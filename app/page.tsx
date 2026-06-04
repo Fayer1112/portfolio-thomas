@@ -1,9 +1,5 @@
-import dynamic from 'next/dynamic';
-
-const Portfolio = dynamic(() => import('@/components/Portfolio'), {
-  ssr: false,
-});
+import ClientPage from './client-page';
 
 export default function Home() {
-  return <Portfolio initialData={{}} />;
+  return <ClientPage initialData={{}} />;
 }
