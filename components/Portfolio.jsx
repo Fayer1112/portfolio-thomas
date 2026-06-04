@@ -80,7 +80,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .star{position:absolute;border-radius:50%;background:#fff;animation:starBlink 3s ease-in-out infinite}
 
 /* ─ NAV ─ */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 52px;transition:all .35s}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 80px;transition:all .35s}
 .nav.sc{background:rgba(7,8,15,.92);border-bottom:1px solid var(--bdr);backdrop-filter:blur(24px)}
 .nlogo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
 .nlogo-mark{display:flex;align-items:center}
@@ -90,8 +90,9 @@ button{cursor:pointer;font-family:var(--fb)}
 .nlinks button:hover{color:var(--tx)}
 .ncv{border:1px solid var(--bdr2);color:var(--tx2);padding:8px 18px;border-radius:6px;font-size:11.5px;font-weight:700;background:transparent;transition:all .25s}
 .ncv:hover{border-color:var(--acc);color:var(--acc);background:var(--accd)}
-.nhb{display:none;background:none;border:1px solid var(--bdr);border-radius:7px;color:var(--tx2);font-size:20px;cursor:pointer;padding:6px 10px;line-height:1;transition:all .2s;z-index:101;position:relative;animation:burgerIn .3s cubic-bezier(.4,0,.2,1) both}
+.nhb{display:none;background:none;border:1px solid var(--bdr);border-radius:7px;color:var(--tx2);font-size:20px;cursor:pointer;padding:6px 10px;line-height:1;transition:all .2s;z-index:101;position:relative;animation:burgerIn .3s cubic-bezier(.4,0,.2,1) both;flex-shrink:0}
 .nhb:hover{border-color:var(--acc);color:var(--acc)}
+.ncv-mobile{display:none}
 .nmob{position:fixed;inset:0;background:rgba(7,8,15,.98);backdrop-filter:blur(20px);z-index:200;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:40px 24px;transform-origin:top center}
 .nmob.open{display:flex;animation:menuSlideIn .32s cubic-bezier(.4,0,.2,1) both}
 .nmob.closing{display:flex;animation:menuSlideOut .25s cubic-bezier(.4,0,.2,1) forwards}
@@ -102,14 +103,15 @@ button{cursor:pointer;font-family:var(--fb)}
 .nmob-divider{width:40px;height:1px;background:var(--bdr);margin:8px 0}
 
 /* ─ HERO ─ */
-.hero{min-height:100vh;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;padding:120px 64px 80px;position:relative;overflow:hidden;z-index:1;gap:60px}
-.hero-left{}
-.hero-right{display:flex;align-items:center;justify-content:center;position:relative;min-height:480px}
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 88px;position:relative;overflow:hidden;z-index:1;gap:0;max-width:1600px;margin:0 auto;width:100%}
+.hero-outer{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;padding-top:0}
+.hero-left{padding:60px 0}
+.hero-right{display:flex;align-items:center;justify-content:flex-end;position:relative;height:100vh;min-height:600px}
 .hero-badge{display:inline-flex;align-items:center;gap:9px;background:var(--accd);border:1px solid rgba(124,58,237,.3);border-radius:100px;padding:8px 18px;font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--acc);margin-bottom:28px}
 .hero-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--acc);animation:pulse 2s ease-in-out infinite}
-.hero-h1{font-size:clamp(48px,6vw,84px);font-weight:800;line-height:.92;letter-spacing:-3px}
-.hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:var(--tx2);font-size:.75em;letter-spacing:-1px;display:block;margin-top:8px}
-.hero-desc{font-size:16.5px;color:var(--tx2);line-height:1.88;margin-top:28px;max-width:520px;font-weight:400}
+.hero-h1{font-size:clamp(38px,6.5vw,108px);font-weight:800;line-height:.92;letter-spacing:-2.5px}
+.hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:var(--tx2);font-size:clamp(18px,.75em,52px);letter-spacing:-1px;display:block;margin-top:8px}
+.hero-desc{font-size:16px;color:var(--tx2);line-height:1.82;margin-top:24px;max-width:560px;font-weight:400}
 .hero-desc strong{color:var(--tx);font-weight:600}
 .hero-desc em{color:var(--acc);font-style:normal;font-weight:600}
 .hero-divider{width:40px;height:2px;background:var(--acc);border-radius:2px;margin:24px 0;opacity:.5}
@@ -119,14 +121,14 @@ button{cursor:pointer;font-family:var(--fb)}
 .hero-acts{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap}
 .hero-scroll-hint{margin-top:40px;display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);font-weight:600}
 .hero-scroll-hint::before{content:'';width:1px;height:28px;background:linear-gradient(to bottom,transparent,var(--tx3))}
-.hero-mascots{position:relative;width:100%;height:480px}
-.hero-mascot-main{position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
+.hero-mascots{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.hero-mascot-main{position:relative;display:flex;align-items:center;justify-content:center}
 .hero-mascot-secondary{position:absolute;top:0;right:0;opacity:.7}
 .hero-mascot-label{position:absolute;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;color:var(--tx2);white-space:nowrap}
 .hero-mascot-label::after{content:'';position:absolute;bottom:-5px;left:14px;width:8px;height:8px;background:var(--bg3);border-right:1px solid var(--bdr);border-bottom:1px solid var(--bdr);transform:rotate(45deg)}
-.hero-float-card{position:absolute;background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:10px 14px;font-size:11.5px;backdrop-filter:blur(8px)}
-.hero-float-card .fc-label{color:var(--tx3);font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px}
-.hero-float-card .fc-val{font-family:var(--fd);font-weight:800;font-size:16px;color:var(--acc)}
+.hero-float-card{position:absolute;background:rgba(12,13,24,.85);border:1px solid var(--bdr2);border-radius:12px;padding:14px 20px;font-size:12px;backdrop-filter:blur(20px);z-index:3}
+.hero-float-card .fc-label{color:var(--tx3);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:6px}
+.hero-float-card .fc-val{font-family:var(--fd);font-weight:800;font-size:18px;color:var(--acc)}
 .btn-pri{background:var(--acc);color:#fff;padding:12px 24px;border-radius:7px;font-size:13px;font-weight:700;border:none;transition:all .25s;display:inline-flex;align-items:center;gap:8px}
 .btn-pri:hover{background:#8B47FF;transform:translateY(-2px);box-shadow:0 10px 28px rgba(124,58,237,.35)}
 .btn-sec{background:transparent;color:var(--tx2);padding:12px 24px;border-radius:7px;font-size:13px;font-weight:600;border:1px solid var(--bdr2);transition:all .25s}
@@ -138,13 +140,13 @@ button{cursor:pointer;font-family:var(--fb)}
 
 /* ─ STATS BAR ─ */
 .stats{display:flex;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);position:relative;z-index:1}
-.stat{flex:1;padding:26px 0 26px 44px;border-right:1px solid var(--bdr)}
-.stat:first-child{padding-left:52px}.stat:last-child{border-right:none}
+.stat{flex:1;padding:26px 0 26px 72px;border-right:1px solid var(--bdr)}
+.stat:first-child{padding-left:88px}.stat:last-child{border-right:none}
 .stat-n{font-family:var(--fd);font-size:38px;font-weight:800;letter-spacing:-2px;line-height:1}
 .stat-n span{color:var(--acc)}.stat-l{font-size:11.5px;color:var(--tx2);margin-top:4px;font-weight:500}
 
 /* ─ SECTION ─ */
-.sec{padding:88px 52px;position:relative;z-index:1}
+.sec{padding:88px 88px;position:relative;z-index:1}
 .seye{font-size:10.5px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .seye::before{content:'';width:20px;height:1px;background:var(--acc)}
 .stit{font-size:clamp(30px,4vw,52px);font-weight:800;letter-spacing:-2px;max-width:680px;line-height:1}
@@ -294,14 +296,14 @@ button{cursor:pointer;font-family:var(--fb)}
 .clk:hover{border-color:var(--acc);background:var(--accd);color:var(--acc)}
 
 /* ─ FOOTER ─ */
-.foot{border-top:1px solid var(--bdr);padding:20px 52px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--tx3);position:relative;z-index:1;flex-wrap:wrap;gap:10px}
+.foot{border-top:1px solid var(--bdr);padding:20px 88px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--tx3);position:relative;z-index:1;flex-wrap:wrap;gap:10px}
 .foot-copy{cursor:default;transition:color .2s}
 .foot-admin-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 15px;border-radius:6px;font-size:11.5px;font-weight:700;border:1px solid var(--bdr);background:transparent;color:var(--tx3);cursor:pointer;transition:all .25s;font-family:var(--fb)}
 .foot-admin-btn:hover{border-color:var(--acc);color:var(--acc);background:var(--accd)}
 
 /* ─ PROJECT DETAIL ─ */
 .pd-page{min-height:100vh;background:var(--bg)}
-.pd-hero{padding:120px 52px 0;position:relative;z-index:1}
+.pd-hero{padding:120px 88px 0;position:relative;z-index:1}
 .pdbk{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--tx2);cursor:pointer;margin-bottom:36px;transition:color .2s;background:none;border:none;font-family:var(--fb);font-weight:600}
 .pdbk:hover{color:var(--acc)}
 .pd-hero-inner{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:flex-end;padding-bottom:44px;border-bottom:1px solid var(--bdr)}
@@ -313,13 +315,13 @@ button{cursor:pointer;font-family:var(--fb)}
 .pd-tag{padding:4px 12px;border-radius:5px;font-size:11.5px;font-weight:600}
 .pd-conf{background:rgba(255,200,0,.1);color:#d4a000;border:1px solid rgba(255,200,0,.2)}
 .pd-year-badge{font-family:var(--fd);font-size:52px;font-weight:800;color:var(--bg3);letter-spacing:-3px;line-height:1;user-select:none}
-.pd-brief{display:grid;grid-template-columns:repeat(5,1fr);gap:0;background:var(--bdr);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;margin:40px 52px 0}
+.pd-brief{display:grid;grid-template-columns:repeat(5,1fr);gap:0;background:var(--bdr);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;margin:40px 88px 0}
 .pd-brief-item{background:var(--bg3);padding:20px 24px;transition:background .2s}
 .pd-brief-item:hover{background:var(--bg4)}
 .pd-brief-lbl{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px}
 .pd-brief-val{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--tx);letter-spacing:-.2px}
-.pd-cover{margin:36px 52px;border-radius:14px;overflow:hidden;border:1px solid var(--bdr)}
-.pd-content{padding:0 52px 88px}
+.pd-cover{margin:36px 88px;border-radius:14px;overflow:hidden;border:1px solid var(--bdr)}
+.pd-content{padding:0 88px 88px}
 .pd-slbl{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:10px;margin-top:56px}
 .pd-slbl::before{content:'';width:12px;height:1px;background:var(--acc)}
 .pd-slbl-num{font-family:var(--fd);font-size:11px;color:var(--tx3);margin-left:auto;letter-spacing:0}
@@ -367,7 +369,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .pd-pv-item:hover{background:var(--bg3)}
 .pd-pv-icon{width:30px;height:30px;border-radius:7px;background:var(--accd);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
 .pd-pv-txt{font-size:13.5px;color:var(--tx2);line-height:1.7;font-weight:400;padding-top:4px}
-.pd-nav{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bdr);padding:28px 52px;position:relative;z-index:1}
+.pd-nav{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bdr);padding:28px 88px;position:relative;z-index:1}
 .pd-nav-lbl{font-size:10.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:5px}
 .pd-nav-t{font-family:var(--fd);font-size:18px;font-weight:800;cursor:pointer;transition:color .2s;letter-spacing:-.3px}.pd-nav-t:hover{color:var(--acc)}
 
@@ -485,7 +487,8 @@ button{cursor:pointer;font-family:var(--fb)}
 
 /* ─ RESPONSIVE ─ */
 @media(max-width:1024px){
-  .hero{grid-template-columns:1fr;padding:110px 40px 80px;text-align:left;gap:40px}
+  .hero{grid-template-columns:1fr;padding:110px 52px 80px;text-align:left;gap:40px;max-width:100%}
+  .hero-outer{padding-top:0}
   .hero-right{display:none}
   .about-grid{grid-template-columns:1fr}
   .dh-wrap{grid-template-columns:1fr}
@@ -502,15 +505,15 @@ button{cursor:pointer;font-family:var(--fb)}
   .pd-metrics{grid-template-columns:1fr 1fr}
 }
 @media(max-width:768px){
-  .nav{padding:14px 20px}.nlinks{display:none}.nhb{display:flex;align-items:center}
-  .hero{padding:90px 20px 64px}
-  .stats{flex-direction:column}.stat{padding-left:20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
-  .sec{padding:60px 20px}
+  .nav{padding:12px 20px;gap:8px}.nlinks{display:none}.nhb{display:flex;align-items:center}.ncv{display:none}.ncv-mobile{display:flex;align-items:center;gap:4px;border:1px solid var(--bdr);color:var(--tx2);padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;background:transparent;white-space:nowrap;text-decoration:none;flex-shrink:0}
+  .hero{padding:80px 20px 48px;gap:32px}.hero-left{padding:24px 0}.hero-h1{letter-spacing:-2px}.hero-desc{font-size:15px;line-height:1.75;margin-top:18px}.hero-badge{font-size:10px;padding:5px 12px;margin-bottom:16px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}
+  .stats{flex-direction:column}.stat{padding:20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
+  .sec{padding:52px 20px}
   .tl-grid{grid-template-columns:1fr}
   .tgrid{grid-template-columns:1fr}
   .testi-grid{grid-template-columns:1fr}
   .contact-layout{grid-template-columns:1fr}.cwrap{padding:44px 22px}
-  .foot{padding:16px 20px}
+  .foot{padding:16px 24px}
   .pgallery-row.r1,.pgallery-row.r2,.pgallery-row.r3{grid-template-columns:1fr}
   .dash-kpi-grid{grid-template-columns:1fr 1fr}
   .dash-grid2{grid-template-columns:1fr}
@@ -777,126 +780,226 @@ function CookieBanner({ onAccept, onDecline }) {
   );
 }
 
-// ── ASTRONAUT SVG — original chibi style (white suit, red stripes, dark visor) ─
-function AstronautSVG({ size = 300, style = {} }) {
+// ── ASTRONAUT SVG — 3D realistic bust style ─────────────────────────────────
+function AstronautSVG({ size = 520, style = {} }) {
   return (
     <svg
-      width={size} height={size}
-      viewBox="0 0 400 400"
+      width={size} height={size * 1.15}
+      viewBox="0 0 520 600"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="hero-astro"
-      style={{ filter:"drop-shadow(0 16px 48px rgba(124,58,237,.22))", ...style }}
+      style={{ filter:"drop-shadow(0 32px 80px rgba(75,127,250,.25))", ...style }}
     >
-      {/* Stars / sparkles */}
-      {[
-        [42,44,12],[334,28,16],[352,138,10],[28,248,12],[358,302,10],[180,18,8]
-      ].map(([x,y,s],i) => (
-        <g key={i} style={{ animation:`starBlink ${2+i*.35}s ${i*.28}s ease-in-out infinite` }}>
-          <path d={`M${x},${y-s} L${x+s*.25},${y-s*.25} L${x+s},${y} L${x+s*.25},${y+s*.25} L${x},${y+s} L${x-s*.25},${y+s*.25} L${x-s},${y} L${x-s*.25},${y-s*.25}Z`}
-            fill="rgba(200,180,255,.65)"/>
-        </g>
-      ))}
+      <defs>
+        <radialGradient id="helmetGlow" cx="40%" cy="35%" r="60%">
+          <stop offset="0%" stopColor="#C8E8FF" stopOpacity=".35"/>
+          <stop offset="60%" stopColor="#6BA8D4" stopOpacity=".1"/>
+          <stop offset="100%" stopColor="#1A2A4A" stopOpacity=".05"/>
+        </radialGradient>
+        <radialGradient id="visorGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#0A0F1E"/>
+          <stop offset="100%" stopColor="#050810"/>
+        </radialGradient>
+        <radialGradient id="visorGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#1A3A6A" stopOpacity=".6"/>
+          <stop offset="100%" stopColor="#050810" stopOpacity="0"/>
+        </radialGradient>
+        <radialGradient id="suitGrad" cx="35%" cy="30%" r="65%">
+          <stop offset="0%" stopColor="#E8F4FF"/>
+          <stop offset="45%" stopColor="#C8D8EC"/>
+          <stop offset="100%" stopColor="#8AA4C0"/>
+        </radialGradient>
+        <radialGradient id="bodyGrad" cx="35%" cy="25%" r="70%">
+          <stop offset="0%" stopColor="#D8E8F8"/>
+          <stop offset="50%" stopColor="#B0C8E0"/>
+          <stop offset="100%" stopColor="#6888A8"/>
+        </radialGradient>
+        <radialGradient id="chestGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#FF8800" stopOpacity=".9"/>
+          <stop offset="100%" stopColor="#FF4400" stopOpacity=".2"/>
+        </radialGradient>
+        <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="8" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="visorBlur" x="-5%" y="-5%" width="110%" height="110%">
+          <feGaussianBlur stdDeviation="1.5"/>
+        </filter>
+        <clipPath id="helmetClip">
+          <ellipse cx="260" cy="195" rx="148" ry="158"/>
+        </clipPath>
+      </defs>
 
-      {/* ── BODY — rounded white suit ── */}
-      <ellipse cx="200" cy="270" rx="88" ry="95" fill="#EDF0F5" stroke="#1E1E2A" strokeWidth="3"/>
+      {/* ── Atmospheric background glow ── */}
+      <ellipse cx="260" cy="320" rx="220" ry="180"
+        fill="none" stroke="rgba(75,127,250,.06)" strokeWidth="60"/>
+      <ellipse cx="260" cy="320" rx="180" ry="140"
+        fill="none" stroke="rgba(75,127,250,.04)" strokeWidth="40"/>
+
+      {/* ── BODY / TORSO ── */}
+      {/* Main suit body */}
+      <path d="M60 600 Q60 440 80 400 Q120 360 180 345 L260 340 L340 345 Q400 360 440 400 Q460 440 460 600Z"
+        fill="url(#bodyGrad)"/>
+      {/* Suit shading right */}
+      <path d="M300 345 Q380 360 430 405 Q455 440 460 600 L380 600 Q360 480 330 430 Q310 400 300 345Z"
+        fill="rgba(60,80,110,.35)"/>
       {/* Suit shading left */}
-      <ellipse cx="175" cy="278" rx="70" ry="78" fill="#D6DAE6" opacity=".4"/>
+      <path d="M140 360 Q100 385 80 420 Q65 460 60 600 L120 600 Q130 490 155 440 Q170 410 185 390Z"
+        fill="rgba(200,230,255,.12)"/>
+      {/* Suit outline */}
+      <path d="M60 600 Q60 440 80 400 Q120 360 180 345 L260 340 L340 345 Q400 360 440 400 Q460 440 460 600Z"
+        fill="none" stroke="rgba(140,180,220,.3)" strokeWidth="1.5"/>
 
-      {/* Waist red stripe */}
-      <path d="M116 290 Q200 308 284 290 Q283 312 200 326 Q117 312 116 290Z"
-        fill="#E63946" stroke="#1E1E2A" strokeWidth="2"/>
-
-      {/* ── LEFT ARM — raised & waving ── */}
-      <ellipse cx="104" cy="228" rx="26" ry="46" fill="#EDF0F5" stroke="#1E1E2A" strokeWidth="2.5"
-        transform="rotate(-28 104 228)"/>
-      {/* Red stripe on arm */}
-      <ellipse cx="94" cy="206" rx="14" ry="7" fill="#E63946" stroke="#1E1E2A" strokeWidth="1.5"
-        transform="rotate(-28 94 206)"/>
-      <ellipse cx="90" cy="224" rx="14" ry="7" fill="#E63946" stroke="#1E1E2A" strokeWidth="1.5"
-        transform="rotate(-28 90 224)"/>
-      {/* Left glove — round, waving */}
-      <ellipse cx="68" cy="268" rx="24" ry="18" fill="#D6DAE6" stroke="#1E1E2A" strokeWidth="2.5"/>
-      {/* Glove fingers hint */}
-      <ellipse cx="58" cy="260" rx="7" ry="5" fill="#C4C8D4" stroke="#1E1E2A" strokeWidth="1.2" transform="rotate(-20 58 260)"/>
-      <ellipse cx="52" cy="272" rx="7" ry="5" fill="#C4C8D4" stroke="#1E1E2A" strokeWidth="1.2"/>
-      <ellipse cx="58" cy="282" rx="7" ry="5" fill="#C4C8D4" stroke="#1E1E2A" strokeWidth="1.2" transform="rotate(20 58 282)"/>
-
-      {/* ── RIGHT ARM — relaxed/floating ── */}
-      <ellipse cx="296" cy="238" rx="26" ry="46" fill="#EDF0F5" stroke="#1E1E2A" strokeWidth="2.5"
-        transform="rotate(20 296 238)"/>
-      <ellipse cx="308" cy="216" rx="14" ry="7" fill="#E63946" stroke="#1E1E2A" strokeWidth="1.5"
-        transform="rotate(20 308 216)"/>
-      <ellipse cx="312" cy="234" rx="14" ry="7" fill="#E63946" stroke="#1E1E2A" strokeWidth="1.5"
-        transform="rotate(20 312 234)"/>
-      {/* Right glove */}
-      <ellipse cx="330" cy="276" rx="24" ry="18" fill="#D6DAE6" stroke="#1E1E2A" strokeWidth="2.5"/>
-
-      {/* ── LEGS ── */}
-      {/* Left leg */}
-      <ellipse cx="158" cy="356" rx="34" ry="25" fill="#EDF0F5" stroke="#1E1E2A" strokeWidth="2.5"
-        transform="rotate(-10 158 356)"/>
-      <ellipse cx="152" cy="344" rx="22" ry="7" fill="#E63946" stroke="#1E1E2A" strokeWidth="1.5"
-        transform="rotate(-10 152 344)"/>
-      {/* Left boot */}
-      <ellipse cx="148" cy="376" rx="30" ry="16" fill="#C4C8D4" stroke="#1E1E2A" strokeWidth="2.5"/>
-      <ellipse cx="132" cy="380" rx="14" ry="10" fill="#B0B5C4" stroke="#1E1E2A" strokeWidth="1.5"/>
-
-      {/* Right leg */}
-      <ellipse cx="242" cy="352" rx="34" ry="25" fill="#EDF0F5" stroke="#1E1E2A" strokeWidth="2.5"
-        transform="rotate(14 242 352)"/>
-      <ellipse cx="250" cy="340" rx="22" ry="7" fill="#E63946" stroke="#1E1E2A" strokeWidth="1.5"
-        transform="rotate(14 250 340)"/>
-      {/* Right boot */}
-      <ellipse cx="256" cy="372" rx="30" ry="16" fill="#C4C8D4" stroke="#1E1E2A" strokeWidth="2.5"/>
-      <ellipse cx="270" cy="376" rx="14" ry="10" fill="#B0B5C4" stroke="#1E1E2A" strokeWidth="1.5"/>
-
-      {/* ── CHEST PANEL ── */}
-      <rect x="164" y="248" width="72" height="50" rx="10" fill="white" stroke="#1E1E2A" strokeWidth="2"/>
-      <rect x="167" y="251" width="66" height="44" rx="8" fill="#F0F2F7"/>
-      {/* Panel buttons */}
-      <rect x="171" y="258" width="24" height="16" rx="4" fill="#E63946" stroke="#1E1E2A" strokeWidth="1.2"/>
-      <rect x="199" y="258" width="24" height="7" rx="3" fill="#8BAFD4" stroke="#1E1E2A" strokeWidth="1.2"/>
-      <rect x="199" y="267" width="24" height="7" rx="3" fill="#8BAFD4" stroke="#1E1E2A" strokeWidth="1.2"/>
-      <circle cx="218" cy="282" r="7" fill="#E63946" stroke="#1E1E2A" strokeWidth="1.5"/>
+      {/* ── SHOULDERS ── */}
+      {/* Left shoulder */}
+      <ellipse cx="105" cy="390" rx="68" ry="55"
+        fill="url(#suitGrad)" opacity=".9"/>
+      <ellipse cx="92" cy="378" rx="42" ry="30"
+        fill="rgba(200,230,255,.2)"/>
+      <ellipse cx="105" cy="390" rx="68" ry="55"
+        fill="none" stroke="rgba(140,180,220,.4)" strokeWidth="1.5"/>
+      {/* Right shoulder */}
+      <ellipse cx="415" cy="390" rx="68" ry="55"
+        fill="url(#suitGrad)" opacity=".9"/>
+      <ellipse cx="402" cy="378" rx="42" ry="30"
+        fill="rgba(200,230,255,.2)"/>
+      <ellipse cx="415" cy="390" rx="68" ry="55"
+        fill="none" stroke="rgba(140,180,220,.4)" strokeWidth="1.5"/>
 
       {/* ── NECK RING ── */}
-      <ellipse cx="200" cy="172" rx="60" ry="16" fill="#C4C8D4" stroke="#1E1E2A" strokeWidth="2.5"/>
-      <ellipse cx="200" cy="170" rx="56" ry="13" fill="#D6DAE6"/>
+      <ellipse cx="260" cy="345" rx="90" ry="22"
+        fill="#8AAAC8" stroke="rgba(140,180,220,.5)" strokeWidth="1.5"/>
+      <ellipse cx="260" cy="340" rx="86" ry="18"
+        fill="#A0C0DC"/>
+      {/* Neck ring detail lines */}
+      {[0,1,2,3,4,5].map(i => (
+        <line key={i}
+          x1={180 + i*18} y1={332} x2={180 + i*18} y2={352}
+          stroke="rgba(80,120,160,.4)" strokeWidth="1"/>
+      ))}
 
-      {/* ── HELMET — main sphere ── */}
-      <circle cx="200" cy="128" r="76" fill="#D6DAE6" stroke="#1E1E2A" strokeWidth="3"/>
-      {/* Helmet back shading */}
-      <circle cx="200" cy="128" r="76" fill="url(#helmetGrad)" opacity=".6"/>
-      {/* Visor — large dark oval */}
-      <ellipse cx="200" cy="136" rx="56" ry="50" fill="#1A1B2E" stroke="#1E1E2A" strokeWidth="2.5"/>
-      <ellipse cx="200" cy="136" rx="54" ry="48" fill="#141527"/>
+      {/* ── CHEST PANEL ── */}
+      <rect x="192" y="405" width="136" height="105" rx="12"
+        fill="#1A2840" stroke="rgba(100,150,200,.4)" strokeWidth="1.5"/>
+      <rect x="194" y="407" width="132" height="101" rx="10"
+        fill="#0E1828"/>
+      {/* Panel inner border light */}
+      <rect x="196" y="409" width="128" height="97" rx="9"
+        fill="none" stroke="rgba(80,140,200,.2)" strokeWidth="1"/>
+
+      {/* Orange status light - main */}
+      <rect x="208" y="422" width="38" height="28" rx="5"
+        fill="url(#chestGlow)" filter="url(#softGlow)"/>
+      <rect x="210" y="424" width="34" height="24" rx="4"
+        fill="#FF7700" opacity=".9"/>
+      <rect x="212" y="426" width="20" height="8" rx="2"
+        fill="rgba(255,200,100,.5)"/>
+
+      {/* Right panel buttons */}
+      <rect x="258" y="422" width="56" height="10" rx="3"
+        fill="#0A1525" stroke="rgba(60,120,180,.4)" strokeWidth="1"/>
+      <rect x="260" y="424" width="18" height="6" rx="2"
+        fill="#3A7AB8" opacity=".6"/>
+      <rect x="282" y="424" width="12" height="6" rx="2"
+        fill="#1A4A78" opacity=".5"/>
+      <rect x="298" y="424" width="14" height="6" rx="2"
+        fill="#2A5A90" opacity=".5"/>
+
+      <rect x="258" y="436" width="56" height="10" rx="3"
+        fill="#0A1525" stroke="rgba(60,120,180,.4)" strokeWidth="1"/>
+      <circle cx="268" cy="441" r="3" fill="#FF4400" opacity=".8"/>
+      <circle cx="280" cy="441" r="3" fill="#3A7AB8" opacity=".6"/>
+      <circle cx="292" cy="441" r="3" fill="#2A9A50" opacity=".6"/>
+      <circle cx="304" cy="441" r="3" fill="#AA7A10" opacity=".6"/>
+
+      {/* Bottom panel strip */}
+      <rect x="208" y="460" width="106" height="36" rx="5"
+        fill="#0A1525" stroke="rgba(60,120,180,.3)" strokeWidth="1"/>
+      {[0,1,2,3,4,5].map(i => (
+        <rect key={i} x={212+i*17} y={464} width={13} height={28} rx={2}
+          fill={i===2?"#1A4A78":i===4?"#2A2A10":"#0D1820"}
+          opacity={i===2?.7:i===4?.5:.3}/>
+      ))}
+
+      {/* EXMO badge */}
+      <rect x="340" y="415" width="58" height="28" rx="5"
+        fill="#0E1828" stroke="rgba(80,130,180,.35)" strokeWidth="1"/>
+      <text x="369" y="434" textAnchor="middle"
+        fill="rgba(120,170,220,.6)" fontSize="9" fontFamily="monospace" fontWeight="700">EXMO</text>
+
+      {/* ── HELMET SHELL ── */}
+      <ellipse cx="260" cy="195" rx="155" ry="162"
+        fill="url(#suitGrad)"/>
+      {/* Helmet shading */}
+      <ellipse cx="260" cy="195" rx="155" ry="162"
+        fill="url(#helmetGlow)"/>
+      {/* Helmet right shading */}
+      <path d="M360 100 Q415 140 415 200 Q415 280 360 320 Q400 280 400 200 Q400 130 360 100Z"
+        fill="rgba(60,90,130,.25)"/>
+      {/* Helmet left highlight */}
+      <path d="M145 120 Q110 155 110 200 Q110 255 145 290 Q120 260 118 200 Q118 148 145 120Z"
+        fill="rgba(220,240,255,.15)"/>
+
+      {/* ── VISOR ── */}
+      <ellipse cx="260" cy="205" rx="118" ry="122"
+        fill="url(#visorGrad)"/>
+      <ellipse cx="260" cy="205" rx="118" ry="122"
+        fill="url(#visorGlow)"/>
+      {/* Visor depth */}
+      <ellipse cx="260" cy="205" rx="114" ry="118"
+        fill="#070C18"/>
+      {/* Visor inner glow */}
+      <ellipse cx="260" cy="215" rx="100" ry="105"
+        fill="none" stroke="rgba(40,80,160,.15)" strokeWidth="12"/>
+
+      {/* ── VISOR RING LIGHT (key feature from image) ── */}
+      {/* Outer glow ring */}
+      <ellipse cx="260" cy="200" rx="106" ry="110"
+        fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="14"/>
+      {/* Main white ring */}
+      <ellipse cx="260" cy="200" rx="104" ry="108"
+        fill="none" stroke="rgba(255,255,255,.55)" strokeWidth="2.5"
+        style={{ filter:"drop-shadow(0 0 8px rgba(255,255,255,.4))" }}/>
+      {/* Inner accent ring */}
+      <ellipse cx="260" cy="200" rx="96" ry="100"
+        fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="1"/>
+
       {/* Visor reflections */}
-      <ellipse cx="178" cy="112" rx="18" ry="12" fill="white" opacity=".13"
-        transform="rotate(-25 178 112)"/>
-      <ellipse cx="168" cy="120" rx="6" ry="10" fill="white" opacity=".08"
-        transform="rotate(-25 168 120)"/>
-      {/* Small dots bottom of visor */}
-      <circle cx="185" cy="166" r="5" fill="#242540" stroke="#2E2F50" strokeWidth="1"/>
-      <circle cx="200" cy="168" r="5" fill="#242540" stroke="#2E2F50" strokeWidth="1"/>
-      <circle cx="215" cy="166" r="5" fill="#242540" stroke="#2E2F50" strokeWidth="1"/>
-      {/* Visor rim glow */}
-      <ellipse cx="200" cy="136" rx="54" ry="48" fill="none" stroke="rgba(124,58,237,.2)" strokeWidth="1.5"/>
+      <ellipse cx="215" cy="155" rx="38" ry="22"
+        fill="rgba(255,255,255,.07)" transform="rotate(-20 215 155)"/>
+      <ellipse cx="200" cy="168" rx="14" ry="32"
+        fill="rgba(255,255,255,.04)" transform="rotate(-20 200 168)"/>
+      {/* Small bright reflection spot */}
+      <ellipse cx="204" cy="148" rx="10" ry="6"
+        fill="rgba(255,255,255,.18)" transform="rotate(-25 204 148)"/>
+
+      {/* Visor border */}
+      <ellipse cx="260" cy="205" rx="118" ry="122"
+        fill="none" stroke="rgba(140,180,220,.25)" strokeWidth="2"/>
 
       {/* ── HELMET DETAILS ── */}
-      {/* Side ear-caps */}
-      <ellipse cx="126" cy="136" rx="12" ry="18" fill="#C4C8D4" stroke="#1E1E2A" strokeWidth="2"/>
-      <ellipse cx="274" cy="136" rx="12" ry="18" fill="#C4C8D4" stroke="#1E1E2A" strokeWidth="2"/>
-      {/* Top connector */}
-      <ellipse cx="200" cy="55" rx="14" ry="10" fill="#C4C8D4" stroke="#1E1E2A" strokeWidth="2"/>
-      <rect x="194" y="52" width="12" height="22" rx="4" fill="#D6DAE6" stroke="#1E1E2A" strokeWidth="1.5"/>
+      {/* Side connectors */}
+      <rect x="102" y="185" width="16" height="30" rx="4"
+        fill="#8AAAC8" stroke="rgba(140,180,220,.3)" strokeWidth="1"/>
+      <rect x="104" y="190" width="12" height="20" rx="2"
+        fill="#6A8AAA"/>
+      <rect x="402" y="185" width="16" height="30" rx="4"
+        fill="#8AAAC8" stroke="rgba(140,180,220,.3)" strokeWidth="1"/>
+      <rect x="404" y="190" width="12" height="20" rx="2"
+        fill="#6A8AAA"/>
 
-      <defs>
-        <radialGradient id="helmetGrad" cx="35%" cy="30%" r="65%">
-          <stop offset="0%" stopColor="white" stopOpacity=".25"/>
-          <stop offset="100%" stopColor="#8090B0" stopOpacity=".3"/>
-        </radialGradient>
-      </defs>
+      {/* Top antenna */}
+      <rect x="248" y="34" width="24" height="14" rx="4"
+        fill="#8AAAC8" stroke="rgba(140,180,220,.35)" strokeWidth="1"/>
+      <rect x="254" y="20" width="12" height="18" rx="3"
+        fill="#A0C0DC" stroke="rgba(140,180,220,.3)" strokeWidth="1"/>
+      <circle cx="260" cy="16" r="5"
+        fill="#C0D8F0" stroke="rgba(180,210,240,.5)" strokeWidth="1"/>
+
+      {/* Helmet outline */}
+      <ellipse cx="260" cy="195" rx="155" ry="162"
+        fill="none" stroke="rgba(160,200,240,.2)" strokeWidth="1.5"/>
     </svg>
   );
 }
@@ -1125,6 +1228,7 @@ function Nav({ scrolled, onBack, onTrack }) {
           {links.map(([id,lbl]) => <li key={id}><button onClick={() => go(id)}>{lbl}</button></li>)}
         </ul>
         <a className="ncv" href="https://www.thomas-leloup.fr/cv_thomas_leloup.pdf" target="_blank" rel="noopener">Mon CV ↗</a>
+        <a className="ncv-mobile" href="https://www.thomas-leloup.fr/cv_thomas_leloup.pdf" target="_blank" rel="noopener">CV ↗</a>
         {!mobOpen && (
           <button className="nhb" onClick={openMenu} aria-label="Ouvrir le menu">☰</button>
         )}
@@ -1229,6 +1333,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
       <Nav scrolled={scrolled} onTrack={onTrack}/>
 
       {/* ── HERO ── */}
+      <div className="hero-outer">
       <section className="hero" id="hero">
         <div className="hero-left" style={{ position:"relative", zIndex:1 }}>
           <div className="hero-badge afu">
@@ -1281,6 +1386,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
           </div>
         </div>
       </section>
+      </div>
 
       {/* ── STATS ── */}
       <div className="stats" style={{ position:"relative", zIndex:1 }}>
