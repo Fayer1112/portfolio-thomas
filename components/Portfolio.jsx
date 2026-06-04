@@ -140,19 +140,19 @@ button{cursor:pointer;font-family:var(--fb)}
 
 /* ─ STATS BAR ─ */
 .stats{display:flex;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);position:relative;z-index:1}
-.stat{flex:1;padding:26px 0 26px 56px;border-right:1px solid var(--bdr)}
+.stat{flex:1;padding:34px 0 34px 56px;border-right:1px solid var(--bdr)}
 .stat:first-child{padding-left:64px}.stat:last-child{border-right:none}
 .stat-n{font-family:var(--fd);font-size:38px;font-weight:800;letter-spacing:-2px;line-height:1}
 .stat-n span{color:var(--acc)}.stat-l{font-size:11.5px;color:var(--tx2);margin-top:4px;font-weight:500}
 
 /* ─ SECTION ─ */
-.sec{padding:88px 64px;position:relative;z-index:1}
-.seye{font-size:10.5px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec{padding:120px 64px;position:relative;z-index:1}
+.seye{font-size:10.5px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:var(--acc);margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .seye::before{content:'';width:20px;height:1px;background:var(--acc)}
-.stit{font-size:clamp(30px,4vw,52px);font-weight:800;letter-spacing:-2px;max-width:680px;line-height:1}
+.stit{font-size:clamp(30px,4vw,52px);font-weight:800;letter-spacing:-2px;max-width:680px;line-height:1;margin-bottom:8px}
 
 /* ─ ABOUT ─ */
-.about-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:72px;align-items:center;margin-top:52px}
+.about-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:80px;align-items:center;margin-top:64px}
 .about-img-wrap{position:relative}
 .about-corners .c{position:absolute;border-color:var(--acc);border-style:solid;border-width:0;opacity:.4;width:28px;height:28px}
 .about-corners .c.tl{top:-10px;left:-10px;border-top-width:2px;border-left-width:2px;border-radius:5px 0 0 0}
@@ -171,7 +171,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .askill:hover{border-color:var(--acc);color:var(--acc);background:var(--accd)}
 
 /* ─ DOUBLE HAT SECTION ─ */
-.dh-wrap{margin-top:60px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.dh-wrap{margin-top:72px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
 .dh-tree-wrap{position:relative}
 .diag-wrap{width:100%;overflow:hidden;border-radius:16px;background:linear-gradient(135deg,#111220 0%,#0D0E1A 100%);border:1px solid var(--bdr);padding:24px}
 .dh-info{display:flex;flex-direction:column;gap:20px;padding-top:20px}
@@ -188,7 +188,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .dh-skill-fill.vis{width:var(--w)}
 
 /* ─ TIMELINE ─ */
-.tl-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:48px}
+.tl-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:56px}
 .tl-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:12px;padding:22px;transition:all .25s;position:relative;overflow:hidden}
 .tl-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accd),transparent);opacity:0;transition:opacity .3s}
 .tl-card:hover{border-color:var(--bdr2)}.tl-card:hover::after{opacity:1}
@@ -204,7 +204,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .pf-btn:hover{border-color:var(--bdr2);color:var(--tx)}
 .pf-btn.on{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 4px 16px rgba(124,58,237,.28)}
 .pf-sep{width:1px;background:var(--bdr);margin:0 4px;align-self:stretch}
-.pgallery{display:grid;gap:3px}
+.pgallery{display:grid;gap:4px}
 .pgallery-row{display:grid;gap:3px}
 .pgallery-row.r1{grid-template-columns:2fr 1fr}
 .pgallery-row.r2{grid-template-columns:1fr 2fr}
@@ -232,7 +232,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .pno{text-align:center;padding:60px;color:var(--tx3);font-size:14px}
 
 /* ─ TESTIMONIALS ─ */
-.testi-wrap{margin-top:52px;display:flex;flex-direction:column;gap:18px}
+.testi-wrap{margin-top:64px;display:flex;flex-direction:column;gap:20px}
 .tcard{background:var(--bg3);border:1px solid var(--bdr);border-radius:16px;padding:32px;transition:all .28s;position:relative;overflow:hidden}
 .tcard:hover{border-color:var(--bdr2);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.25)}
 .tcard::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,.04),transparent 60%);opacity:0;transition:opacity .3s}
@@ -252,7 +252,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .tcard-star{color:#F59E0B;font-size:13px;letter-spacing:2px;margin-top:14px;opacity:.8}
 
 /* ─ CONTACT ─ */
-.contact-layout{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:start;margin-top:52px}
+.contact-layout{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;margin-top:64px}
 .contact-info{}
 .contact-info-title{font-family:var(--fd);font-size:clamp(28px,3.5vw,44px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:16px}
 .contact-info-desc{font-size:15.5px;color:var(--tx2);line-height:1.82;margin-bottom:28px;font-weight:400}
@@ -488,7 +488,7 @@ button{cursor:pointer;font-family:var(--fb)}
 /* ─ RESPONSIVE ─ */
 @media(min-width:1600px){
 .hero{padding:0 80px}
-.sec{padding:88px 80px}
+.sec{padding:120px 80px}
 .foot{padding:20px 80px}
 }
 @media(max-width:1024px){
@@ -512,8 +512,8 @@ button{cursor:pointer;font-family:var(--fb)}
 @media(max-width:768px){
   .nav{padding:12px 20px;gap:8px}.nlinks{display:none}.nhb{display:flex;align-items:center}.ncv{display:none}.ncv-mobile{display:flex;align-items:center;gap:4px;border:1px solid var(--bdr);color:var(--tx2);padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;background:transparent;white-space:nowrap;text-decoration:none;flex-shrink:0}
   .hero{padding:80px 20px 48px;gap:32px}.hero-left{padding:24px 0}.hero-h1{letter-spacing:-2px}.hero-desc{font-size:15px;line-height:1.75;margin-top:18px}.hero-badge{font-size:10px;padding:5px 12px;margin-bottom:16px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}
-  .stats{flex-direction:column}.stat{padding:20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
-  .sec{padding:52px 20px}
+  .stats{flex-direction:column}.stat{padding:24px 20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
+  .sec{padding:72px 20px}
   .tl-grid{grid-template-columns:1fr}
   .tgrid{grid-template-columns:1fr}
   .testi-grid{grid-template-columns:1fr}
