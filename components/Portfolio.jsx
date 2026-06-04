@@ -54,7 +54,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .afu{animation:fadeUp .7s var(--ease) both}
 .asc{animation:scaleIn .3s var(--ease) both}
 .d1{animation-delay:.1s}.d2{animation-delay:.22s}.d3{animation-delay:.36s}.d4{animation-delay:.52s}.d5{animation-delay:.7s}
-.rv{opacity:0;transform:translateY(20px);transition:opacity .65s ease,transform .65s ease}
+.rv{opacity:1;transform:translateY(0);transition:opacity .65s ease,transform .65s ease}
 .rv.vis{opacity:1;transform:translateY(0)}
 
 /* ─ LOADING SCREEN ─ */
