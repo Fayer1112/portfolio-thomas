@@ -1799,7 +1799,7 @@ function ContactForm({ onTrack }) {
     return e;
   };
 
-  const send = () => {
+  const send = async () => {
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     setStatus("sending");
