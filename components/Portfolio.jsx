@@ -1162,7 +1162,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
   const [goAdmin, setGoAdmin] = useState(false);
   const [dhVisible, setDhVisible] = useState(false);
   const dhRef = useRef(null);
-  useReveal();
+  // useReveal disabled for Next.js SSR compatibility
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50);
@@ -1511,7 +1511,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
 // ── PROJECT DETAIL ────────────────────────────────────────────────────────────
 function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack }) {
   const [scrolled, setScrolled] = useState(false);
-  useReveal();
+  ;
   useEffect(() => {
     window.scrollTo(0, 0);
     const fn = () => setScrolled(window.scrollY > 50);
