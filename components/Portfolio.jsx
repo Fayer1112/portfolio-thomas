@@ -1305,9 +1305,9 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
             <div className="about-badge"><div className="about-badge-n">4+</div><div className="about-badge-t">ans d'expérience</div></div>
           </div>
           <div className="about-txt">
-            <p className="rv">Dès l'âge de 12 ans, la modélisation 3D a été ma première rencontre avec le design. Après un parcours de développeur Full Stack, j'ai choisi de mettre cette double expertise au service du Product Design.</p>
-            <p className="rv">Ce qui me différencie : mon background de développeur Full Stack me permet de concevoir en anticipant les contraintes techniques, sans pour autant coder aujourd'hui. Je parle le même langage que les équipes dev, ce qui fluidifie considérablement les cycles de livraison.</p>
-            <p className="rv">Spécialisé en Design Ops, je structure les processus design pour les rendre scalables, reproductibles et alignés avec les équipes engineering.</p>
+            <p className="rv vis">Dès l'âge de 12 ans, la modélisation 3D a été ma première rencontre avec le design. Après un parcours de développeur Full Stack, j'ai choisi de mettre cette double expertise au service du Product Design.</p>
+            <p className="rv vis">Ce qui me différencie : mon background de développeur Full Stack me permet de concevoir en anticipant les contraintes techniques, sans pour autant coder aujourd'hui. Je parle le même langage que les équipes dev, ce qui fluidifie considérablement les cycles de livraison.</p>
+            <p className="rv vis">Spécialisé en Design Ops, je structure les processus design pour les rendre scalables, reproductibles et alignés avec les équipes engineering.</p>
             <div className="about-skills rv">
               {["Audit UX","Design System","Design Ops","Maquettage","Prototypage","UX Research","UX Writing","Tests utilisateurs","Design thinking","React / HTML","Dev Handoff"].map((s) => (
                 <span className="askill" key={s}>{s}</span>
@@ -1320,7 +1320,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
         <div style={{ marginTop:60 }}>
           <div className="seye rv">Double expertise</div>
           <h2 className="stit rv">Design × Engineering</h2>
-          <p style={{ fontSize:15, color:"var(--tx2)", maxWidth:580, lineHeight:1.8, marginTop:14 }} className="rv">
+          <p style={{ fontSize:15, color:"var(--tx2)", maxWidth:580, lineHeight:1.8, marginTop:14 }} className="rv vis">
             Ma trajectoire atypique — développeur Full Stack devenu Product Designer — me donne un avantage concret : je conçois en anticipant les contraintes techniques, ce qui réduit les frictions avec les équipes de développement.
           </p>
           <div className="dh-wrap" ref={dhRef}>
