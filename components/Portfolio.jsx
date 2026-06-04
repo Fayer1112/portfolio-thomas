@@ -1374,7 +1374,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
 
         <div className="hero-right">
           {/* Floating context cards */}
-          <div className="hero-float-card afu d2" style={{ position:"absolute", top:20, left:0, zIndex:3 }}>
+          <div className="hero-float-card afu d2" style={{ position:"absolute", top:60, left:0, zIndex:3 }}>
             <div className="fc-label">Expertise</div>
             <div className="fc-val">Design × Dev</div>
           </div>
