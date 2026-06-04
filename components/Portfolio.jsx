@@ -103,8 +103,8 @@ button{cursor:pointer;font-family:var(--fb)}
 .nmob-divider{width:40px;height:1px;background:var(--bdr);margin:8px 0}
 
 /* ─ HERO ─ */
-.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 64px;position:relative;overflow:hidden;z-index:1;gap:0;max-width:1440px;margin:0 auto;width:100%}
-.hero-outer{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;padding-top:0}
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 40px;position:relative;overflow:hidden;z-index:1;gap:0;width:100%}
+.hero-outer{min-height:100vh;display:flex;align-items:center;position:relative;z-index:1;padding-top:0}
 .hero-left{padding:60px 0}
 .hero-right{display:flex;align-items:center;justify-content:flex-end;position:relative;height:100vh;min-height:600px}
 .hero-badge{display:inline-flex;align-items:center;gap:9px;background:var(--accd);border:1px solid rgba(124,58,237,.3);border-radius:100px;padding:8px 18px;font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--acc);margin-bottom:28px}
@@ -486,7 +486,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .no-data{text-align:center;padding:32px;color:var(--tx3);font-size:13px}
 
 /* ─ RESPONSIVE ─ */
-@media(min-width:1440px){
+@media(min-width:1600px){
 .hero{padding:0 80px}
 .sec{padding:88px 80px}
 .foot{padding:20px 80px}
