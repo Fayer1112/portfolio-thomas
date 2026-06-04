@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useEffect, useCallback, useRef } from "react";
 
 const FONTS = "https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap";
@@ -54,7 +52,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .afu{animation:fadeUp .7s var(--ease) both}
 .asc{animation:scaleIn .3s var(--ease) both}
 .d1{animation-delay:.1s}.d2{animation-delay:.22s}.d3{animation-delay:.36s}.d4{animation-delay:.52s}.d5{animation-delay:.7s}
-.rv{opacity:1;transform:translateY(0);transition:opacity .65s ease,transform .65s ease}
+.rv{opacity:0;transform:translateY(20px);transition:opacity .65s ease,transform .65s ease}
 .rv.vis{opacity:1;transform:translateY(0)}
 
 /* ─ LOADING SCREEN ─ */
@@ -598,43 +596,48 @@ const DEFAULT_TESTIMONIALS = [
 ];
 
 // ── HOOKS ─────────────────────────────────────────────────────────────────────
-const API_MAP = {
-  "tl_v4_projects":     "/api/projects",
-  "tl_v4_tags":         "/api/tags",
-  "tl_v4_testimonials": "/api/testimonials",
-};
-
 function useStorage(key, initial) {
   const [data, setData] = useState(initial);
+  // useRef avoids stale closure — save() always sees latest data
   const dataRef = useRef(initial);
-  const endpoint = API_MAP[key] || null;
 
   useEffect(() => {
-    if (!endpoint) {
-      try {
-        const s = localStorage.getItem(key);
-        if (s) { const p = JSON.parse(s); dataRef.current = p; setData(p); }
-      } catch {}
-      return;
-    }
     let cancelled = false;
-    fetch(endpoint)
-      .then(r => r.json())
-      .then(d => { if (!cancelled && Array.isArray(d)) { dataRef.current = d; setData(d); }})
-      .catch(() => {});
+    (async () => {
+      try {
+        const r = await window.storage.get(key);
+        if (!cancelled && r) {
+          const parsed = JSON.parse(r.value);
+          dataRef.current = parsed;
+          setData(parsed);
+        }
+      } catch {
+        // storage unavailable — silently use initial value
+      }
+    })();
     return () => { cancelled = true; };
-  }, [key]);
+  }, [key]); // key only — stable
 
   const save = useCallback(async (updater) => {
     const next = typeof updater === "function" ? updater(dataRef.current) : updater;
     dataRef.current = next;
     setData(next);
-    if (!endpoint) {
-      try { localStorage.setItem(key, JSON.stringify(next)); } catch {}
-    }
-  }, [key]);
+    try { await window.storage.set(key, JSON.stringify(next)); } catch {}
+  }, [key]); // key only — no stale closure
 
   return [data, save];
+}
+
+function useReveal() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const obs = new IntersectionObserver(
+      (es) => es.forEach((e) => { if (e.isIntersecting) e.target.classList.add("vis"); }),
+      { threshold: 0.08 }
+    );
+    document.querySelectorAll(".rv").forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  });
 }
 
 // ── ANALYTICS TRACKER ────────────────────────────────────────────────────────
@@ -1156,13 +1159,14 @@ function Nav({ scrolled, onBack, onTrack }) {
 
 // ── HOME PAGE ─────────────────────────────────────────────────────────────────
 function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
+  useReveal();
   const [scrolled, setScrolled] = useState(false);
   const [filter, setFilter] = useState("Tous");
   const [tagFilter, setTagFilter] = useState(null);
   const [goAdmin, setGoAdmin] = useState(false);
   const [dhVisible, setDhVisible] = useState(false);
   const dhRef = useRef(null);
-  // useReveal disabled for Next.js SSR compatibility
+  useReveal();
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50);
@@ -1305,9 +1309,9 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
             <div className="about-badge"><div className="about-badge-n">4+</div><div className="about-badge-t">ans d'expérience</div></div>
           </div>
           <div className="about-txt">
-            <p className="rv vis">Dès l'âge de 12 ans, la modélisation 3D a été ma première rencontre avec le design. Après un parcours de développeur Full Stack, j'ai choisi de mettre cette double expertise au service du Product Design.</p>
-            <p className="rv vis">Ce qui me différencie : mon background de développeur Full Stack me permet de concevoir en anticipant les contraintes techniques, sans pour autant coder aujourd'hui. Je parle le même langage que les équipes dev, ce qui fluidifie considérablement les cycles de livraison.</p>
-            <p className="rv vis">Spécialisé en Design Ops, je structure les processus design pour les rendre scalables, reproductibles et alignés avec les équipes engineering.</p>
+            <p className="rv">Dès l'âge de 12 ans, la modélisation 3D a été ma première rencontre avec le design. Après un parcours de développeur Full Stack, j'ai choisi de mettre cette double expertise au service du Product Design.</p>
+            <p className="rv">Ce qui me différencie : mon background de développeur Full Stack me permet de concevoir en anticipant les contraintes techniques, sans pour autant coder aujourd'hui. Je parle le même langage que les équipes dev, ce qui fluidifie considérablement les cycles de livraison.</p>
+            <p className="rv">Spécialisé en Design Ops, je structure les processus design pour les rendre scalables, reproductibles et alignés avec les équipes engineering.</p>
             <div className="about-skills rv">
               {["Audit UX","Design System","Design Ops","Maquettage","Prototypage","UX Research","UX Writing","Tests utilisateurs","Design thinking","React / HTML","Dev Handoff"].map((s) => (
                 <span className="askill" key={s}>{s}</span>
@@ -1320,7 +1324,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
         <div style={{ marginTop:60 }}>
           <div className="seye rv">Double expertise</div>
           <h2 className="stit rv">Design × Engineering</h2>
-          <p style={{ fontSize:15, color:"var(--tx2)", maxWidth:580, lineHeight:1.8, marginTop:14 }} className="rv vis">
+          <p style={{ fontSize:15, color:"var(--tx2)", maxWidth:580, lineHeight:1.8, marginTop:14 }} className="rv">
             Ma trajectoire atypique — développeur Full Stack devenu Product Designer — me donne un avantage concret : je conçois en anticipant les contraintes techniques, ce qui réduit les frictions avec les équipes de développement.
           </p>
           <div className="dh-wrap" ref={dhRef}>
@@ -1511,7 +1515,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
 // ── PROJECT DETAIL ────────────────────────────────────────────────────────────
 function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack }) {
   const [scrolled, setScrolled] = useState(false);
-  ;
+  useReveal();
   useEffect(() => {
     window.scrollTo(0, 0);
     const fn = () => setScrolled(window.scrollY > 50);
@@ -1799,7 +1803,7 @@ function ContactForm({ onTrack }) {
     return e;
   };
 
-  const send = async () => {
+  const send = () => {
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     setStatus("sending");
@@ -1817,16 +1821,7 @@ function ContactForm({ onTrack }) {
       const mailto = "mailto:leloupthomas.pro@gmail.com?subject=" + subject + "&body=" + body;
 
       // Open in new tab — page stays visible
-      try {
-        const resp = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        });
-        if (!resp.ok) throw new Error();
-      } catch {
-        window.open(mailto, "_blank", "noopener,noreferrer");
-      }
+      const opened = window.open(mailto, "_blank", "noopener,noreferrer");
 
       if (onTrack) onTrack("event", { type:"contact_form_send", subject:form.subject });
 
@@ -2346,15 +2341,15 @@ function AdminPage({ onBack }) {
 }
 
 // ── ROOT ──────────────────────────────────────────────────────────────────────
-export default function Portfolio({ initialData = {} }) {
+export default function App() {
   const [view, setView] = useState("home");
   const [projectId, setProjectId] = useState(null);
   const [loading, setLoading] = useState(true); // loading screen
   const [cookieState, setCookieState] = useStorage("tl_cookie_consent", null);
   const [showCookie, setShowCookie] = useState(false);
-  const [projects] = useStorage("tl_v4_projects", initialData.projects || DEFAULT_PROJECTS);
-  const [tags] = useStorage("tl_v4_tags", initialData.tags || DEFAULT_TAGS);
-  const [testimonials] = useStorage("tl_v4_testimonials", initialData.testimonials || DEFAULT_TESTIMONIALS);
+  const [projects] = useStorage("tl_v4_projects", DEFAULT_PROJECTS);
+  const [tags] = useStorage("tl_v4_tags", DEFAULT_TAGS);
+  const [testimonials] = useStorage("tl_v4_testimonials", DEFAULT_TESTIMONIALS);
   const { analytics, track } = useAnalytics(cookieState === "accepted");
 
   // Show loading only on first ever visit
