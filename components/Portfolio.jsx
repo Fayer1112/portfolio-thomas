@@ -106,7 +106,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 40px;position:relative;overflow:hidden;z-index:1;gap:0;width:100%}
 .hero-outer{min-height:100vh;display:flex;align-items:center;position:relative;z-index:1;padding-top:0}
 .hero-left{padding:60px 0}
-.hero-right{display:flex;align-items:center;justify-content:flex-end;position:relative;height:100vh;min-height:600px}
+.hero-right{display:flex;align-items:center;justify-content:center;position:relative;height:100vh;min-height:600px}
 .hero-badge{display:inline-flex;align-items:center;gap:9px;background:var(--accd);border:1px solid rgba(124,58,237,.3);border-radius:100px;padding:8px 18px;font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--acc);margin-bottom:28px}
 .hero-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--acc);animation:pulse 2s ease-in-out infinite}
 .hero-h1{font-size:clamp(38px,6.5vw,108px);font-weight:800;line-height:.92;letter-spacing:-2.5px}
@@ -116,8 +116,8 @@ button{cursor:pointer;font-family:var(--fb)}
 .hero-desc em{color:var(--acc);font-style:normal;font-weight:600}
 .hero-divider{width:40px;height:2px;background:var(--acc);border-radius:2px;margin:24px 0;opacity:.5}
 .hero-tags{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
-.hero-tag-chip{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid var(--bdr2);color:var(--tx2);background:var(--bg3);transition:all .2s}
-.hero-tag-chip:hover{border-color:var(--acc);color:var(--acc);background:var(--accd)}
+.hero-tag-chip{font-size:12px;font-weight:500;color:var(--tx3);padding:0;background:none;border:none;letter-spacing:.2px}
+.hero-tag-chip::before{content:'·';color:var(--acc);margin-right:5px;font-size:15px;line-height:1;vertical-align:middle}
 .hero-acts{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap}
 .hero-scroll-hint{margin-top:40px;display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);font-weight:600}
 .hero-scroll-hint::before{content:'';width:1px;height:28px;background:linear-gradient(to bottom,transparent,var(--tx3))}
@@ -140,8 +140,8 @@ button{cursor:pointer;font-family:var(--fb)}
 
 /* ─ STATS BAR ─ */
 .stats{display:flex;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);position:relative;z-index:1}
-.stat{flex:1;padding:34px 0 34px 56px;border-right:1px solid var(--bdr)}
-.stat:first-child{padding-left:64px}.stat:last-child{border-right:none}
+.stat{flex:1;padding:34px 24px;border-right:1px solid var(--bdr);text-align:center}
+.stat:first-child{padding-left:24px}.stat:last-child{border-right:none}
 .stat-n{font-family:var(--fd);font-size:38px;font-weight:800;letter-spacing:-2px;line-height:1}
 .stat-n span{color:var(--acc)}.stat-l{font-size:11.5px;color:var(--tx2);margin-top:4px;font-weight:500}
 
@@ -1082,8 +1082,8 @@ function DoubleHatTree({ visible }) {
   ];
 
   const leaves = [
-    { x:52, y:74, color:TOKENS.blue+"CC", t1:"UX",       t2:"Research",  r:52 },
-    { x:170, y:74, color:TOKENS.blue+"CC", t1:"UI /",     t2:"Figma",     r:52 },
+    { x:52, y:74, color:TOKENS.blue, t1:"UX",       t2:"Research",  r:52 },
+    { x:170, y:74, color:TOKENS.blue, t1:"UI /",     t2:"Figma",     r:52 },
     { x:288, y:74, color:"#06D6A0", t1:"Design",   t2:"Ops",       r:52 },
     { x:452, y:74, color:"#D78B0C", t1:"Logique",  t2:null,        r:52 },
     { x:570, y:74, color:"#38BDF8", t1:"Contrainte",t2:null,       r:52 },
