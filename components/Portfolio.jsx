@@ -2348,11 +2348,11 @@ function TestimonialModal({ testimonial, onSave, onClose }) {
         <div className="modt">{isEdit?`Modifier — ${testimonial.name}`:"Nouveau témoignage"}</div>
         <div className="mods">Les témoignages s'affichent dans la section Recommandations</div>
         <div style={{ display:"flex", flexDirection:"column", gap:13 }}>
-          {!isEdit && <div className="fgrp"><label className="flbl">ID slug *</label><input className="finp" value={f.id} onChange={(e)=>set("id",e.target.value)}/>{err.id&&<span className="ferr">{err.id}</span>}</div>}
           <div className="frow">
-            <div className="fgrp"><label className="flbl">Nom complet *</label><input className="finp" value={f.name} onChange={(e)=>set("name",e.target.value)}/>{err.name&&<span className="ferr">{err.name}</span>}</div>
+            <div className="fgrp"><label className="flbl">Nom complet *</label><input className="finp" value={f.name} onChange={(e)=>{const n=e.target.value;set("name",n);if(!isEdit){const slug=n.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");set("id",slug);}}}/>{err.name&&<span className="ferr">{err.name}</span>}</div>
             <div className="fgrp"><label className="flbl">Initiales (auto si vide)</label><input className="finp" value={f.init} onChange={(e)=>set("init",e.target.value)} placeholder="JD"/></div>
           </div>
+          {!isEdit && <div className="fgrp"><label className="flbl">ID slug <span style={{fontWeight:400,color:"var(--tx3)",fontSize:11}}>— auto-généré, modifiable</span></label><input className="finp" value={f.id} onChange={(e)=>set("id",e.target.value)} placeholder="ex: jean-dupont"/>{err.id&&<span className="ferr">{err.id}</span>}</div>}
           <div className="frow">
             <div className="fgrp"><label className="flbl">Rôle / Poste</label><input className="finp" value={f.role||""} onChange={(e)=>set("role",e.target.value)} placeholder="Lead Designer"/></div>
             <div className="fgrp"><label className="flbl">Entreprise</label><input className="finp" value={f.company||""} onChange={(e)=>set("company",e.target.value)} placeholder="Air France"/></div>
