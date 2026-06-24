@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import sql from '@/lib/db';
@@ -20,8 +21,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Mot de passe incorrect' }, { status: 401 });
     }
 
-    const token = signToken({ user: 'thomas' });
-    return NextResponse.json({ token });
+    return NextResponse.json({ token: signToken({ admin: true }) });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });

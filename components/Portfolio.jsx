@@ -567,8 +567,37 @@ const TOKENS = Object.freeze({
 
 
 // ── CONSTANTS ─────────────────────────────────────────────────────────────────
-const ADMIN_PASSWORD = "Thom@sllp1112";
 const TAG_COLORS = ["#7C3AED","#4B7FFA","#8B5CF6","#06D6A0","#F59E0B","#EC4899","#F97316","#14B8A6","#EF4444","#84CC16"];
+
+// ── BDD FIELD MAPPING ─────────────────────────────────────────────────────────
+const toApiProject = (p) => ({
+  id: p.id, title: p.title, subtitle: p.subtitle, category: p.category,
+  year: p.year, role: p.role, duration: p.duration, platform: p.platform,
+  client: p.client, cover_type: p.coverType, context: p.context,
+  problematique: p.problematique, objectifs: p.objectifs,
+  process_steps: p.processSteps, metrics: p.metrics, tools: p.tools,
+  plus_values: p.plusValues, featured: p.featured, confidential: p.confidential,
+  display_order: p.order, tags: p.tags,
+});
+const fromDbProject = (p) => ({
+  ...p,
+  coverType: p.cover_type ?? p.coverType ?? 'cabin',
+  processSteps: p.process_steps ?? p.processSteps ?? [],
+  plusValues: p.plus_values ?? p.plusValues ?? [],
+  order: p.display_order ?? p.order ?? 99,
+});
+const toApiTestimonial = (t) => ({
+  id: t.id, name: t.name, initials: t.init, role: t.role,
+  company: t.company, company_logo: t.companyLogo, content: t.text,
+  display_order: t.order,
+});
+const fromDbTestimonial = (t) => ({
+  ...t,
+  init: t.initials ?? t.init ?? '',
+  text: t.content ?? t.text ?? '',
+  companyLogo: t.company_logo ?? t.companyLogo ?? '',
+  order: t.display_order ?? t.order ?? 99,
+});
 const COVER_DEFS = {
   cabin:  { g1:"#050B28", g2:"#0B2E70", g3:"#1549A8" },
   skylib: { g1:"#021812", g2:"#054D3C", g3:"#0A9070" },
@@ -1374,7 +1403,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
 
         <div className="hero-right">
           {/* Floating context cards */}
-          <div className="hero-float-card afu d2" style={{ position:"absolute", bottom:60, left:"32%", zIndex:3 }}>
+          <div className="hero-float-card afu d2" style={{ position:"absolute", top:20, left:0, zIndex:3 }}>
             <div className="fc-label">Expertise</div>
             <div className="fc-val">Design × Dev</div>
           </div>
@@ -2108,7 +2137,22 @@ class ErrorBoundary extends React.Component {
 function AdminLogin({ onLogin }) {
   const [pw, setPw] = useState("");
   const [err, setErr] = useState("");
-  const submit = () => { pw === ADMIN_PASSWORD ? onLogin() : setErr("Mot de passe incorrect."); };
+  const [loading, setLoading] = useState(false);
+  const submit = async () => {
+    if (!pw) return;
+    setLoading(true); setErr("");
+    try {
+      const r = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw }),
+      });
+      if (!r.ok) { setErr("Mot de passe incorrect."); return; }
+      const { token } = await r.json();
+      onLogin(token);
+    } catch { setErr("Erreur de connexion."); }
+    finally { setLoading(false); }
+  };
   return (
     <div className="alog">
       <div className="alogb asc">
@@ -2127,7 +2171,7 @@ function AdminLogin({ onLogin }) {
               placeholder="••••••••" autoFocus/>
             {err && <span className="ferr">{err}</span>}
           </div>
-          <button className="btn-pri" onClick={submit} style={{ justifyContent:"center" }}>Accéder →</button>
+          <button className="btn-pri" onClick={submit} style={{ justifyContent:"center" }} disabled={loading}>{loading ? "Connexion…" : "Accéder →"}</button>
         </div>
       </div>
     </div>
@@ -2353,9 +2397,11 @@ function TestimonialModal({ testimonial, onSave, onClose }) {
 
 // ── ADMIN PAGE ────────────────────────────────────────────────────────────────
 function AdminPage({ onBack }) {
-  // Persist admin session for current browser tab (cleared on tab close)
   const [authed, setAuthed] = useState(() => {
     try { return sessionStorage.getItem("tl_admin_session") === "1"; } catch { return false; }
+  });
+  const [token, setToken] = useState(() => {
+    try { return sessionStorage.getItem("tl_admin_token") || ""; } catch { return ""; }
   });
   const [tab, setTab] = useState("dashboard");
   const [projects, setProjects] = useStorage("tl_v4_projects", DEFAULT_PROJECTS);
@@ -2370,12 +2416,23 @@ function AdminPage({ onBack }) {
   const [confirm, setConfirm] = useState(null);
   const [confirmTesti, setConfirmTesti] = useState(null);
 
-  if (!authed) return <AdminLogin onLogin={() => {
-    try { sessionStorage.setItem("tl_admin_session", "1"); } catch {}
-    setAuthed(true);
+  if (!authed) return <AdminLogin onLogin={(tok) => {
+    try { sessionStorage.setItem("tl_admin_session", "1"); sessionStorage.setItem("tl_admin_token", tok); } catch {}
+    setToken(tok); setAuthed(true);
   }}/>;
 
-  const saveProject = (p) => { if (editProject) setProjects((ps)=>ps.map((x)=>x.id===p.id?p:x)); else setProjects((ps)=>[...ps,p]); setEditProject(null); setAddProject(false); };
+  const authHeaders = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+
+  const saveProject = async (p) => {
+    const isEdit = !!editProject;
+    try {
+      const url = isEdit ? `/api/projects/${p.id}` : '/api/projects';
+      const r = await fetch(url, { method: isEdit ? 'PUT' : 'POST', headers: authHeaders, body: JSON.stringify(toApiProject(p)) });
+      if (!r.ok) console.error('Erreur API projet', r.status);
+    } catch(e) { console.error(e); }
+    if (isEdit) setProjects((ps)=>ps.map((x)=>x.id===p.id?p:x)); else setProjects((ps)=>[...ps,p]);
+    setEditProject(null); setAddProject(false);
+  };
   const sorted = [...projects].sort((a,b)=>(a.order||99)-(b.order||99));
 
   return (
@@ -2387,8 +2444,8 @@ function AdminPage({ onBack }) {
         ))}
         <div className="asbbt">
           <button className="ani" onClick={() => {
-            try { sessionStorage.removeItem("tl_admin_session"); } catch {}
-            setAuthed(false);
+            try { sessionStorage.removeItem("tl_admin_session"); sessionStorage.removeItem("tl_admin_token"); } catch {}
+            setToken(""); setAuthed(false);
           }} style={{ color:"#f87171", marginBottom:4 }}>🔒 Déconnexion</button>
           <button className="ani" onClick={onBack} style={{ color:"var(--tx3)" }}>← Retour au site</button>
         </div>
@@ -2444,24 +2501,53 @@ function AdminPage({ onBack }) {
 
       {(editProject||addProject) && <ProjectModal project={editProject} tags={tags} onSave={saveProject} onClose={()=>{setEditProject(null);setAddProject(false);}}/>}
       {addTag && <TagModal onSave={(t)=>{setTags((ts)=>ts.find((x)=>x.id===t.id)?ts:[...ts,t]);setAddTag(false);}} onClose={()=>setAddTag(false)}/>}
-      {(editTesti||addTesti) && <TestimonialModal testimonial={editTesti} onSave={(t)=>{if(editTesti)setTestimonials((ts)=>ts.map((x)=>x.id===t.id?t:x));else setTestimonials((ts)=>[...ts,t]);setEditTesti(null);setAddTesti(false);}} onClose={()=>{setEditTesti(null);setAddTesti(false);}}/>}
-      {confirm && <div className="movl" onClick={()=>setConfirm(null)}><div className="mod" style={{ maxWidth:400 }} onClick={(e)=>e.stopPropagation()}><div className="modt">Supprimer ce projet ?</div><div className="mods">Cette action est irréversible.</div><div className="modft"><button className="btn-sec" onClick={()=>setConfirm(null)}>Annuler</button><button className="btn-pri" style={{ background:"#ef4444" }} onClick={()=>{setProjects((ps)=>ps.filter((p)=>p.id!==confirm));setConfirm(null);}}>Supprimer</button></div></div></div>}
-      {confirmTesti && <div className="movl" onClick={()=>setConfirmTesti(null)}><div className="mod" style={{ maxWidth:400 }} onClick={(e)=>e.stopPropagation()}><div className="modt">Supprimer ce témoignage ?</div><div className="mods">Cette action est irréversible.</div><div className="modft"><button className="btn-sec" onClick={()=>setConfirmTesti(null)}>Annuler</button><button className="btn-pri" style={{ background:"#ef4444" }} onClick={()=>{setTestimonials((ts)=>ts.filter((x)=>x.id!==confirmTesti));setConfirmTesti(null);}}>Supprimer</button></div></div></div>}
+      {(editTesti||addTesti) && <TestimonialModal testimonial={editTesti} onSave={async (t)=>{
+        try {
+          const r = await fetch('/api/testimonials', { method:'POST', headers:authHeaders, body:JSON.stringify(toApiTestimonial(t)) });
+          if (!r.ok) console.error('Erreur API témoignage', r.status);
+        } catch(e) { console.error(e); }
+        if(editTesti) setTestimonials((ts)=>ts.map((x)=>x.id===t.id?t:x)); else setTestimonials((ts)=>[...ts,t]);
+        setEditTesti(null); setAddTesti(false);
+      }} onClose={()=>{setEditTesti(null);setAddTesti(false);}}/>}
+      {confirm && <div className="movl" onClick={()=>setConfirm(null)}><div className="mod" style={{ maxWidth:400 }} onClick={(e)=>e.stopPropagation()}><div className="modt">Supprimer ce projet ?</div><div className="mods">Cette action est irréversible.</div><div className="modft"><button className="btn-sec" onClick={()=>setConfirm(null)}>Annuler</button><button className="btn-pri" style={{ background:"#ef4444" }} onClick={async ()=>{
+        try { await fetch(`/api/projects/${confirm}`, { method:'DELETE', headers:authHeaders }); } catch(e) { console.error(e); }
+        setProjects((ps)=>ps.filter((p)=>p.id!==confirm)); setConfirm(null);
+      }}>Supprimer</button></div></div></div>}
+      {confirmTesti && <div className="movl" onClick={()=>setConfirmTesti(null)}><div className="mod" style={{ maxWidth:400 }} onClick={(e)=>e.stopPropagation()}><div className="modt">Supprimer ce témoignage ?</div><div className="mods">Cette action est irréversible.</div><div className="modft"><button className="btn-sec" onClick={()=>setConfirmTesti(null)}>Annuler</button><button className="btn-pri" style={{ background:"#ef4444" }} onClick={async ()=>{
+        try { await fetch('/api/testimonials', { method:'DELETE', headers:authHeaders, body:JSON.stringify({ id:confirmTesti }) }); } catch(e) { console.error(e); }
+        setTestimonials((ts)=>ts.filter((x)=>x.id!==confirmTesti)); setConfirmTesti(null);
+      }}>Supprimer</button></div></div></div>}
     </div>
   );
 }
 
 // ── ROOT ──────────────────────────────────────────────────────────────────────
-export default function App() {
+export default function App({ initialData = {} }) {
   const [view, setView] = useState("home");
   const [projectId, setProjectId] = useState(null);
   const [loading, setLoading] = useState(true); // loading screen
   const [cookieState, setCookieState] = useStorage("tl_cookie_consent", null);
   const [showCookie, setShowCookie] = useState(false);
-  const [projects] = useStorage("tl_v4_projects", DEFAULT_PROJECTS);
+
+  // Seed from server-side data (Next.js SSR) — normalize DB snake_case → frontend camelCase
+  const serverProjects = initialData.projets?.length > 0 ? initialData.projets.map(fromDbProject) : null;
+  const serverTestimonials = initialData.temoignages?.length > 0 ? initialData.temoignages.map(fromDbTestimonial) : null;
+
+  const [projects] = useStorage("tl_v4_projects", serverProjects || DEFAULT_PROJECTS);
   const [tags] = useStorage("tl_v4_tags", DEFAULT_TAGS);
-  const [testimonials] = useStorage("tl_v4_testimonials", DEFAULT_TESTIMONIALS);
+  const [testimonials] = useStorage("tl_v4_testimonials", serverTestimonials || DEFAULT_TESTIMONIALS);
   const { analytics, track } = useAnalytics(cookieState === "accepted");
+
+  // Sync server data into local storage on each render so fresh BDD data is always used
+  useEffect(() => {
+    if (serverProjects) {
+      try { window.storage?.set("tl_v4_projects", JSON.stringify(serverProjects)); } catch {}
+    }
+    if (serverTestimonials) {
+      try { window.storage?.set("tl_v4_testimonials", JSON.stringify(serverTestimonials)); } catch {}
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Show loading only on first ever visit
   const [hasLoadedBefore] = useStorage("tl_loaded_before", false);
