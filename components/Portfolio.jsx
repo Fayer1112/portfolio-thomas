@@ -2258,11 +2258,11 @@ function ProjectModal({ project, tags, onSave, onClose }) {
         </div>
         <div style={{ display:"flex", flexDirection:"column", gap:13 }}>
           {tab==="info" && (<>
-            {!isEdit && <div className="fgrp"><label className="flbl">ID slug *</label><input className="finp" value={f.id} onChange={(e)=>set("id",e.target.value)}/>{err.id&&<span className="ferr">{err.id}</span>}</div>}
             <div className="frow">
-              <div className="fgrp"><label className="flbl">Titre *</label><input className="finp" value={f.title} onChange={(e)=>set("title",e.target.value)}/>{err.title&&<span className="ferr">{err.title}</span>}</div>
+              <div className="fgrp"><label className="flbl">Titre *</label><input className="finp" value={f.title} onChange={(e)=>{const t=e.target.value;set("title",t);if(!isEdit){const slug=t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");set("id",slug);}}}/>{err.title&&<span className="ferr">{err.title}</span>}</div>
               <div className="fgrp"><label className="flbl">Catégorie</label><select className="fslt" value={f.category} onChange={(e)=>set("category",e.target.value)}>{["Case Study","UI Design","UX Audit","Product Design","Branding"].map((c)=><option key={c}>{c}</option>)}</select></div>
             </div>
+            {!isEdit && <div className="fgrp"><label className="flbl">ID slug <span style={{fontWeight:400,color:"var(--tx3)",fontSize:11}}>— auto-généré, modifiable</span></label><input className="finp" value={f.id} onChange={(e)=>set("id",e.target.value)} placeholder="ex: mon-projet"/>{err.id&&<span className="ferr">{err.id}</span>}</div>}
             <div className="fgrp"><label className="flbl">Sous-titre *</label><input className="finp" value={f.subtitle} onChange={(e)=>set("subtitle",e.target.value)}/>{err.subtitle&&<span className="ferr">{err.subtitle}</span>}</div>
             <div className="frow">
               <div className="fgrp"><label className="flbl">Rôle</label><input className="finp" value={f.role||""} onChange={(e)=>set("role",e.target.value)}/></div>
