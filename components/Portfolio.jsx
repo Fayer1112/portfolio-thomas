@@ -2404,9 +2404,8 @@ function AdminPage({ onBack }) {
     try { return sessionStorage.getItem("tl_admin_token") || ""; } catch { return ""; }
   });
   const [tab, setTab] = useState("dashboard");
-  const [projects, setProjects] = useStorage("tl_v4_projects", DEFAULT_PROJECTS);
   const [tags, setTags] = useStorage("tl_v4_tags", DEFAULT_TAGS);
-  const [testimonials, setTestimonials] = useStorage("tl_v4_testimonials", DEFAULT_TESTIMONIALS);
+  const [testimonials, setTestimonials] = useState(DEFAULT_TESTIMONIALS);
   const [analytics] = useStorage("tl_analytics_v4", { visits:[], events:[] });
   const [editProject, setEditProject] = useState(null);
   const [addProject, setAddProject] = useState(false);
@@ -2415,6 +2414,19 @@ function AdminPage({ onBack }) {
   const [addTesti, setAddTesti] = useState(false);
   const [confirm, setConfirm] = useState(null);
   const [confirmTesti, setConfirmTesti] = useState(null);
+  const [loadingData, setLoadingData] = useState(true);
+
+  useEffect(() => {
+    if (!authed) return;
+    Promise.all([
+      fetch('/api/projects').then(r=>r.json()).catch(()=>null),
+      fetch('/api/testimonials').then(r=>r.json()).catch(()=>null),
+    ]).then(([projs, testis]) => {
+      if (Array.isArray(projs)) setProjects(projs.map(fromDbProject));
+      if (Array.isArray(testis)) setTestimonials(testis.map(fromDbTestimonial));
+      setLoadingData(false);
+    });
+  }, [authed]);
 
   if (!authed) return <AdminLogin onLogin={(tok) => {
     try { sessionStorage.setItem("tl_admin_session", "1"); sessionStorage.setItem("tl_admin_token", tok); } catch {}
@@ -2430,9 +2442,19 @@ function AdminPage({ onBack }) {
       const r = await fetch(url, { method: isEdit ? 'PUT' : 'POST', headers: authHeaders, body: JSON.stringify(toApiProject(p)) });
       if (!r.ok) console.error('Erreur API projet', r.status);
     } catch(e) { console.error(e); }
-    if (isEdit) setProjects((ps)=>ps.map((x)=>x.id===p.id?p:x)); else setProjects((ps)=>[...ps,p]);
+    refreshData();
     setEditProject(null); setAddProject(false);
   };
+  const refreshData = () => {
+    Promise.all([
+      fetch('/api/projects').then(r=>r.json()).catch(()=>null),
+      fetch('/api/testimonials').then(r=>r.json()).catch(()=>null),
+    ]).then(([projs, testis]) => {
+      if (Array.isArray(projs)) setProjects(projs.map(fromDbProject));
+      if (Array.isArray(testis)) setTestimonials(testis.map(fromDbTestimonial));
+    });
+  };
+
   const sorted = [...projects].sort((a,b)=>(a.order||99)-(b.order||99));
 
   return (
@@ -2506,16 +2528,16 @@ function AdminPage({ onBack }) {
           const r = await fetch('/api/testimonials', { method:'POST', headers:authHeaders, body:JSON.stringify(toApiTestimonial(t)) });
           if (!r.ok) console.error('Erreur API témoignage', r.status);
         } catch(e) { console.error(e); }
-        if(editTesti) setTestimonials((ts)=>ts.map((x)=>x.id===t.id?t:x)); else setTestimonials((ts)=>[...ts,t]);
+        refreshData();
         setEditTesti(null); setAddTesti(false);
       }} onClose={()=>{setEditTesti(null);setAddTesti(false);}}/>}
       {confirm && <div className="movl" onClick={()=>setConfirm(null)}><div className="mod" style={{ maxWidth:400 }} onClick={(e)=>e.stopPropagation()}><div className="modt">Supprimer ce projet ?</div><div className="mods">Cette action est irréversible.</div><div className="modft"><button className="btn-sec" onClick={()=>setConfirm(null)}>Annuler</button><button className="btn-pri" style={{ background:"#ef4444" }} onClick={async ()=>{
         try { await fetch(`/api/projects/${confirm}`, { method:'DELETE', headers:authHeaders }); } catch(e) { console.error(e); }
-        setProjects((ps)=>ps.filter((p)=>p.id!==confirm)); setConfirm(null);
+        refreshData(); setConfirm(null);
       }}>Supprimer</button></div></div></div>}
       {confirmTesti && <div className="movl" onClick={()=>setConfirmTesti(null)}><div className="mod" style={{ maxWidth:400 }} onClick={(e)=>e.stopPropagation()}><div className="modt">Supprimer ce témoignage ?</div><div className="mods">Cette action est irréversible.</div><div className="modft"><button className="btn-sec" onClick={()=>setConfirmTesti(null)}>Annuler</button><button className="btn-pri" style={{ background:"#ef4444" }} onClick={async ()=>{
         try { await fetch('/api/testimonials', { method:'DELETE', headers:authHeaders, body:JSON.stringify({ id:confirmTesti }) }); } catch(e) { console.error(e); }
-        setTestimonials((ts)=>ts.filter((x)=>x.id!==confirmTesti)); setConfirmTesti(null);
+        refreshData(); setConfirmTesti(null);
       }}>Supprimer</button></div></div></div>}
     </div>
   );
