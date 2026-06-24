@@ -2411,6 +2411,7 @@ function AdminPage({ onBack }) {
     try { return sessionStorage.getItem("tl_admin_token") || ""; } catch { return ""; }
   });
   const [tab, setTab] = useState("dashboard");
+  const [projects, setProjects] = useState(DEFAULT_PROJECTS);
   const [tags, setTags] = useStorage("tl_v4_tags", DEFAULT_TAGS);
   const [testimonials, setTestimonials] = useState(DEFAULT_TESTIMONIALS);
   const [analytics] = useStorage("tl_analytics_v4", { visits:[], events:[] });
