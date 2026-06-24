@@ -20,13 +20,13 @@ export async function POST(req: NextRequest) {
   const t = parsed.data;
   try {
     await sql`
-      INSERT INTO testimonials (id, name, initials, role, company, company_logo, content, display_order)
+      INSERT INTO testimonials (id, name, initials, role, company, company_logo, content, display_order, rating)
       VALUES (${t.id}, ${t.name}, ${t.initials||null}, ${t.role||null},
-              ${t.company||null}, ${t.company_logo||null}, ${t.content}, ${t.display_order||99})
+              ${t.company||null}, ${t.company_logo||null}, ${t.content}, ${t.display_order||99}, ${t.rating??5})
       ON CONFLICT (id) DO UPDATE SET
         name=${t.name}, initials=${t.initials||null}, role=${t.role||null},
         company=${t.company||null}, company_logo=${t.company_logo||null},
-        content=${t.content}, display_order=${t.display_order||99}
+        content=${t.content}, display_order=${t.display_order||99}, rating=${t.rating??5}
     `;
     return NextResponse.json({ success: true }, { status: 201 });
   } catch {

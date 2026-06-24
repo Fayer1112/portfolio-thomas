@@ -589,7 +589,7 @@ const fromDbProject = (p) => ({
 const toApiTestimonial = (t) => ({
   id: t.id, name: t.name, initials: t.init, role: t.role,
   company: t.company, company_logo: t.companyLogo, content: t.text,
-  display_order: t.order,
+  display_order: t.order, rating: t.rating ?? 5,
 });
 const fromDbTestimonial = (t) => ({
   ...t,
@@ -597,6 +597,7 @@ const fromDbTestimonial = (t) => ({
   text: t.content ?? t.text ?? '',
   companyLogo: t.company_logo ?? t.companyLogo ?? '',
   order: t.display_order ?? t.order ?? 99,
+  rating: t.rating ?? 5,
 });
 const COVER_DEFS = {
   cabin:  { g1:"#050B28", g2:"#0B2E70", g3:"#1549A8" },
@@ -1403,13 +1404,16 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
 
         <div className="hero-right">
           {/* Floating context cards */}
-          <div className="hero-float-card afu d2" style={{ position:"absolute", top:20, left:0, zIndex:3 }}>
-            <div className="fc-label">Expertise</div>
-            <div className="fc-val">Design × Dev</div>
-          </div>
-          <div className="hero-float-card afu d3" style={{ position:"absolute", bottom:60, right:0, zIndex:3 }}>
-            <div className="fc-label">Disponible</div>
-            <div className="fc-val" style={{ color:"#06D6A0" }}>Paris · Remote</div>
+          <div className="hero-float-card afu d3" style={{ position:"absolute", bottom:60, right:0, zIndex:3, display:"flex", gap:20, alignItems:"center" }}>
+            <div>
+              <div className="fc-label">Disponible</div>
+              <div className="fc-val" style={{ color:"#06D6A0" }}>Paris · Remote</div>
+            </div>
+            <div style={{ width:1, height:32, background:"var(--bdr)" }}/>
+            <div>
+              <div className="fc-label">Expertise</div>
+              <div className="fc-val">Design × Dev</div>
+            </div>
           </div>
 
           {/* Mascot */}
@@ -1576,7 +1580,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
                 </div>
               </div>
               <p className={`tcard-quote${i === 0 ? " featured-quote" : ""}`}>{t.text}</p>
-              <div className="tcard-star">★★★★★</div>
+              <div className="tcard-star">{"★".repeat(t.rating??5)}{"☆".repeat(5-(t.rating??5))}</div>
             </div>
           ))}
           {testimonials.length === 0 && <div className="aempty">Aucun témoignage pour le moment.</div>}
@@ -2368,7 +2372,10 @@ function TestimonialModal({ testimonial, onSave, onClose }) {
             {err.text && <span className="ferr">{err.text}</span>}
             <span style={{ fontSize:10.5, color:"var(--tx3)", marginTop:3 }}>{f.text.length} caractères</span>
           </div>
-          <div className="fgrp"><label className="flbl">Ordre d'affichage (1 = premier et mis en vedette)</label><input className="finp" type="number" min="1" value={f.order} onChange={(e)=>set("order",parseInt(e.target.value)||99)} style={{ width:80 }}/></div>
+          <div className="frow">
+            <div className="fgrp"><label className="flbl">Ordre d'affichage (1 = premier et mis en vedette)</label><input className="finp" type="number" min="1" value={f.order} onChange={(e)=>set("order",parseInt(e.target.value)||99)} style={{ width:80 }}/></div>
+            <div className="fgrp"><label className="flbl">Note (étoiles)</label><div style={{ display:"flex", gap:6, marginTop:6 }}>{[1,2,3,4,5].map(n=><button key={n} type="button" onClick={()=>set("rating",n)} style={{ fontSize:22, background:"none", border:"none", cursor:"pointer", color:n<=(f.rating??5)?"#F59E0B":"var(--bdr2)", padding:0, lineHeight:1 }}>★</button>)}</div></div>
+          </div>
           {f.name && (
             <div style={{ background:"var(--bg3)", border:"1px solid var(--bdr)", borderRadius:10, padding:"18px 20px" }}>
               <div style={{ fontSize:9.5, color:"var(--tx3)", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", marginBottom:10 }}>Aperçu</div>

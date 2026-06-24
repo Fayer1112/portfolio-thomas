@@ -46,4 +46,5 @@ export const testimonialSchema = z.object({
   company_logo:  z.string().optional(),
   content:       z.string().min(10),
   display_order: z.number().optional(),
+  rating:        z.number().min(1).max(5).optional(),
 });
