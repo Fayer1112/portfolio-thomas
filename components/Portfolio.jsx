@@ -1472,7 +1472,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
             {/* Astronaut — biggest parallax layer */}
             <div className="hero-mascots afu d3">
               <div className="hero-mascot-main" style={{ transform:`translate(${px.x*18}px, ${px.y*12}px)`, transition:"transform .15s ease-out" }}>
-                <AstronautSVG size={380}/>
+                <img src="/astro-desk.png" alt="Astronaute designer" className="hero-astro" style={{ width:400, height:"auto", maxWidth:"100%" }}/>
               </div>
             </div>
           </div>
@@ -1519,8 +1519,13 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
 
         {/* Double casquette */}
         <div style={{ marginTop:60 }}>
-          <div className="seye rv">Double expertise</div>
-          <h2 className="stit rv">Design × Engineering</h2>
+          <div style={{ display:"flex", alignItems:"center", gap:32, marginBottom:0 }}>
+            <div style={{ flex:1 }}>
+              <div className="seye rv">Double expertise</div>
+              <h2 className="stit rv">Design × Engineering</h2>
+            </div>
+            <img src="/astro-research.png" alt="" aria-hidden="true" className="rv" style={{ width:180, height:"auto", flexShrink:0, filter:"drop-shadow(0 12px 32px rgba(75,127,250,.2))", animation:"floatY 9s ease-in-out infinite", animationDelay:"1.5s" }}/>
+          </div>
           <p style={{ fontSize:15, color:"var(--tx2)", maxWidth:580, lineHeight:1.8, marginTop:14 }} className="rv">
             Ma trajectoire atypique — développeur Full Stack devenu Product Designer — me donne un avantage concret : je conçois en anticipant les contraintes techniques, ce qui réduit les frictions avec les équipes de développement.
           </p>
@@ -1570,8 +1575,13 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
 
       {/* ── PROJETS ── */}
       <section className="sec" id="projets" style={{ paddingTop:0 }}>
-        <div className="seye rv">Portfolio</div>
-        <h2 className="stit rv">Projets</h2>
+        <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", gap:24 }}>
+          <div>
+            <div className="seye rv">Portfolio</div>
+            <h2 className="stit rv">Projets</h2>
+          </div>
+          <img src="/astro-tablet.png" alt="" aria-hidden="true" className="rv" style={{ width:170, height:"auto", opacity:.92, flexShrink:0, marginBottom:-8, filter:"drop-shadow(0 12px 32px rgba(124,58,237,.25))", animation:"floatY 8s ease-in-out infinite" }}/>
+        </div>
         <div className="pf-bar rv">
           {categories.map((c) => <button key={c} className={`pf-btn${filter===c?" on":""}`} onClick={() => { setFilter(c); setTagFilter(null); }}>{c}</button>)}
           <div className="pf-sep"/>
