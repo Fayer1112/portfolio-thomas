@@ -47,6 +47,10 @@ button{cursor:pointer;font-family:var(--fb)}
 @keyframes treeLine{from{stroke-dashoffset:120}to{stroke-dashoffset:0}}
 @keyframes skillFill{from{width:0}to{width:var(--w)}}
 @keyframes pulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
+@keyframes glowBreath{0%,100%{opacity:.55;transform:translate(-50%,-50%) scale(1)}50%{opacity:.9;transform:translate(-50%,-50%) scale(1.12)}}
+@keyframes blobDrift{0%,100%{transform:translate(0,0) scale(1) rotate(0deg)}33%{transform:translate(40px,-30px) scale(1.08) rotate(8deg)}66%{transform:translate(-25px,20px) scale(.94) rotate(-5deg)}}
+@keyframes chipGlow{0%,100%{box-shadow:0 0 10px rgba(124,58,237,.2)}50%{box-shadow:0 0 22px rgba(124,58,237,.45)}}
+@keyframes scanline{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
 .afu{animation:fadeUp .7s var(--ease) both}
@@ -103,39 +107,43 @@ button{cursor:pointer;font-family:var(--fb)}
 .nmob-divider{width:40px;height:1px;background:var(--bdr);margin:8px 0}
 
 /* ─ HERO ─ */
-.hero{min-height:100vh;display:grid;grid-template-columns:1.4fr 1fr;align-items:center;padding:0 40px 0 56px;position:relative;overflow:hidden;z-index:1;gap:0;width:100%}
-.hero-outer{min-height:100vh;display:flex;align-items:center;position:relative;z-index:1;padding-top:0}
-.hero-left{padding:60px 0;max-width:720px}
-.hero-right{display:flex;align-items:center;justify-content:center;position:relative;height:100vh;min-height:600px}
-.hero-badge{display:inline-flex;align-items:center;gap:9px;background:var(--accd);border:1px solid rgba(124,58,237,.3);border-radius:100px;padding:8px 18px;font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--acc);margin-bottom:28px}
-.hero-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--acc);animation:pulse 2s ease-in-out infinite}
-.hero-h1{font-size:clamp(44px,7vw,114px);font-weight:800;line-height:.9;letter-spacing:-3px}
-.hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:var(--tx2);font-size:clamp(20px,.68em,52px);letter-spacing:-1px;display:block;margin-top:10px}
-.hero-spec{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 0}
-.hero-spec-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:100px;font-size:12.5px;font-weight:700;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.32);color:#C4B5FD;letter-spacing:.3px;transition:all .2s;white-space:nowrap}
-.hero-spec-chip:hover{background:rgba(124,58,237,.22);border-color:rgba(124,58,237,.55);color:#DDD6FE;transform:translateY(-1px)}
-.hero-spec-chip svg{opacity:.7}
-.hero-divider{width:40px;height:2px;background:var(--acc);border-radius:2px;margin:26px 0;opacity:.5}
-.hero-desc{font-size:15.5px;color:var(--tx2);line-height:1.8;max-width:580px;font-weight:400}
-.hero-desc strong{color:var(--tx);font-weight:600}
-.hero-desc em{color:var(--acc);font-style:normal;font-weight:600}
-.hero-acts{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap}
-.hero-scroll-hint{margin-top:40px;display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);font-weight:600}
-.hero-scroll-hint::before{content:'';width:1px;height:28px;background:linear-gradient(to bottom,transparent,var(--tx3))}
+.hero{min-height:100vh;display:grid;grid-template-columns:1.45fr 1fr;align-items:center;padding:0 48px 0 64px;position:relative;overflow:hidden;z-index:1;gap:0;width:100%}
+.hero-outer{min-height:100vh;display:flex;align-items:center;position:relative;z-index:1;padding-top:0;overflow:hidden}
+.hero-outer::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 85% 70% at 72% 48%,rgba(124,58,237,.16) 0%,transparent 58%),radial-gradient(ellipse 45% 55% at 12% 90%,rgba(75,127,250,.09) 0%,transparent 55%),radial-gradient(ellipse 35% 45% at 88% 12%,rgba(139,92,246,.07) 0%,transparent 60%);pointer-events:none;z-index:0}
+.hero-spotlight{position:absolute;top:-10%;left:55%;width:650px;height:650px;background:radial-gradient(circle,rgba(124,58,237,.11) 0%,transparent 65%);filter:blur(60px);pointer-events:none;z-index:0;animation:glowBreath 6s ease-in-out infinite}
+.hero-blob{position:absolute;right:-120px;top:50%;width:600px;height:600px;background:conic-gradient(from 180deg at 50% 50%,rgba(124,58,237,.12) 0deg,rgba(75,127,250,.07) 120deg,rgba(139,92,246,.1) 240deg,rgba(124,58,237,.12) 360deg);border-radius:40% 60% 55% 45%/45% 55% 60% 40%;filter:blur(70px);pointer-events:none;z-index:0;animation:blobDrift 18s ease-in-out infinite}
+.hero-left{padding:60px 0;max-width:740px;position:relative;z-index:1}
+.hero-right{display:flex;align-items:center;justify-content:center;position:relative;height:100vh;min-height:600px;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:9px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.35);border-radius:100px;padding:8px 18px;font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:#C4B5FD;margin-bottom:32px;backdrop-filter:blur(8px)}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#06D6A0;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 6px #06D6A0}
+.hero-h1{font-size:clamp(52px,8.5vw,136px);font-weight:800;line-height:.88;letter-spacing:-4px;position:relative}
+.hero-name-grad{background:linear-gradient(135deg,#FFFFFF 0%,#EDE9FE 35%,#C4B5FD 65%,#9B6DFF 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block}
+.hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:rgba(255,255,255,.35);font-size:clamp(18px,.52em,48px);letter-spacing:0px;display:block;margin-top:14px;-webkit-text-fill-color:rgba(255,255,255,.35)}
+.hero-spec{display:flex;gap:9px;flex-wrap:wrap;margin:28px 0 0}
+.hero-spec-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:100px;font-size:12px;font-weight:700;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.28);color:#C4B5FD;letter-spacing:.3px;transition:all .22s;white-space:nowrap;box-shadow:0 0 0 rgba(124,58,237,0);backdrop-filter:blur(8px)}
+.hero-spec-chip:hover{background:rgba(124,58,237,.2);border-color:rgba(124,58,237,.6);color:#EDE9FE;transform:translateY(-2px);box-shadow:0 0 18px rgba(124,58,237,.35),0 4px 14px rgba(0,0,0,.3)}
+.hero-divider{width:48px;height:1px;background:linear-gradient(90deg,var(--acc),transparent);margin:28px 0;opacity:.7}
+.hero-desc{font-size:15.5px;color:rgba(255,255,255,.55);line-height:1.82;max-width:560px;font-weight:400}
+.hero-desc strong{color:rgba(255,255,255,.85);font-weight:600}
+.hero-desc em{color:#C4B5FD;font-style:normal;font-weight:600}
+.hero-acts{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap}
+.hero-scroll-hint{margin-top:44px;display:flex;align-items:center;gap:10px;font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.25);font-weight:600}
+.hero-scroll-hint::before{content:'';width:1px;height:28px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.2))}
 .hero-mascots{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 .hero-mascot-main{position:relative;display:flex;align-items:center;justify-content:center}
-.hero-glow{position:absolute;border-radius:50%;pointer-events:none}
-.hero-glow1{width:340px;height:340px;background:radial-gradient(circle,rgba(124,58,237,.18) 0%,transparent 68%);top:50%;left:50%;transform:translate(-50%,-50%);filter:blur(30px)}
-.hero-glow2{width:500px;height:500px;background:radial-gradient(circle,rgba(75,127,250,.07) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);filter:blur(50px)}
-.hero-ring{position:absolute;border-radius:50%;border:1px solid rgba(124,58,237,.1);top:50%;left:50%;transform:translate(-50%,-50%);animation:spinSlow 40s linear infinite}
-.hero-float-card{position:absolute;background:rgba(8,9,20,.88);border:1px solid rgba(124,58,237,.2);border-radius:14px;padding:14px 20px;font-size:12px;backdrop-filter:blur(24px);z-index:3;transition:transform .12s ease-out;box-shadow:0 8px 32px rgba(0,0,0,.35)}
-.hero-float-card .fc-label{color:var(--tx3);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:6px}
+.hero-glow{position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+.hero-glow1{width:380px;height:380px;background:radial-gradient(circle,rgba(124,58,237,.25) 0%,rgba(124,58,237,.08) 45%,transparent 70%);top:50%;left:50%;filter:blur(20px);animation:glowBreath 5s ease-in-out infinite}
+.hero-glow2{width:580px;height:580px;background:radial-gradient(circle,rgba(75,127,250,.1) 0%,transparent 60%);top:50%;left:50%;filter:blur(50px)}
+.hero-neon-ring{position:absolute;border-radius:50%;border:1px solid;top:50%;left:50%;pointer-events:none;z-index:1}
+.hero-ring{position:absolute;border-radius:50%;border:1px solid rgba(124,58,237,.08);top:50%;left:50%;pointer-events:none}
+.hero-float-card{position:absolute;background:rgba(6,7,18,.82);border:1px solid rgba(124,58,237,.22);border-radius:14px;padding:14px 20px;font-size:12px;backdrop-filter:blur(28px);z-index:4;transition:transform .12s ease-out;box-shadow:0 8px 32px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04)}
+.hero-float-card .fc-label{color:rgba(255,255,255,.35);font-size:9.5px;text-transform:uppercase;letter-spacing:1.8px;font-weight:700;margin-bottom:6px}
 .hero-float-card .fc-val{font-family:var(--fd);font-weight:800;font-size:18px;color:var(--acc)}
-.btn-pri{background:var(--acc);color:#fff;padding:13px 28px;border-radius:7px;font-size:13.5px;font-weight:700;border:none;transition:all .25s;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(124,58,237,.3)}
-.btn-pri:hover{background:#8B47FF;transform:translateY(-2px);box-shadow:0 12px 32px rgba(124,58,237,.45)}
-.btn-sec{background:transparent;color:var(--tx2);padding:13px 28px;border-radius:7px;font-size:13.5px;font-weight:600;border:1px solid var(--bdr2);transition:all .25s}
-.btn-sec:hover{border-color:var(--acc);color:var(--acc);background:var(--accd)}
-.hero-astro{animation:floatY 7s ease-in-out infinite;filter:drop-shadow(0 20px 50px rgba(124,58,237,.3)) drop-shadow(0 0 80px rgba(75,127,250,.12));transition:transform .15s ease-out}
+.btn-pri{background:linear-gradient(135deg,#7C3AED,#6025C0);color:#fff;padding:14px 30px;border-radius:8px;font-size:13.5px;font-weight:700;border:none;transition:all .25s;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(124,58,237,.35),inset 0 1px 0 rgba(255,255,255,.12)}
+.btn-pri:hover{background:linear-gradient(135deg,#8B47FF,#7C3AED);transform:translateY(-2px);box-shadow:0 14px 36px rgba(124,58,237,.5),inset 0 1px 0 rgba(255,255,255,.15)}
+.btn-sec{background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);padding:14px 30px;border-radius:8px;font-size:13.5px;font-weight:600;border:1px solid rgba(255,255,255,.1);transition:all .25s;backdrop-filter:blur(8px)}
+.btn-sec:hover{border-color:rgba(124,58,237,.5);color:#C4B5FD;background:rgba(124,58,237,.1)}
+.hero-astro{animation:floatY 7s ease-in-out infinite;filter:drop-shadow(0 24px 60px rgba(124,58,237,.4)) drop-shadow(0 0 100px rgba(75,127,250,.15)) drop-shadow(0 -8px 20px rgba(139,92,246,.2));transition:transform .15s ease-out;position:relative;z-index:2}
 .hero-orb{position:absolute;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
 .hero-orb1{width:260px;height:260px;background:radial-gradient(circle,rgba(124,58,237,.08),transparent 70%)}
 .hero-orb2{width:380px;height:380px;border:1px solid rgba(124,58,237,.07);animation:spinSlow 35s linear infinite}
@@ -513,7 +521,7 @@ button{cursor:pointer;font-family:var(--fb)}
 }
 @media(max-width:768px){
   .nav{padding:12px 20px;gap:8px}.nlinks{display:none}.nhb{display:flex;align-items:center}.ncv{display:none}.ncv-mobile{display:flex;align-items:center;gap:4px;border:1px solid var(--bdr);color:var(--tx2);padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;background:transparent;white-space:nowrap;text-decoration:none;flex-shrink:0}
-  .hero{padding:80px 20px 48px;gap:32px;grid-template-columns:1fr}.hero-left{padding:24px 0;max-width:100%}.hero-h1{letter-spacing:-2px}.hero-desc{font-size:15px;line-height:1.75}.hero-badge{font-size:10px;padding:5px 12px;margin-bottom:16px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:8px;margin-top:18px}.hero-spec-chip{font-size:11.5px;padding:6px 13px}
+  .hero{padding:80px 20px 48px;gap:32px;grid-template-columns:1fr}.hero-left{padding:24px 0;max-width:100%}.hero-h1{letter-spacing:-2px;font-size:clamp(44px,12vw,80px)}.hero-desc{font-size:15px;line-height:1.75}.hero-badge{font-size:10px;padding:5px 14px;margin-bottom:20px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
   .stats{flex-direction:column}.stat{padding:24px 20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
   .sec{padding:72px 20px}
   .tl-grid{grid-template-columns:1fr}
@@ -1380,82 +1388,95 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
 
       {/* ── HERO ── */}
       <div className="hero-outer" ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave}>
-      <section className="hero" id="hero">
-        <div className="hero-left" style={{ position:"relative", zIndex:1 }}>
-          <div className="hero-badge afu">
-            <div className="hero-badge-dot"/>
-            Product Designer · Design Ops · Paris
-          </div>
-          <h1 className="hero-h1 afu d1">
-            Thomas<br/>Leloup
-            <span className="hero-h1-sub">Design &amp; Engineering</span>
-          </h1>
+        {/* Background atmosphere */}
+        <div className="hero-spotlight" style={{ transform:`translate(calc(-50% + ${px.x*25}px), calc(-50% + ${px.y*15}px))` }}/>
+        <div className="hero-blob" style={{ transform:`translate(${px.x*-20}px, ${px.y*-12}px)` }}/>
 
-          {/* Spécialisations — immédiatement lisibles */}
-          <div className="hero-spec afu d2">
-            {[
-              { label:"UX Research",   icon:"🔍" },
-              { label:"Design System", icon:"⚡" },
-              { label:"Design Ops",    icon:"⚙️" },
-              { label:"Dev Handoff",   icon:"🔗" },
-              { label:"Figma",         icon:"🎨" },
-              { label:"Prototypage",   icon:"🧪" },
-            ].map(({ label, icon }) => (
-              <span className="hero-spec-chip" key={label}><span style={{ fontSize:13 }}>{icon}</span>{label}</span>
-            ))}
-          </div>
-
-          <div className="hero-divider afu d3"/>
-          <p className="hero-desc afu d3">
-            Je conçois des expériences complexes avec la <strong>précision d'un ingénieur</strong> et l'intention d'un designer.
-            Issu d'un background <strong>Full Stack</strong> — je parle le même langage que les équipes tech
-            et je pense aux <em>contraintes techniques pendant que je design</em>.
-          </p>
-          <div className="hero-acts afu d4">
-            <button className="btn-pri" onClick={() => { document.getElementById("projets")?.scrollIntoView({ behavior:"smooth" }); if (onTrack) onTrack("event", { type:"cta_click", label:"hero_projects" }); }}>
-              Voir mes projets →
-            </button>
-            <a className="btn-sec" href="https://www.thomas-leloup.fr/cv_thomas_leloup.pdf" target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("event", { type:"cta_click", label:"hero_cv" }); }}>
-              Mon CV
-            </a>
-          </div>
-          <div className="hero-scroll-hint afu d5">Scroll pour explorer</div>
-        </div>
-
-        <div className="hero-right">
-          {/* Depth layers + glow */}
-          <div className="hero-glow hero-glow2" style={{ transform:`translate(calc(-50% + ${px.x*30}px), calc(-50% + ${px.y*20}px))` }}/>
-          <div className="hero-glow hero-glow1" style={{ transform:`translate(calc(-50% + ${px.x*18}px), calc(-50% + ${px.y*12}px))` }}/>
-          <div className="hero-ring" style={{ width:420, height:420, transform:`translate(calc(-50% + ${px.x*8}px), calc(-50% + ${px.y*5}px)) rotate(${px.x*4}deg)` }}/>
-          <div className="hero-ring" style={{ width:540, height:540, opacity:.5, transform:`translate(calc(-50% + ${px.x*4}px), calc(-50% + ${px.y*3}px)) rotate(${-px.x*3}deg)` }}/>
-
-          {/* Floating card */}
-          <div className="hero-float-card afu d3" style={{ position:"absolute", bottom:72, right:-10, zIndex:4, display:"flex", gap:20, alignItems:"center", transform:`translate(${px.x*-12}px, ${px.y*-8}px)` }}>
-            <div>
-              <div className="fc-label">Disponible</div>
-              <div className="fc-val" style={{ color:"#06D6A0" }}>Paris · Remote</div>
+        <section className="hero" id="hero">
+          <div className="hero-left">
+            <div className="hero-badge afu">
+              <div className="hero-badge-dot"/>
+              Product Designer · Design Ops · Paris
             </div>
-            <div style={{ width:1, height:32, background:"var(--bdr)" }}/>
-            <div>
-              <div className="fc-label">Expertise</div>
-              <div className="fc-val">Design × Dev</div>
+            <h1 className="hero-h1 afu d1">
+              <span className="hero-name-grad">Thomas<br/>Leloup</span>
+              <span className="hero-h1-sub">Design &amp; Engineering</span>
+            </h1>
+
+            {/* Spécialisations */}
+            <div className="hero-spec afu d2">
+              {[
+                { label:"UX Research",   icon:"🔍" },
+                { label:"Design System", icon:"⚡" },
+                { label:"Design Ops",    icon:"⚙️" },
+                { label:"Dev Handoff",   icon:"🔗" },
+                { label:"Figma",         icon:"🎨" },
+                { label:"Prototypage",   icon:"🧪" },
+              ].map(({ label, icon }) => (
+                <span className="hero-spec-chip" key={label}><span style={{ fontSize:13 }}>{icon}</span>{label}</span>
+              ))}
             </div>
+
+            <div className="hero-divider afu d3"/>
+            <p className="hero-desc afu d3">
+              Je conçois des expériences avec la <strong>précision d'un ingénieur</strong> et l'intention d'un designer.
+              Issu d'un background <strong>Full Stack</strong> — je parle le même langage que les équipes tech
+              et je pense aux <em>contraintes techniques pendant que je design</em>.
+            </p>
+            <div className="hero-acts afu d4">
+              <button className="btn-pri" onClick={() => { document.getElementById("projets")?.scrollIntoView({ behavior:"smooth" }); if (onTrack) onTrack("event", { type:"cta_click", label:"hero_projects" }); }}>
+                Voir mes projets →
+              </button>
+              <a className="btn-sec" href="https://www.thomas-leloup.fr/cv_thomas_leloup.pdf" target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("event", { type:"cta_click", label:"hero_cv" }); }}>
+                Mon CV
+              </a>
+            </div>
+            <div className="hero-scroll-hint afu d5">Scroll pour explorer</div>
           </div>
 
-          {/* Second floating card */}
-          <div className="hero-float-card afu d2" style={{ position:"absolute", top:140, left:-20, zIndex:4, transform:`translate(${px.x*-8}px, ${px.y*-5}px)` }}>
-            <div className="fc-label">Expérience</div>
-            <div className="fc-val">4+ ans</div>
-          </div>
+          <div className="hero-right">
+            {/* Deep glow layers */}
+            <div className="hero-glow hero-glow2" style={{ transform:`translate(calc(-50% + ${px.x*35}px), calc(-50% + ${px.y*22}px))` }}/>
+            <div className="hero-glow hero-glow1" style={{ transform:`translate(calc(-50% + ${px.x*20}px), calc(-50% + ${px.y*14}px))` }}/>
 
-          {/* Mascot with parallax */}
-          <div className="hero-mascots afu d3">
-            <div className="hero-mascot-main" style={{ transform:`translate(${px.x*15}px, ${px.y*10}px)`, transition:"transform .15s ease-out" }}>
-              <AstronautSVG size={340}/>
+            {/* Neon rings */}
+            <div className="hero-neon-ring" style={{ width:390, height:390, borderColor:"rgba(124,58,237,.18)", boxShadow:"0 0 40px rgba(124,58,237,.08) inset", transform:`translate(calc(-50% + ${px.x*10}px), calc(-50% + ${px.y*7}px)) rotate(${px.x*6}deg)`, animation:"spinSlow 50s linear infinite" }}/>
+            <div className="hero-neon-ring" style={{ width:520, height:520, borderColor:"rgba(75,127,250,.08)", transform:`translate(calc(-50% + ${px.x*5}px), calc(-50% + ${px.y*3}px)) rotate(${-px.x*4}deg)`, animation:"spinSlow 80s linear infinite reverse" }}/>
+            <div className="hero-neon-ring" style={{ width:640, height:640, borderColor:"rgba(124,58,237,.04)", transform:`translate(calc(-50% + ${px.x*2}px), calc(-50% + ${px.y*1}px))` }}/>
+
+            {/* Float card — bottom */}
+            <div className="hero-float-card afu d3" style={{ bottom:80, right:-8, display:"flex", gap:20, alignItems:"center", transform:`translate(${px.x*-14}px, ${px.y*-9}px)` }}>
+              <div>
+                <div className="fc-label">Disponible</div>
+                <div className="fc-val" style={{ color:"#06D6A0" }}>Paris · Remote</div>
+              </div>
+              <div style={{ width:1, height:32, background:"rgba(255,255,255,.08)" }}/>
+              <div>
+                <div className="fc-label">Expertise</div>
+                <div className="fc-val">Design × Dev</div>
+              </div>
+            </div>
+
+            {/* Float card — top */}
+            <div className="hero-float-card afu d2" style={{ top:148, left:-24, transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
+              <div className="fc-label">Expérience</div>
+              <div className="fc-val">4+ ans</div>
+            </div>
+
+            {/* Float card — mid right (projets) */}
+            <div className="hero-float-card afu d4" style={{ top:"50%", right:-16, marginTop:-30, transform:`translate(${px.x*-6}px, calc(-50% + ${px.y*-4}px))` }}>
+              <div className="fc-label">Projets</div>
+              <div className="fc-val" style={{ fontSize:16 }}>5 livrés</div>
+            </div>
+
+            {/* Astronaut — biggest parallax layer */}
+            <div className="hero-mascots afu d3">
+              <div className="hero-mascot-main" style={{ transform:`translate(${px.x*18}px, ${px.y*12}px)`, transition:"transform .15s ease-out" }}>
+                <AstronautSVG size={380}/>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
       </div>
 
       {/* ── STATS ── */}
