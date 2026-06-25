@@ -107,7 +107,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .nmob-divider{width:40px;height:1px;background:var(--bdr);margin:8px 0}
 
 /* ─ HERO ─ */
-.hero{min-height:100vh;display:grid;grid-template-columns:1.45fr 1fr;align-items:center;padding:0 48px 0 64px;position:relative;overflow:clip;z-index:1;gap:0;width:100%}
+.hero{min-height:100vh;display:grid;grid-template-columns:1.6fr 1fr;align-items:center;padding:0 32px 0 64px;position:relative;overflow:clip;z-index:1;gap:0;width:100%}
 .hero-outer{min-height:100vh;display:flex;align-items:center;position:relative;z-index:1;padding-top:0;overflow:hidden}
 .hero-outer::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 85% 70% at 72% 48%,rgba(124,58,237,.16) 0%,transparent 58%),radial-gradient(ellipse 45% 55% at 12% 90%,rgba(75,127,250,.09) 0%,transparent 55%),radial-gradient(ellipse 35% 45% at 88% 12%,rgba(139,92,246,.07) 0%,transparent 60%);pointer-events:none;z-index:0}
 .hero-spotlight{position:absolute;top:-10%;left:55%;width:650px;height:650px;background:radial-gradient(circle,rgba(124,58,237,.11) 0%,transparent 65%);filter:blur(60px);pointer-events:none;z-index:0;animation:glowBreath 6s ease-in-out infinite}
@@ -116,7 +116,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .hero-right{display:flex;align-items:center;justify-content:center;position:relative;height:100vh;min-height:600px;z-index:1}
 .hero-badge{display:inline-flex;align-items:center;gap:9px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.35);border-radius:100px;padding:8px 18px;font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:#C4B5FD;margin-bottom:32px;backdrop-filter:blur(8px)}
 .hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#06D6A0;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 6px #06D6A0}
-.hero-h1{font-size:clamp(52px,8.5vw,136px);font-weight:800;line-height:.88;letter-spacing:-4px;position:relative}
+.hero-h1{font-size:clamp(48px,7.2vw,118px);font-weight:800;line-height:.9;letter-spacing:-3px;position:relative}
 .hero-name-grad{background:linear-gradient(135deg,#FFFFFF 0%,#EDE9FE 35%,#C4B5FD 65%,#9B6DFF 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;padding-right:8px}
 .hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:rgba(255,255,255,.35);font-size:clamp(18px,.52em,48px);letter-spacing:0px;display:block;margin-top:14px;-webkit-text-fill-color:rgba(255,255,255,.35)}
 .hero-spec{display:flex;gap:9px;flex-wrap:wrap;margin:28px 0 0}
