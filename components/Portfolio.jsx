@@ -103,37 +103,39 @@ button{cursor:pointer;font-family:var(--fb)}
 .nmob-divider{width:40px;height:1px;background:var(--bdr);margin:8px 0}
 
 /* ─ HERO ─ */
-.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 40px;position:relative;overflow:hidden;z-index:1;gap:0;width:100%}
+.hero{min-height:100vh;display:grid;grid-template-columns:1.4fr 1fr;align-items:center;padding:0 40px 0 56px;position:relative;overflow:hidden;z-index:1;gap:0;width:100%}
 .hero-outer{min-height:100vh;display:flex;align-items:center;position:relative;z-index:1;padding-top:0}
-.hero-left{padding:60px 0}
+.hero-left{padding:60px 0;max-width:720px}
 .hero-right{display:flex;align-items:center;justify-content:center;position:relative;height:100vh;min-height:600px}
 .hero-badge{display:inline-flex;align-items:center;gap:9px;background:var(--accd);border:1px solid rgba(124,58,237,.3);border-radius:100px;padding:8px 18px;font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--acc);margin-bottom:28px}
 .hero-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--acc);animation:pulse 2s ease-in-out infinite}
-.hero-h1{font-size:clamp(38px,6.5vw,108px);font-weight:800;line-height:.92;letter-spacing:-2.5px}
-.hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:var(--tx2);font-size:clamp(18px,.75em,52px);letter-spacing:-1px;display:block;margin-top:8px}
-.hero-desc{font-size:16px;color:var(--tx2);line-height:1.82;margin-top:24px;max-width:560px;font-weight:400}
+.hero-h1{font-size:clamp(44px,7vw,114px);font-weight:800;line-height:.9;letter-spacing:-3px}
+.hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:var(--tx2);font-size:clamp(20px,.68em,52px);letter-spacing:-1px;display:block;margin-top:10px}
+.hero-spec{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 0}
+.hero-spec-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:100px;font-size:12.5px;font-weight:700;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.32);color:#C4B5FD;letter-spacing:.3px;transition:all .2s;white-space:nowrap}
+.hero-spec-chip:hover{background:rgba(124,58,237,.22);border-color:rgba(124,58,237,.55);color:#DDD6FE;transform:translateY(-1px)}
+.hero-spec-chip svg{opacity:.7}
+.hero-divider{width:40px;height:2px;background:var(--acc);border-radius:2px;margin:26px 0;opacity:.5}
+.hero-desc{font-size:15.5px;color:var(--tx2);line-height:1.8;max-width:580px;font-weight:400}
 .hero-desc strong{color:var(--tx);font-weight:600}
 .hero-desc em{color:var(--acc);font-style:normal;font-weight:600}
-.hero-divider{width:40px;height:2px;background:var(--acc);border-radius:2px;margin:24px 0;opacity:.5}
-.hero-tags{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
-.hero-tag-chip{font-size:12px;font-weight:500;color:var(--tx3);padding:0;background:none;border:none;letter-spacing:.2px}
-.hero-tag-chip::before{content:'·';color:var(--acc);margin-right:5px;font-size:15px;line-height:1;vertical-align:middle}
 .hero-acts{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap}
 .hero-scroll-hint{margin-top:40px;display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);font-weight:600}
 .hero-scroll-hint::before{content:'';width:1px;height:28px;background:linear-gradient(to bottom,transparent,var(--tx3))}
 .hero-mascots{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 .hero-mascot-main{position:relative;display:flex;align-items:center;justify-content:center}
-.hero-mascot-secondary{position:absolute;top:0;right:0;opacity:.7}
-.hero-mascot-label{position:absolute;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;color:var(--tx2);white-space:nowrap}
-.hero-mascot-label::after{content:'';position:absolute;bottom:-5px;left:14px;width:8px;height:8px;background:var(--bg3);border-right:1px solid var(--bdr);border-bottom:1px solid var(--bdr);transform:rotate(45deg)}
-.hero-float-card{position:absolute;background:rgba(12,13,24,.85);border:1px solid var(--bdr2);border-radius:12px;padding:14px 20px;font-size:12px;backdrop-filter:blur(20px);z-index:3}
+.hero-glow{position:absolute;border-radius:50%;pointer-events:none}
+.hero-glow1{width:340px;height:340px;background:radial-gradient(circle,rgba(124,58,237,.18) 0%,transparent 68%);top:50%;left:50%;transform:translate(-50%,-50%);filter:blur(30px)}
+.hero-glow2{width:500px;height:500px;background:radial-gradient(circle,rgba(75,127,250,.07) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);filter:blur(50px)}
+.hero-ring{position:absolute;border-radius:50%;border:1px solid rgba(124,58,237,.1);top:50%;left:50%;transform:translate(-50%,-50%);animation:spinSlow 40s linear infinite}
+.hero-float-card{position:absolute;background:rgba(8,9,20,.88);border:1px solid rgba(124,58,237,.2);border-radius:14px;padding:14px 20px;font-size:12px;backdrop-filter:blur(24px);z-index:3;transition:transform .12s ease-out;box-shadow:0 8px 32px rgba(0,0,0,.35)}
 .hero-float-card .fc-label{color:var(--tx3);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:6px}
 .hero-float-card .fc-val{font-family:var(--fd);font-weight:800;font-size:18px;color:var(--acc)}
-.btn-pri{background:var(--acc);color:#fff;padding:12px 24px;border-radius:7px;font-size:13px;font-weight:700;border:none;transition:all .25s;display:inline-flex;align-items:center;gap:8px}
-.btn-pri:hover{background:#8B47FF;transform:translateY(-2px);box-shadow:0 10px 28px rgba(124,58,237,.35)}
-.btn-sec{background:transparent;color:var(--tx2);padding:12px 24px;border-radius:7px;font-size:13px;font-weight:600;border:1px solid var(--bdr2);transition:all .25s}
+.btn-pri{background:var(--acc);color:#fff;padding:13px 28px;border-radius:7px;font-size:13.5px;font-weight:700;border:none;transition:all .25s;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(124,58,237,.3)}
+.btn-pri:hover{background:#8B47FF;transform:translateY(-2px);box-shadow:0 12px 32px rgba(124,58,237,.45)}
+.btn-sec{background:transparent;color:var(--tx2);padding:13px 28px;border-radius:7px;font-size:13.5px;font-weight:600;border:1px solid var(--bdr2);transition:all .25s}
 .btn-sec:hover{border-color:var(--acc);color:var(--acc);background:var(--accd)}
-.hero-astro{animation:floatY 7s ease-in-out infinite;filter:drop-shadow(0 16px 40px rgba(124,58,237,.22))}
+.hero-astro{animation:floatY 7s ease-in-out infinite;filter:drop-shadow(0 20px 50px rgba(124,58,237,.3)) drop-shadow(0 0 80px rgba(75,127,250,.12));transition:transform .15s ease-out}
 .hero-orb{position:absolute;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
 .hero-orb1{width:260px;height:260px;background:radial-gradient(circle,rgba(124,58,237,.08),transparent 70%)}
 .hero-orb2{width:380px;height:380px;border:1px solid rgba(124,58,237,.07);animation:spinSlow 35s linear infinite}
@@ -511,7 +513,7 @@ button{cursor:pointer;font-family:var(--fb)}
 }
 @media(max-width:768px){
   .nav{padding:12px 20px;gap:8px}.nlinks{display:none}.nhb{display:flex;align-items:center}.ncv{display:none}.ncv-mobile{display:flex;align-items:center;gap:4px;border:1px solid var(--bdr);color:var(--tx2);padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;background:transparent;white-space:nowrap;text-decoration:none;flex-shrink:0}
-  .hero{padding:80px 20px 48px;gap:32px}.hero-left{padding:24px 0}.hero-h1{letter-spacing:-2px}.hero-desc{font-size:15px;line-height:1.75;margin-top:18px}.hero-badge{font-size:10px;padding:5px 12px;margin-bottom:16px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}
+  .hero{padding:80px 20px 48px;gap:32px;grid-template-columns:1fr}.hero-left{padding:24px 0;max-width:100%}.hero-h1{letter-spacing:-2px}.hero-desc{font-size:15px;line-height:1.75}.hero-badge{font-size:10px;padding:5px 12px;margin-bottom:16px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:8px;margin-top:18px}.hero-spec-chip{font-size:11.5px;padding:6px 13px}
   .stats{flex-direction:column}.stat{padding:24px 20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
   .sec{padding:72px 20px}
   .tl-grid{grid-template-columns:1fr}
@@ -1304,8 +1306,17 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
   const [tagFilter, setTagFilter] = useState(null);
   const [goAdmin, setGoAdmin] = useState(false);
   const [dhVisible, setDhVisible] = useState(false);
+  const [px, setPx] = useState({ x:0, y:0 });
+  const heroRef = useRef(null);
   const dhRef = useRef(null);
   useReveal();
+
+  const handleHeroMouse = useCallback((e) => {
+    if (!heroRef.current) return;
+    const r = heroRef.current.getBoundingClientRect();
+    setPx({ x:((e.clientX-r.left)/r.width-.5)*2, y:((e.clientY-r.top)/r.height-.5)*2 });
+  }, []);
+  const handleHeroLeave = useCallback(() => setPx({ x:0, y:0 }), []);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50);
@@ -1368,7 +1379,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
       <Nav scrolled={scrolled} onTrack={onTrack}/>
 
       {/* ── HERO ── */}
-      <div className="hero-outer">
+      <div className="hero-outer" ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave}>
       <section className="hero" id="hero">
         <div className="hero-left" style={{ position:"relative", zIndex:1 }}>
           <div className="hero-badge afu">
@@ -1379,18 +1390,27 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
             Thomas<br/>Leloup
             <span className="hero-h1-sub">Design &amp; Engineering</span>
           </h1>
-          <div className="hero-divider afu d2"/>
-          <p className="hero-desc afu d2">
-            Je conçois des expériences complexes avec la <strong>précision d'un ingénieur</strong> et l'intention d'un designer.
-            Issu d'un background développeur Full Stack — je parle le même langage que les équipes tech
-            et je pense aux <em>contraintes techniques pendant que je design</em>,
-            ce qui permet de livrer des interfaces <strong>réalistes, précises et adoptées par les équipes dev.</strong>
-          </p>
-          <div className="hero-tags afu d3">
-            {["UX Research","Design System","Design Ops","Figma","Dev Handoff","Prototypage"].map((t) => (
-              <span className="hero-tag-chip" key={t}>{t}</span>
+
+          {/* Spécialisations — immédiatement lisibles */}
+          <div className="hero-spec afu d2">
+            {[
+              { label:"UX Research",   icon:"🔍" },
+              { label:"Design System", icon:"⚡" },
+              { label:"Design Ops",    icon:"⚙️" },
+              { label:"Dev Handoff",   icon:"🔗" },
+              { label:"Figma",         icon:"🎨" },
+              { label:"Prototypage",   icon:"🧪" },
+            ].map(({ label, icon }) => (
+              <span className="hero-spec-chip" key={label}><span style={{ fontSize:13 }}>{icon}</span>{label}</span>
             ))}
           </div>
+
+          <div className="hero-divider afu d3"/>
+          <p className="hero-desc afu d3">
+            Je conçois des expériences complexes avec la <strong>précision d'un ingénieur</strong> et l'intention d'un designer.
+            Issu d'un background <strong>Full Stack</strong> — je parle le même langage que les équipes tech
+            et je pense aux <em>contraintes techniques pendant que je design</em>.
+          </p>
           <div className="hero-acts afu d4">
             <button className="btn-pri" onClick={() => { document.getElementById("projets")?.scrollIntoView({ behavior:"smooth" }); if (onTrack) onTrack("event", { type:"cta_click", label:"hero_projects" }); }}>
               Voir mes projets →
@@ -1403,8 +1423,14 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
         </div>
 
         <div className="hero-right">
-          {/* Floating context cards */}
-          <div className="hero-float-card afu d3" style={{ position:"absolute", bottom:60, right:0, zIndex:3, display:"flex", gap:20, alignItems:"center" }}>
+          {/* Depth layers + glow */}
+          <div className="hero-glow hero-glow2" style={{ transform:`translate(calc(-50% + ${px.x*30}px), calc(-50% + ${px.y*20}px))` }}/>
+          <div className="hero-glow hero-glow1" style={{ transform:`translate(calc(-50% + ${px.x*18}px), calc(-50% + ${px.y*12}px))` }}/>
+          <div className="hero-ring" style={{ width:420, height:420, transform:`translate(calc(-50% + ${px.x*8}px), calc(-50% + ${px.y*5}px)) rotate(${px.x*4}deg)` }}/>
+          <div className="hero-ring" style={{ width:540, height:540, opacity:.5, transform:`translate(calc(-50% + ${px.x*4}px), calc(-50% + ${px.y*3}px)) rotate(${-px.x*3}deg)` }}/>
+
+          {/* Floating card */}
+          <div className="hero-float-card afu d3" style={{ position:"absolute", bottom:72, right:-10, zIndex:4, display:"flex", gap:20, alignItems:"center", transform:`translate(${px.x*-12}px, ${px.y*-8}px)` }}>
             <div>
               <div className="fc-label">Disponible</div>
               <div className="fc-val" style={{ color:"#06D6A0" }}>Paris · Remote</div>
@@ -1416,10 +1442,16 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
             </div>
           </div>
 
-          {/* Mascot */}
+          {/* Second floating card */}
+          <div className="hero-float-card afu d2" style={{ position:"absolute", top:140, left:-20, zIndex:4, transform:`translate(${px.x*-8}px, ${px.y*-5}px)` }}>
+            <div className="fc-label">Expérience</div>
+            <div className="fc-val">4+ ans</div>
+          </div>
+
+          {/* Mascot with parallax */}
           <div className="hero-mascots afu d3">
-            <div className="hero-mascot-main">
-              <AstronautSVG size={320}/>
+            <div className="hero-mascot-main" style={{ transform:`translate(${px.x*15}px, ${px.y*10}px)`, transition:"transform .15s ease-out" }}>
+              <AstronautSVG size={340}/>
             </div>
           </div>
         </div>
