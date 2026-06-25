@@ -156,7 +156,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .stat-n span{color:var(--acc)}.stat-l{font-size:11.5px;color:var(--tx2);margin-top:4px;font-weight:500}
 
 /* ─ SECTION ─ */
-.sec{padding:120px 64px;position:relative;z-index:1}
+.sec{padding:160px 64px;position:relative;z-index:1}
 .seye{font-size:10.5px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:var(--acc);margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .seye::before{content:'';width:20px;height:1px;background:var(--acc)}
 .stit{font-size:clamp(30px,4vw,52px);font-weight:800;letter-spacing:-2px;max-width:680px;line-height:1;margin-bottom:8px}
@@ -498,7 +498,7 @@ button{cursor:pointer;font-family:var(--fb)}
 /* ─ RESPONSIVE ─ */
 @media(min-width:1600px){
 .hero{padding:0 80px}
-.sec{padding:120px 80px}
+.sec{padding:180px 80px}
 .foot{padding:20px 80px}
 }
 @media(max-width:1024px){
@@ -1445,7 +1445,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
             <div className="hero-neon-ring" style={{ width:640, height:640, borderColor:"rgba(124,58,237,.04)", transform:`translate(calc(-50% + ${px.x*2}px), calc(-50% + ${px.y*1}px))` }}/>
 
             {/* Float card — bottom */}
-            <div className="hero-float-card afu d3" style={{ bottom:80, right:-8, display:"flex", gap:20, alignItems:"center", transform:`translate(${px.x*-14}px, ${px.y*-9}px)` }}>
+            <div className="hero-float-card afu d3" style={{ bottom:60, right:24, display:"flex", gap:20, alignItems:"center", transform:`translate(${px.x*-14}px, ${px.y*-9}px)` }}>
               <div>
                 <div className="fc-label">Disponible</div>
                 <div className="fc-val" style={{ color:"#06D6A0" }}>Paris · Remote</div>
@@ -1457,22 +1457,25 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
               </div>
             </div>
 
-            {/* Float card — top */}
-            <div className="hero-float-card afu d2" style={{ top:140, left:24, transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
+            {/* Float card — top left de la zone droite */}
+            <div className="hero-float-card afu d2" style={{ top:100, left:40, transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
               <div className="fc-label">Expérience</div>
               <div className="fc-val">4+ ans</div>
             </div>
 
-            {/* Float card — mid right (projets) */}
-            <div className="hero-float-card afu d4" style={{ top:"50%", right:-16, marginTop:-30, transform:`translate(${px.x*-6}px, calc(-50% + ${px.y*-4}px))` }}>
+            {/* Float card — bas droite */}
+            <div className="hero-float-card afu d4" style={{ bottom:140, right:24, transform:`translate(${px.x*-6}px, ${px.y*-4}px)` }}>
               <div className="fc-label">Projets</div>
               <div className="fc-val" style={{ fontSize:16 }}>5 livrés</div>
             </div>
 
-            {/* Astronaut — biggest parallax layer */}
+            {/* Astronaut — parallaxe 3D avec perspective */}
             <div className="hero-mascots afu d3">
-              <div className="hero-mascot-main" style={{ transform:`translate(${px.x*18}px, ${px.y*12}px)`, transition:"transform .15s ease-out" }}>
-                <img src="/astro-desk.png" alt="Astronaute designer" className="hero-astro" style={{ width:400, height:"auto", maxWidth:"100%" }}/>
+              <div className="hero-mascot-main" style={{
+                transform:`perspective(900px) translate3d(${px.x*20}px, ${px.y*14}px, 0) rotateY(${-px.x*4}deg) rotateX(${px.y*2.5}deg)`,
+                transition:"transform .18s ease-out"
+              }}>
+                <img src="/astro-desk.png" alt="Astronaute designer" className="hero-astro" style={{ width:440, height:"auto", maxWidth:"100%" }}/>
               </div>
             </div>
           </div>
