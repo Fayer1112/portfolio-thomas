@@ -1458,7 +1458,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
             </div>
 
             {/* Float card — top */}
-            <div className="hero-float-card afu d2" style={{ top:148, left:-24, transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
+            <div className="hero-float-card afu d2" style={{ top:140, left:24, transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
               <div className="fc-label">Expérience</div>
               <div className="fc-val">4+ ans</div>
             </div>
