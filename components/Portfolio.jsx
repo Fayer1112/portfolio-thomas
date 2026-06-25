@@ -107,13 +107,13 @@ button{cursor:pointer;font-family:var(--fb)}
 .nmob-divider{width:40px;height:1px;background:var(--bdr);margin:8px 0}
 
 /* ─ HERO ─ */
-.hero{min-height:100vh;display:grid;grid-template-columns:1.6fr 1fr;align-items:center;padding:0 32px 0 64px;position:relative;overflow:visible;z-index:1;gap:0;width:100%}
+.hero{min-height:100vh;display:block;padding:0 64px;position:relative;z-index:1;width:100%}
 .hero-outer{min-height:100vh;display:flex;align-items:center;position:relative;z-index:1;padding-top:0;overflow:hidden}
 .hero-outer::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 85% 70% at 72% 48%,rgba(124,58,237,.16) 0%,transparent 58%),radial-gradient(ellipse 45% 55% at 12% 90%,rgba(75,127,250,.09) 0%,transparent 55%),radial-gradient(ellipse 35% 45% at 88% 12%,rgba(139,92,246,.07) 0%,transparent 60%);pointer-events:none;z-index:0}
 .hero-spotlight{position:absolute;top:-10%;left:55%;width:650px;height:650px;background:radial-gradient(circle,rgba(124,58,237,.11) 0%,transparent 65%);filter:blur(60px);pointer-events:none;z-index:0;animation:glowBreath 6s ease-in-out infinite}
 .hero-blob{position:absolute;right:-120px;top:50%;width:600px;height:600px;background:conic-gradient(from 180deg at 50% 50%,rgba(124,58,237,.12) 0deg,rgba(75,127,250,.07) 120deg,rgba(139,92,246,.1) 240deg,rgba(124,58,237,.12) 360deg);border-radius:40% 60% 55% 45%/45% 55% 60% 40%;filter:blur(70px);pointer-events:none;z-index:0;animation:blobDrift 18s ease-in-out infinite}
-.hero-left{padding:60px 0;max-width:740px;position:relative;z-index:1}
-.hero-right{display:flex;align-items:center;justify-content:center;position:relative;height:100vh;min-height:600px;z-index:1}
+.hero-left{padding:140px 0 80px;max-width:780px;position:relative;z-index:2}
+.hero-right{position:absolute;right:0;top:0;height:100%;width:46%;display:flex;align-items:center;justify-content:center;z-index:1;pointer-events:none}
 .hero-badge{display:inline-flex;align-items:center;gap:9px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.35);border-radius:100px;padding:8px 18px;font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:#C4B5FD;margin-bottom:32px;backdrop-filter:blur(8px)}
 .hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#06D6A0;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 6px #06D6A0}
 .hero-h1{font-size:clamp(48px,7.2vw,118px);font-weight:800;line-height:.9;letter-spacing:-3px;position:relative}
@@ -136,7 +136,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .hero-glow2{width:580px;height:580px;background:radial-gradient(circle,rgba(75,127,250,.1) 0%,transparent 60%);top:50%;left:50%;filter:blur(50px)}
 .hero-neon-ring{position:absolute;border-radius:50%;border:1px solid;top:50%;left:50%;pointer-events:none;z-index:1}
 .hero-ring{position:absolute;border-radius:50%;border:1px solid rgba(124,58,237,.08);top:50%;left:50%;pointer-events:none}
-.hero-float-card{position:absolute;background:rgba(6,7,18,.82);border:1px solid rgba(124,58,237,.22);border-radius:14px;padding:14px 20px;font-size:12px;backdrop-filter:blur(28px);z-index:4;transition:transform .12s ease-out;box-shadow:0 8px 32px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04)}
+.hero-float-card{position:absolute;background:rgba(6,7,18,.82);border:1px solid rgba(124,58,237,.22);border-radius:14px;padding:14px 20px;font-size:12px;backdrop-filter:blur(28px);z-index:4;transition:transform .12s ease-out;box-shadow:0 8px 32px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04);pointer-events:auto}
 .hero-float-card .fc-label{color:rgba(255,255,255,.35);font-size:9.5px;text-transform:uppercase;letter-spacing:1.8px;font-weight:700;margin-bottom:6px}
 .hero-float-card .fc-val{font-family:var(--fd);font-weight:800;font-size:18px;color:var(--acc)}
 .btn-pri{background:linear-gradient(135deg,#7C3AED,#6025C0);color:#fff;padding:14px 30px;border-radius:8px;font-size:13.5px;font-weight:700;border:none;transition:all .25s;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(124,58,237,.35),inset 0 1px 0 rgba(255,255,255,.12)}
