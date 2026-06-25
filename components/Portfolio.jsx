@@ -89,7 +89,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .nlogo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
 .nlogo-mark{display:flex;align-items:center}
 .nlogo-txt{font-family:var(--fd);font-size:15px;font-weight:800;letter-spacing:-.3px;color:var(--tx)}
-.nlinks{display:flex;gap:26px;list-style:none;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase}
+.nlinks{display:flex;gap:26px;list-style:none;font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
 .nlinks button{color:var(--tx2);background:none;border:none;font:inherit;letter-spacing:inherit;text-transform:inherit;transition:color .2s;padding:0}
 .nlinks button:hover{color:var(--tx)}
 .ncv{border:1px solid var(--bdr2);color:var(--tx2);padding:8px 18px;border-radius:6px;font-size:11.5px;font-weight:700;background:transparent;transition:all .25s}
@@ -107,7 +107,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .nmob-divider{width:40px;height:1px;background:var(--bdr);margin:8px 0}
 
 /* ─ HERO ─ */
-.hero{min-height:100vh;display:grid;grid-template-columns:1.6fr 1fr;align-items:center;padding:0 32px 0 64px;position:relative;overflow:clip;z-index:1;gap:0;width:100%}
+.hero{min-height:100vh;display:grid;grid-template-columns:1.6fr 1fr;align-items:center;padding:0 32px 0 64px;position:relative;overflow:visible;z-index:1;gap:0;width:100%}
 .hero-outer{min-height:100vh;display:flex;align-items:center;position:relative;z-index:1;padding-top:0;overflow:hidden}
 .hero-outer::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 85% 70% at 72% 48%,rgba(124,58,237,.16) 0%,transparent 58%),radial-gradient(ellipse 45% 55% at 12% 90%,rgba(75,127,250,.09) 0%,transparent 55%),radial-gradient(ellipse 35% 45% at 88% 12%,rgba(139,92,246,.07) 0%,transparent 60%);pointer-events:none;z-index:0}
 .hero-spotlight{position:absolute;top:-10%;left:55%;width:650px;height:650px;background:radial-gradient(circle,rgba(124,58,237,.11) 0%,transparent 65%);filter:blur(60px);pointer-events:none;z-index:0;animation:glowBreath 6s ease-in-out infinite}
