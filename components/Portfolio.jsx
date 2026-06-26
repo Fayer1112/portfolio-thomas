@@ -317,11 +317,12 @@ button{cursor:pointer;font-family:var(--fb)}
 /* ─ PROJECT DETAIL ─ */
 .pd-page{min-height:100vh;background:var(--bg)}
 /* Sub-nav sticky scrollspy */
-.pd-subnav{position:sticky;top:68px;z-index:50;background:rgba(7,8,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);display:flex;gap:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.pd-subnav-wrap{position:sticky;z-index:49;transition:top .3s ease}
+.pd-subnav{background:rgba(16,18,34,.97);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,.07);display:flex;gap:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0 64px}
 .pd-subnav::-webkit-scrollbar{display:none}
-.pd-subnav-btn{padding:13px 22px;font-size:11.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--tx3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:var(--fb)}
-.pd-subnav-btn.on{color:var(--acc);border-bottom-color:var(--acc)}
-.pd-subnav-btn:hover{color:var(--tx2)}
+.pd-subnav-btn{padding:15px 20px;font-size:13.5px;font-weight:500;letter-spacing:0;color:rgba(255,255,255,.38);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:var(--fb)}
+.pd-subnav-btn.on{color:#fff;border-bottom-color:rgba(255,255,255,.7);font-weight:600}
+.pd-subnav-btn:hover{color:rgba(255,255,255,.65)}
 /* Lightbox */
 .lb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:9999;display:flex;align-items:center;justify-content:center;animation:fadeIn .18s ease}
 .lb-img{max-width:88vw;max-height:86vh;object-fit:contain;border-radius:10px;box-shadow:0 32px 80px rgba(0,0,0,.7);animation:scaleIn .2s var(--ease);display:block}
@@ -545,7 +546,7 @@ button{cursor:pointer;font-family:var(--fb)}
   .nav{padding:12px 20px;gap:8px}.nlinks{display:none}.nhb{display:flex;align-items:center}.ncv{display:none}.ncv-mobile{display:flex;align-items:center;gap:4px;border:1px solid var(--bdr);color:var(--tx2);padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;background:transparent;white-space:nowrap;text-decoration:none;flex-shrink:0}
   .hero{padding:80px 20px 48px;gap:32px;grid-template-columns:1fr}.hero-left{padding:24px 0;max-width:100%}.hero-h1{letter-spacing:-2px;font-size:clamp(44px,12vw,80px)}.hero-desc{font-size:15px;line-height:1.75}.hero-badge{font-size:10px;padding:5px 14px;margin-bottom:20px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
   .stats{flex-direction:column}.stat{padding:24px 20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
-  .pd-subnav{top:58px;padding-left:0}.pd-subnav-btn{padding:11px 14px;font-size:10.5px}
+  .pd-subnav{padding:0 16px}.pd-subnav-btn{padding:12px 14px;font-size:12px}
   .pd-gallery{grid-template-columns:1fr 1fr}
   .contact-layout{grid-template-columns:1fr;gap:40px}
   .lb-arrow{display:none}
@@ -773,20 +774,28 @@ function Lightbox({ images, startIndex = 0, onClose }) {
 function ProjectSubNav({ sections }) {
   const [active, setActive] = useState(sections[0]?.id || "");
   useEffect(() => {
-    const els = sections.map(s => document.getElementById("pds-"+s.id)).filter(Boolean);
-    if (!els.length) return;
-    const obs = new IntersectionObserver(
-      (entries) => { const vis = entries.filter(e=>e.isIntersecting); if(vis.length) setActive(vis[0].target.id.replace("pds-","")); },
-      { rootMargin:"-80px 0px -55% 0px", threshold:0 }
-    );
-    els.forEach(el=>obs.observe(el));
-    return () => obs.disconnect();
+    const update = () => {
+      const offset = 140;
+      let current = sections[0]?.id || "";
+      for (const s of sections) {
+        const el = document.getElementById("pds-" + s.id);
+        if (el && el.getBoundingClientRect().top <= offset) current = s.id;
+      }
+      setActive(current);
+    };
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+    return () => window.removeEventListener("scroll", update);
   }, [sections]);
+
   return (
     <div className="pd-subnav">
       {sections.map(s => (
         <button key={s.id} className={`pd-subnav-btn${active===s.id?" on":""}`}
-          onClick={()=>document.getElementById("pds-"+s.id)?.scrollIntoView({behavior:"smooth",block:"start"})}>
+          onClick={() => {
+            const el = document.getElementById("pds-"+s.id);
+            if (el) { const top = el.getBoundingClientRect().top + window.scrollY - 80; window.scrollTo({ top, behavior:"smooth" }); }
+          }}>
           {s.label}
         </button>
       ))}
@@ -1312,7 +1321,7 @@ function DoubleHatTree({ visible }) {
 
 
 // ── NAV ───────────────────────────────────────────────────────────────────────
-function Nav({ scrolled, onBack, onTrack, onNavigate }) {
+function Nav({ scrolled, onBack, onTrack, onNavigate, hidden }) {
   const [mobOpen, setMobOpen] = useState(false);
   const [closing, setClosing] = useState(false);
 
@@ -1343,7 +1352,7 @@ function Nav({ scrolled, onBack, onTrack, onNavigate }) {
 
   return (
     <>
-      <nav className={`nav${scrolled ? " sc" : ""}`} style={{ zIndex: mobOpen ? 50 : 100 }}>
+      <nav className={`nav${scrolled ? " sc" : ""}`} style={{ zIndex: mobOpen ? 50 : 100, transform: hidden ? "translateY(-100%)" : "translateY(0)", transition:"transform .35s ease", pointerEvents: hidden ? "none" : "auto" }}>
         <div className="nlogo" onClick={onBack || (() => go("hero"))}>
           <div className="nlogo-mark" dangerouslySetInnerHTML={{ __html: LOGO_SVG }}/>
           <span className="nlogo-txt">Thomas Leloup</span>
@@ -1791,12 +1800,14 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
 // ── PROJECT DETAIL ────────────────────────────────────────────────────────────
 function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack }) {
   const [scrolled, setScrolled] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
   const [lb, setLb] = useState(null); // { images, idx }
   useReveal();
   useEffect(() => {
     window.scrollTo(0, 0);
-    const fn = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", fn);
+    setPastHero(false);
+    const fn = () => { setScrolled(window.scrollY > 50); setPastHero(window.scrollY > 380); };
+    window.addEventListener("scroll", fn, { passive: true });
     if (onTrack) onTrack("event", { type:"project_view", project:p.id });
     return () => window.removeEventListener("scroll", fn);
   }, [p]);
@@ -1821,8 +1832,12 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
   return (
     <div className="pd-page">
       <BgCanvas/>
-      <Nav scrolled={scrolled} onBack={()=>onBack()} onTrack={onTrack} onNavigate={(id)=>onBack(id)}/>
-      {subSections.length > 0 && <ProjectSubNav sections={subSections}/>}
+      <Nav scrolled={scrolled} onBack={()=>onBack()} onTrack={onTrack} onNavigate={(id)=>onBack(id)} hidden={pastHero}/>
+      {subSections.length > 0 && (
+        <div className="pd-subnav-wrap" style={{ top: pastHero ? 0 : 68 }}>
+          <ProjectSubNav sections={subSections}/>
+        </div>
+      )}
       {lb && <Lightbox images={lb.images} startIndex={lb.idx} onClose={()=>setLb(null)}/>}
       <div className="pd-hero">
         <button className="pdbk afu" onClick={()=>onBack()}>← Retour aux projets</button>
