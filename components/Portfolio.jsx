@@ -1398,6 +1398,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
   const [dhVisible, setDhVisible] = useState(false);
   const [px, setPx] = useState({ x:0, y:0 });
   const [mobCtaMode, setMobCtaMode] = useState("projects"); // "projects" | "contact"
+  const [mobCtaVisible, setMobCtaVisible] = useState(false);
   const heroRef = useRef(null);
   const dhRef = useRef(null);
   useReveal();
@@ -1412,7 +1413,10 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
   useEffect(() => {
     const fn = () => {
       setScrolled(window.scrollY > 50);
+      const heroEl = document.getElementById("hero");
       const projEl = document.getElementById("projets");
+      const heroPast = heroEl ? heroEl.getBoundingClientRect().bottom < 0 : window.scrollY > 500;
+      setMobCtaVisible(heroPast);
       if (projEl) {
         const projBottom = projEl.getBoundingClientRect().bottom;
         setMobCtaMode(projBottom < 0 ? "contact" : "projects");
@@ -1797,7 +1801,9 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
       </footer>
 
       {/* ── MOBILE CTA FLOTTANT ── */}
-      <button className={`mob-cta ${mobCtaMode==="contact"?"mob-cta-contact":"mob-cta-proj"}`}
+      <button
+        className={`mob-cta ${mobCtaMode==="contact"?"mob-cta-contact":"mob-cta-proj"}`}
+        style={{ opacity: mobCtaVisible ? 1 : 0, transform: `translateX(-50%) translateY(${mobCtaVisible ? 0 : 16}px)`, pointerEvents: mobCtaVisible ? "auto" : "none" }}
         onClick={() => {
           const id = mobCtaMode==="contact" ? "contact" : "projets";
           document.getElementById(id)?.scrollIntoView({ behavior:"smooth" });
