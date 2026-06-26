@@ -1801,12 +1801,22 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
 function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack }) {
   const [scrolled, setScrolled] = useState(false);
   const [pastHero, setPastHero] = useState(false);
-  const [lb, setLb] = useState(null); // { images, idx }
+  const [navHidden, setNavHidden] = useState(false);
+  const [lb, setLb] = useState(null);
+  const lastScrollY = useRef(0);
   useReveal();
   useEffect(() => {
     window.scrollTo(0, 0);
-    setPastHero(false);
-    const fn = () => { setScrolled(window.scrollY > 50); setPastHero(window.scrollY > 380); };
+    setPastHero(false); setNavHidden(false); lastScrollY.current = 0;
+    const fn = () => {
+      const y = window.scrollY;
+      setScrolled(y > 50);
+      setPastHero(y > 380);
+      if (y < 80) { setNavHidden(false); }
+      else if (y > lastScrollY.current + 4) { setNavHidden(true); }
+      else if (y < lastScrollY.current - 4) { setNavHidden(false); }
+      lastScrollY.current = y;
+    };
     window.addEventListener("scroll", fn, { passive: true });
     if (onTrack) onTrack("event", { type:"project_view", project:p.id });
     return () => window.removeEventListener("scroll", fn);
@@ -1832,9 +1842,15 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
   return (
     <div className="pd-page">
       <BgCanvas/>
-      <Nav scrolled={scrolled} onBack={()=>onBack()} onTrack={onTrack} onNavigate={(id)=>onBack(id)} hidden={pastHero}/>
+      <Nav scrolled={scrolled} onBack={()=>onBack()} onTrack={onTrack} onNavigate={(id)=>onBack(id)} hidden={navHidden}/>
       {subSections.length > 0 && (
-        <div className="pd-subnav-wrap" style={{ top: pastHero ? 0 : 68 }}>
+        <div style={{
+          position:"fixed", left:0, right:0, zIndex:49,
+          top: pastHero ? (navHidden ? 0 : 68) : -80,
+          transition:"top .32s ease",
+          opacity: pastHero ? 1 : 0,
+          pointerEvents: pastHero ? "auto" : "none",
+        }}>
           <ProjectSubNav sections={subSections}/>
         </div>
       )}
