@@ -19,7 +19,7 @@ export async function PUT(
         title=${p.title}, subtitle=${p.subtitle||null}, category=${p.category||null},
         year=${p.year||null}, role=${p.role||null}, duration=${p.duration||null},
         platform=${p.platform||null}, client=${p.client||null},
-        cover_type=${p.cover_type||null}, context=${p.context||null},
+        cover_type=${p.cover_type||null}, cover_image=${p.cover_image||null}, context=${p.context||null},
         problematique=${p.problematique||null},
         objectifs=${JSON.stringify(p.objectifs||[])},
         process_steps=${JSON.stringify(p.process_steps||[])},

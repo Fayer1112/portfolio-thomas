@@ -325,6 +325,13 @@ button{cursor:pointer;font-family:var(--fb)}
 .lb-arrow:hover{background:rgba(124,58,237,.4);border-color:rgba(124,58,237,.5)}
 .lb-prev{left:18px}.lb-next{right:18px}
 .lb-counter{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.45);font-size:13px;font-weight:600;letter-spacing:1px}
+/* Mobile CTA flottant */
+.mob-cta{display:none}
+@media(max-width:768px){
+.mob-cta{display:flex;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:200;padding:14px 28px;border-radius:100px;font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all .35s;box-shadow:0 8px 32px rgba(0,0,0,.4);white-space:nowrap;font-family:var(--fb);align-items:center;gap:8px}
+.mob-cta-proj{background:linear-gradient(135deg,#7C3AED,#6025C0);color:#fff;box-shadow:0 8px 32px rgba(124,58,237,.45)}
+.mob-cta-contact{background:linear-gradient(135deg,#06D6A0,#04A87D);color:#fff;box-shadow:0 8px 32px rgba(6,214,160,.4)}
+}
 /* Gallery */
 .pd-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:8px}
 .pd-gallery-img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;cursor:zoom-in;border:1px solid var(--bdr);transition:all .25s;display:block}
@@ -600,7 +607,7 @@ const toApiProject = (p) => ({
   problematique: p.problematique, objectifs: p.objectifs,
   process_steps: p.processSteps, metrics: p.metrics, tools: p.tools,
   plus_values: p.plusValues, featured: p.featured, confidential: p.confidential,
-  display_order: p.order, tags: p.tags, images: p.images || [],
+  display_order: p.order, tags: p.tags, images: p.images || [], cover_image: p.coverImage || null,
 });
 const fromDbProject = (p) => ({
   ...p,
@@ -609,6 +616,7 @@ const fromDbProject = (p) => ({
   plusValues: p.plus_values ?? p.plusValues ?? [],
   order: p.display_order ?? p.order ?? 99,
   images: p.images || [],
+  coverImage: p.cover_image || p.coverImage || null,
 });
 const toApiTestimonial = (t) => ({
   id: t.id, name: t.name, initials: t.init, role: t.role,
@@ -1307,7 +1315,7 @@ function DoubleHatTree({ visible }) {
 
 
 // ── NAV ───────────────────────────────────────────────────────────────────────
-function Nav({ scrolled, onBack, onTrack, onNavigate, hidden }) {
+function Nav({ scrolled, onBack, onTrack, onNavigate, hidden, cvUrl }) {
   const [mobOpen, setMobOpen] = useState(false);
   const [closing, setClosing] = useState(false);
 
@@ -1346,8 +1354,8 @@ function Nav({ scrolled, onBack, onTrack, onNavigate, hidden }) {
         <ul className="nlinks">
           {links.map(([id,lbl]) => <li key={id}><button onClick={() => go(id)}>{lbl}</button></li>)}
         </ul>
-        <a className="ncv" href="https://www.thomas-leloup.fr/cv_thomas_leloup.pdf" target="_blank" rel="noopener">Mon CV ↗</a>
-        <a className="ncv-mobile" href="https://www.thomas-leloup.fr/cv_thomas_leloup.pdf" target="_blank" rel="noopener">CV ↗</a>
+        <a className="ncv" href={cvUrl||"#"} target="_blank" rel="noopener">Mon CV ↗</a>
+        <a className="ncv-mobile" href={cvUrl||"#"} target="_blank" rel="noopener">CV ↗</a>
         {!mobOpen && (
           <button className="nhb" onClick={openMenu} aria-label="Ouvrir le menu">☰</button>
         )}
@@ -1370,7 +1378,7 @@ function Nav({ scrolled, onBack, onTrack, onNavigate, hidden }) {
           <div className="nmob-divider" style={{ animation:`linkFadeUp .35s ${0.12+links.length*.07}s var(--ease) both` }}/>
           <a className="btn-pri"
             style={{ marginTop:4, textDecoration:"none", animation:`linkFadeUp .35s ${0.18+links.length*.07}s var(--ease) both` }}
-            href="https://www.thomas-leloup.fr/cv_thomas_leloup.pdf" target="_blank" rel="noopener"
+            href={cvUrl||"#"} target="_blank" rel="noopener"
             onClick={closeMenu}>
             Télécharger CV ↗
           </a>
@@ -1381,7 +1389,7 @@ function Nav({ scrolled, onBack, onTrack, onNavigate, hidden }) {
 }
 
 // ── HOME PAGE ─────────────────────────────────────────────────────────────────
-function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
+function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
   useReveal();
   const [scrolled, setScrolled] = useState(false);
   const [filter, setFilter] = useState("Tous");
@@ -1389,6 +1397,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
   const [goAdmin, setGoAdmin] = useState(false);
   const [dhVisible, setDhVisible] = useState(false);
   const [px, setPx] = useState({ x:0, y:0 });
+  const [mobCtaMode, setMobCtaMode] = useState("projects"); // "projects" | "contact"
   const heroRef = useRef(null);
   const dhRef = useRef(null);
   useReveal();
@@ -1401,8 +1410,15 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
   const handleHeroLeave = useCallback(() => setPx({ x:0, y:0 }), []);
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", fn);
+    const fn = () => {
+      setScrolled(window.scrollY > 50);
+      const projEl = document.getElementById("projets");
+      if (projEl) {
+        const projBottom = projEl.getBoundingClientRect().bottom;
+        setMobCtaMode(projBottom < 0 ? "contact" : "projects");
+      }
+    };
+    window.addEventListener("scroll", fn, { passive:true });
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
@@ -1458,7 +1474,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
   return (
     <div>
       <BgCanvas/>
-      <Nav scrolled={scrolled} onTrack={onTrack}/>
+      <Nav scrolled={scrolled} onTrack={onTrack} cvUrl={cvUrl}/>
 
       {/* ── HERO ── */}
       <div className="hero-outer" ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave}>
@@ -1501,7 +1517,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
               <button className="btn-pri" onClick={() => { document.getElementById("projets")?.scrollIntoView({ behavior:"smooth" }); if (onTrack) onTrack("event", { type:"cta_click", label:"hero_projects" }); }}>
                 Voir mes projets →
               </button>
-              <a className="btn-sec" href="https://www.thomas-leloup.fr/cv_thomas_leloup.pdf" target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("event", { type:"cta_click", label:"hero_cv" }); }}>
+              <a className="btn-sec" href={cvUrl||"#"} target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("event", { type:"cta_click", label:"hero_cv" }); }}>
                 Mon CV
               </a>
             </div>
@@ -1779,12 +1795,22 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
           Admin
         </button>
       </footer>
+
+      {/* ── MOBILE CTA FLOTTANT ── */}
+      <button className={`mob-cta ${mobCtaMode==="contact"?"mob-cta-contact":"mob-cta-proj"}`}
+        onClick={() => {
+          const id = mobCtaMode==="contact" ? "contact" : "projets";
+          document.getElementById(id)?.scrollIntoView({ behavior:"smooth" });
+          if (onTrack) onTrack("event", { type:"mob_cta_click", mode:mobCtaMode });
+        }}>
+        {mobCtaMode==="contact" ? "✉ Contactez-moi" : "→ Voir mes projets"}
+      </button>
     </div>
   );
 }
 
 // ── PROJECT DETAIL ────────────────────────────────────────────────────────────
-function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack }) {
+function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack, cvUrl }) {
   const [scrolled, setScrolled] = useState(false);
   const [pastHero, setPastHero] = useState(false);
   const [navHidden, setNavHidden] = useState(false);
@@ -1828,7 +1854,7 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
   return (
     <div className="pd-page">
       <BgCanvas/>
-      <Nav scrolled={scrolled} onBack={()=>onBack()} onTrack={onTrack} onNavigate={(id)=>onBack(id)} hidden={navHidden}/>
+      <Nav scrolled={scrolled} onBack={()=>onBack()} onTrack={onTrack} onNavigate={(id)=>onBack(id)} hidden={navHidden} cvUrl={cvUrl}/>
       {subSections.length > 0 && (
         <div style={{
           position:"fixed", left:0, right:0, zIndex:49,
@@ -1861,7 +1887,13 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
           <div className="pd-brief-item" key={k}><div className="pd-brief-lbl">{k}</div><div className="pd-brief-val">{v}</div></div>
         ))}
       </div>
-      <div className="pd-cover rv"><ProjectCoverSVG type={p.coverType||"cabin"} featured={true}/></div>
+      <div className="pd-cover rv">
+        {p.coverImage ? (
+          <img src={p.coverImage} alt={p.title} style={{ width:"100%", maxHeight:480, objectFit:"cover", borderRadius:16, display:"block" }}/>
+        ) : (
+          <ProjectCoverSVG type={p.coverType||"cabin"} featured={true}/>
+        )}
+      </div>
       <div className="pd-content">
         {p.context && (<>
           <div id="pds-context" className="pd-slbl rv">Contexte <span className="pd-slbl-num">01</span></div>
@@ -2296,6 +2328,64 @@ class ErrorBoundary extends React.Component {
   }
 }
 
+// ── IMAGE UPLOADER (Cloudinary) ───────────────────────────────────────────────
+function ImageUploader({ value = [], onChange, maxFiles = 10, accept = "image/*", label = "Images" }) {
+  const [uploading, setUploading] = useState(false);
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "portfolio_uploads";
+
+  const upload = async (files) => {
+    if (!cloudName) { alert("Configure NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME dans .env.local"); return; }
+    setUploading(true);
+    const urls = [];
+    for (const file of Array.from(files)) {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("upload_preset", preset);
+      try {
+        const r = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, { method:"POST", body:fd });
+        const d = await r.json();
+        if (d.secure_url) urls.push(d.secure_url);
+      } catch(e) { console.error("Upload error", e); }
+    }
+    onChange([...value, ...urls].slice(0, maxFiles));
+    setUploading(false);
+  };
+
+  const remove = (idx) => onChange(value.filter((_,i)=>i!==idx));
+
+  return (
+    <div>
+      <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:8 }}>
+        {value.map((url,i) => (
+          <div key={i} style={{ position:"relative", width:80, height:60, borderRadius:6, overflow:"hidden", border:"1px solid var(--bdr)" }}>
+            {accept.includes("image") ? (
+              <img src={url} style={{ width:"100%", height:"100%", objectFit:"cover" }} alt=""/>
+            ) : (
+              <div style={{ width:"100%", height:"100%", background:"var(--bg3)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24 }}>📄</div>
+            )}
+            <button onClick={()=>remove(i)} style={{ position:"absolute", top:2, right:2, background:"rgba(0,0,0,.7)", border:"none", borderRadius:"50%", width:18, height:18, color:"#fff", fontSize:10, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", lineHeight:1 }}>✕</button>
+          </div>
+        ))}
+        {value.length < maxFiles && (
+          <label style={{ width:80, height:60, borderRadius:6, border:"1px dashed var(--bdr)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", cursor:"pointer", color:"var(--tx3)", fontSize:10, gap:3, transition:"border-color .2s" }}
+            onMouseEnter={e=>e.currentTarget.style.borderColor="var(--acc)"}
+            onMouseLeave={e=>e.currentTarget.style.borderColor="var(--bdr)"}>
+            <span style={{ fontSize:20 }}>{uploading ? "⏳" : "+"}</span>
+            <span>{uploading ? "Upload…" : label}</span>
+            <input type="file" accept={accept} multiple={maxFiles>1} style={{ display:"none" }} onChange={e=>upload(e.target.files)} disabled={uploading}/>
+          </label>
+        )}
+      </div>
+      {!cloudName && (
+        <div style={{ fontSize:11, color:"#f87171", padding:"6px 10px", background:"rgba(239,68,68,.08)", borderRadius:6, marginTop:4 }}>
+          ⚠️ Configure ton cloud Cloudinary dans .env.local pour activer l'upload
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── ADMIN COMPONENTS ─────────────────────────────────────────────────────────
 function AdminLogin({ onLogin }) {
   const [pw, setPw] = useState("");
@@ -2397,7 +2487,7 @@ function MetricsField({ items, onChange }) {
 
 function ProjectModal({ project, tags, onSave, onClose }) {
   const isEdit = !!project;
-  const empty = { id:"", title:"", subtitle:"", category:"Case Study", year:new Date().getFullYear().toString(), role:"", duration:"", platform:"", client:"", tags:[], coverType:"cabin", context:"", problematique:"", objectifs:[""], processSteps:[{num:"01",title:"",desc:"",tools:[]}], metrics:[{value:"",label:""}], tools:[""], plusValues:[""], images:[], featured:false, confidential:false, order:99 };
+  const empty = { id:"", title:"", subtitle:"", category:"Case Study", year:new Date().getFullYear().toString(), role:"", duration:"", platform:"", client:"", tags:[], coverType:"cabin", coverImage:"", context:"", problematique:"", objectifs:[""], processSteps:[{num:"01",title:"",desc:"",tools:[]}], metrics:[{value:"",label:""}], tools:[""], plusValues:[""], images:[], featured:false, confidential:false, order:99 };
   const [f, setF] = useState(isEdit ? { ...project, processSteps:project.processSteps||[{num:"01",title:"",desc:"",tools:[]}], metrics:project.metrics||[{value:"",label:""}] } : empty);
   const [err, setErr] = useState({});
   const [tab, setTab] = useState("info");
@@ -2437,7 +2527,11 @@ function ProjectModal({ project, tags, onSave, onClose }) {
             </div>
             <div className="frow">
               <div className="fgrp"><label className="flbl">Année</label><input className="finp" value={f.year||""} onChange={(e)=>set("year",e.target.value)}/></div>
-              <div className="fgrp"><label className="flbl">Cover</label><select className="fslt" value={f.coverType} onChange={(e)=>set("coverType",e.target.value)}>{["cabin","skylib","ds","sncf","kara"].map((c)=><option key={c}>{c}</option>)}</select></div>
+              <div className="fgrp"><label className="flbl">Cover SVG</label><select className="fslt" value={f.coverType} onChange={(e)=>set("coverType",e.target.value)}>{["cabin","skylib","ds","sncf","kara"].map((c)=><option key={c}>{c}</option>)}</select></div>
+            </div>
+            <div className="fgrp">
+              <label className="flbl">Image de couverture <span style={{fontWeight:400,color:"var(--tx3)",fontSize:11}}>— remplace le SVG si uploadé</span></label>
+              <ImageUploader value={f.coverImage?[f.coverImage]:[]} onChange={(v)=>set("coverImage",v[0]||"")} maxFiles={1} accept="image/*" label="Cover"/>
             </div>
             <div className="fgrp">
               <label className="flbl">Tags</label>
@@ -2461,7 +2555,10 @@ function ProjectModal({ project, tags, onSave, onClose }) {
           {tab==="results" && (<>
             <MetricsField items={f.metrics} onChange={(v)=>set("metrics",v)}/>
             <ArrayField label="Plus-values" items={f.plusValues} onChange={(v)=>set("plusValues",v)} placeholder="Plus-value"/>
-            <ArrayField label="Photos du projet (URLs)" items={f.images||[]} onChange={(v)=>set("images",v)} placeholder="https://... (URL de l'image)"/>
+            <div className="fgrp">
+              <label className="flbl">Photos du projet <span style={{fontWeight:400,color:"var(--tx3)",fontSize:11}}>— upload direct (PNG, JPG)</span></label>
+              <ImageUploader value={f.images||[]} onChange={(v)=>set("images",v)} maxFiles={12} accept="image/*" label="Photo"/>
+            </div>
           </>)}
         </div>
         <div className="modft"><button className="btn-sec" onClick={onClose}>Annuler</button><button className="btn-pri" onClick={submit}>{isEdit?"Enregistrer":"Créer"}</button></div>
@@ -2583,18 +2680,29 @@ function AdminPage({ onBack }) {
   const [confirm, setConfirm] = useState(null);
   const [confirmTesti, setConfirmTesti] = useState(null);
   const [loadingData, setLoadingData] = useState(true);
+  const [cvUrl, setCvUrl] = useState("");
+  const [cvSaving, setCvSaving] = useState(false);
 
   useEffect(() => {
     if (!authed) return;
     Promise.all([
       fetch('/api/projects').then(r=>r.json()).catch(()=>null),
       fetch('/api/testimonials').then(r=>r.json()).catch(()=>null),
-    ]).then(([projs, testis]) => {
+      fetch('/api/settings').then(r=>r.json()).catch(()=>null),
+    ]).then(([projs, testis, settings]) => {
       if (Array.isArray(projs)) setProjects(projs.map(fromDbProject));
       if (Array.isArray(testis)) setTestimonials(testis.map(fromDbTestimonial));
+      if (settings?.cv_url) setCvUrl(settings.cv_url);
       setLoadingData(false);
     });
   }, [authed]);
+
+  const saveCv = async (url) => {
+    setCvSaving(true);
+    await fetch('/api/settings', { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${token}` }, body:JSON.stringify({ key:'cv_url', value:url }) });
+    setCvUrl(url);
+    setCvSaving(false);
+  };
 
   if (!authed) return <AdminLogin onLogin={(tok) => {
     try { sessionStorage.setItem("tl_admin_session", "1"); sessionStorage.setItem("tl_admin_token", tok); } catch {}
@@ -2629,7 +2737,7 @@ function AdminPage({ onBack }) {
     <div className="aly">
       <div className="asb">
         <div className="asblo"><div className="asbdot"/>Admin</div>
-        {[["dashboard","📊","Dashboard"],["projects","📁","Projets"],["testimonials","💬","Avis"],["tags","🏷️","Tags"]].map(([id,ico,lbl]) => (
+        {[["dashboard","📊","Dashboard"],["projects","📁","Projets"],["testimonials","💬","Avis"],["tags","🏷️","Tags"],["cv","📄","Mon CV"]].map(([id,ico,lbl]) => (
           <button key={id} className={`ani${tab===id?" on":""}`} onClick={()=>setTab(id)}><span>{ico}</span>{lbl}</button>
         ))}
         <div className="asbbt">
@@ -2687,6 +2795,35 @@ function AdminPage({ onBack }) {
             {tags.map((t)=>{ const count=projects.filter((p)=>p.tags?.includes(t.id)).length; return <div key={t.id} style={{ display:"flex", alignItems:"center", gap:10, marginBottom:8 }}><div style={{ width:7, height:7, borderRadius:"50%", background:t.color, flexShrink:0 }}/><span style={{ fontSize:12.5, color:"var(--tx2)", flex:1, fontWeight:500 }}>{t.name}</span><div style={{ height:4, borderRadius:2, background:t.color+"22", flex:2 }}><div style={{ height:"100%", borderRadius:2, background:t.color, width:`${Math.min(100,(count/Math.max(1,projects.length))*100)}%`, transition:"width .5s" }}/></div><span style={{ fontSize:11, color:"var(--tx3)", minWidth:52, textAlign:"right" }}>{count} projet{count>1?"s":""}</span></div>; })}
           </div>
         </>)}
+
+        {tab==="cv" && (<>
+          <div className="ahd"><div><div className="atit">Mon CV</div><div className="asub">Gérez le PDF affiché sur votre portfolio</div></div></div>
+          <div style={{ maxWidth:560 }}>
+            <div style={{ background:"var(--bg3)", border:"1px solid var(--bdr)", borderRadius:12, padding:"24px 28px", marginBottom:20 }}>
+              <div style={{ fontSize:13, fontWeight:600, color:"var(--tx2)", marginBottom:16 }}>CV actuel</div>
+              {cvUrl ? (
+                <div style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 16px", background:"rgba(6,214,160,.08)", border:"1px solid rgba(6,214,160,.2)", borderRadius:9, marginBottom:16 }}>
+                  <span style={{ fontSize:24 }}>📄</span>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:13, fontWeight:600, color:"#06D6A0" }}>CV en ligne</div>
+                    <a href={cvUrl} target="_blank" rel="noopener" style={{ fontSize:11.5, color:"var(--tx3)", wordBreak:"break-all" }}>{cvUrl.slice(0,60)}…</a>
+                  </div>
+                  <button onClick={()=>saveCv("")} style={{ padding:"6px 14px", borderRadius:7, background:"rgba(239,68,68,.1)", border:"1px solid rgba(239,68,68,.2)", color:"#f87171", fontSize:12, fontWeight:600, cursor:"pointer" }}>Retirer</button>
+                </div>
+              ) : (
+                <div style={{ padding:"12px 16px", background:"rgba(255,255,255,.03)", border:"1px dashed var(--bdr)", borderRadius:9, marginBottom:16, fontSize:13, color:"var(--tx3)" }}>
+                  Aucun CV configuré
+                </div>
+              )}
+              <div style={{ fontSize:13, fontWeight:600, color:"var(--tx2)", marginBottom:10 }}>Uploader un nouveau PDF</div>
+              <ImageUploader value={cvUrl ? [cvUrl] : []} onChange={(urls)=>saveCv(urls[urls.length-1]||"")} maxFiles={1} accept="application/pdf,.pdf" label="PDF"/>
+              {cvSaving && <div style={{ marginTop:8, fontSize:12, color:"var(--tx3)" }}>Sauvegarde…</div>}
+            </div>
+            <div style={{ fontSize:12, color:"var(--tx3)", lineHeight:1.6 }}>
+              Le PDF uploadé sera utilisé pour tous les boutons <strong>"Mon CV"</strong> du portfolio.
+            </div>
+          </div>
+        </>)}
       </div>
 
       {(editProject||addProject) && <ProjectModal project={editProject} tags={tags} onSave={saveProject} onClose={()=>{setEditProject(null);setAddProject(false);}}/>}
@@ -2733,7 +2870,12 @@ export default function App({ initialData = {} }) {
   const [projects] = useStorage("tl_v4_projects", serverProjects || DEFAULT_PROJECTS);
   const [tags] = useStorage("tl_v4_tags", DEFAULT_TAGS);
   const [testimonials] = useStorage("tl_v4_testimonials", serverTestimonials || DEFAULT_TESTIMONIALS);
+  const [cvUrl, setCvUrlApp] = useState("https://www.thomas-leloup.fr/cv_thomas_leloup.pdf");
   const { analytics, track } = useAnalytics(cookieState === "accepted");
+
+  useEffect(() => {
+    fetch('/api/settings').then(r=>r.json()).then(s=>{ if(s?.cv_url) setCvUrlApp(s.cv_url); }).catch(()=>{});
+  }, []);
 
   // Sync server data into local storage on each render so fresh BDD data is always used
   useEffect(() => {
@@ -2795,7 +2937,7 @@ export default function App({ initialData = {} }) {
     return (
       <ErrorBoundary onHome={goHome}>
         <>
-          <ProjectPage project={p} allProjects={projects} tags={tags} onBack={(target)=>goHome(target||"projets")} onProject={goProject} onTrack={track}/>
+          <ProjectPage project={p} allProjects={projects} tags={tags} onBack={(target)=>goHome(target||"projets")} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
           {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
         </>
       </ErrorBoundary>
@@ -2805,7 +2947,7 @@ export default function App({ initialData = {} }) {
   return (
     <ErrorBoundary onHome={goHome}>
       <>
-        <HomePage projects={projects} tags={tags} testimonials={testimonials} onProject={goProject} onTrack={track}/>
+        <HomePage projects={projects} tags={tags} testimonials={testimonials} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
         {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
       </>
     </ErrorBoundary>

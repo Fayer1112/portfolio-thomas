@@ -39,11 +39,11 @@ export async function POST(req: NextRequest) {
   try {
     await sql`
       INSERT INTO projects (id, title, subtitle, category, year, role, duration,
-        platform, client, cover_type, context, problematique, objectifs,
+        platform, client, cover_type, cover_image, context, problematique, objectifs,
         process_steps, metrics, tools, plus_values, featured, confidential, display_order, images)
       VALUES (${p.id}, ${p.title}, ${p.subtitle||null}, ${p.category||'Case Study'},
         ${p.year||null}, ${p.role||null}, ${p.duration||null}, ${p.platform||null},
-        ${p.client||null}, ${p.cover_type||'cabin'}, ${p.context||null},
+        ${p.client||null}, ${p.cover_type||'cabin'}, ${p.cover_image||null}, ${p.context||null},
         ${p.problematique||null}, ${JSON.stringify(p.objectifs||[])},
         ${JSON.stringify(p.process_steps||[])}, ${JSON.stringify(p.metrics||[])},
         ${JSON.stringify(p.tools||[])}, ${JSON.stringify(p.plus_values||[])},

@@ -18,6 +18,7 @@ export const projectSchema = z.object({
   platform:      z.string().max(255).optional(),
   client:        z.string().max(255).optional(),
   cover_type:    z.string().max(50).optional(),
+  cover_image:   z.string().optional(),
   context:       z.string().optional(),
   problematique: z.string().optional(),
   objectifs:     z.array(z.string()).optional(),
