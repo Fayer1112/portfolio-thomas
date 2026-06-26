@@ -27,7 +27,7 @@ export async function PUT(
         tools=${JSON.stringify(p.tools||[])},
         plus_values=${JSON.stringify(p.plus_values||[])},
         featured=${p.featured||false}, confidential=${p.confidential||false},
-        display_order=${p.display_order||99}, updated_at=NOW()
+        display_order=${p.display_order||99}, images=${JSON.stringify(p.images||[])}, updated_at=NOW()
       WHERE id=${id}
     `;
     await sql`DELETE FROM project_tags WHERE project_id=${id}`;

@@ -8,6 +8,7 @@ const PHOTO_URL = "data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1B
 
 const CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:hidden;max-width:100vw}
 :root{
   --bg:#07080F;--bg2:#0C0D18;--bg3:#111220;--bg4:#171826;
   --bdr:#1C1D2E;--bdr2:#282940;
@@ -264,13 +265,15 @@ button{cursor:pointer;font-family:var(--fb)}
 /* ─ CONTACT ─ */
 .contact-layout{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;margin-top:64px}
 .contact-info{}
-.contact-info-title{font-family:var(--fd);font-size:clamp(28px,3.5vw,44px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:16px}
-.contact-info-desc{font-size:15.5px;color:var(--tx2);line-height:1.82;margin-bottom:28px;font-weight:400}
-.contact-detail{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.contact-detail-ico{width:38px;height:38px;border-radius:9px;background:var(--accd);border:1px solid rgba(124,58,237,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
-.contact-detail-txt{font-size:13.5px;font-weight:600;color:var(--tx2)}
-.contact-detail-val{font-size:13px;color:var(--tx);font-weight:500}
-.contact-socials{display:flex;gap:10px;margin-top:24px}
+.contact-info-desc{font-size:15px;color:var(--tx2);line-height:1.82;margin-bottom:24px;font-weight:400}
+.contact-avail{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;background:rgba(6,214,160,.08);border:1px solid rgba(6,214,160,.22);font-size:12px;font-weight:700;color:#06D6A0;margin-bottom:28px;letter-spacing:.3px}
+.contact-avail-dot{width:7px;height:7px;border-radius:50%;background:#06D6A0;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 6px #06D6A0;flex-shrink:0}
+.contact-card{display:flex;align-items:center;gap:16px;padding:16px 20px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--bdr);transition:all .22s;text-decoration:none;margin-bottom:10px;cursor:pointer}
+.contact-card:hover{background:rgba(124,58,237,.08);border-color:rgba(124,58,237,.3);transform:translateX(4px)}
+.contact-card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
+.contact-card-label{font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--tx3);margin-bottom:3px}
+.contact-card-val{font-size:13.5px;font-weight:600;color:var(--tx);line-height:1.3}
+.contact-socials{display:flex;gap:10px;margin-top:20px}
 .cform-wrap{background:var(--bg3);border:1px solid var(--bdr);border-radius:18px;padding:34px}
 .cform-title{font-family:var(--fd);font-size:18px;font-weight:800;letter-spacing:-.3px;margin-bottom:6px}
 .cform-sub{font-size:12.5px;color:var(--tx2);margin-bottom:24px;font-weight:400}
@@ -313,9 +316,28 @@ button{cursor:pointer;font-family:var(--fb)}
 
 /* ─ PROJECT DETAIL ─ */
 .pd-page{min-height:100vh;background:var(--bg)}
+/* Sub-nav sticky scrollspy */
+.pd-subnav{position:sticky;top:68px;z-index:50;background:rgba(7,8,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);display:flex;gap:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.pd-subnav::-webkit-scrollbar{display:none}
+.pd-subnav-btn{padding:13px 22px;font-size:11.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--tx3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:var(--fb)}
+.pd-subnav-btn.on{color:var(--acc);border-bottom-color:var(--acc)}
+.pd-subnav-btn:hover{color:var(--tx2)}
+/* Lightbox */
+.lb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:9999;display:flex;align-items:center;justify-content:center;animation:fadeIn .18s ease}
+.lb-img{max-width:88vw;max-height:86vh;object-fit:contain;border-radius:10px;box-shadow:0 32px 80px rgba(0,0,0,.7);animation:scaleIn .2s var(--ease);display:block}
+.lb-close{position:absolute;top:18px;right:22px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;backdrop-filter:blur(8px);z-index:1}
+.lb-close:hover{background:rgba(255,255,255,.18)}
+.lb-arrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:1}
+.lb-arrow:hover{background:rgba(124,58,237,.4);border-color:rgba(124,58,237,.5)}
+.lb-prev{left:18px}.lb-next{right:18px}
+.lb-counter{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.45);font-size:13px;font-weight:600;letter-spacing:1px}
+/* Gallery */
+.pd-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:8px}
+.pd-gallery-img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;cursor:zoom-in;border:1px solid var(--bdr);transition:all .25s;display:block}
+.pd-gallery-img:hover{border-color:rgba(124,58,237,.4);transform:scale(1.02);box-shadow:0 8px 24px rgba(124,58,237,.18)}
 .pd-hero{padding:120px 64px 0;position:relative;z-index:1}
-.pdbk{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--tx2);cursor:pointer;margin-bottom:36px;transition:color .2s;background:none;border:none;font-family:var(--fb);font-weight:600}
-.pdbk:hover{color:var(--acc)}
+.pdbk{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:8px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);color:#C4B5FD;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:32px;transition:all .22s;font-family:var(--fb);letter-spacing:.2px}
+.pdbk:hover{background:rgba(124,58,237,.2);border-color:rgba(124,58,237,.5);color:#DDD6FE;transform:translateX(-3px)}
 .pd-hero-inner{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:flex-end;padding-bottom:44px;border-bottom:1px solid var(--bdr)}
 .pd-cat{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .pd-cat::before{content:'';width:16px;height:1px;background:var(--acc)}
@@ -523,6 +545,10 @@ button{cursor:pointer;font-family:var(--fb)}
   .nav{padding:12px 20px;gap:8px}.nlinks{display:none}.nhb{display:flex;align-items:center}.ncv{display:none}.ncv-mobile{display:flex;align-items:center;gap:4px;border:1px solid var(--bdr);color:var(--tx2);padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;background:transparent;white-space:nowrap;text-decoration:none;flex-shrink:0}
   .hero{padding:80px 20px 48px;gap:32px;grid-template-columns:1fr}.hero-left{padding:24px 0;max-width:100%}.hero-h1{letter-spacing:-2px;font-size:clamp(44px,12vw,80px)}.hero-desc{font-size:15px;line-height:1.75}.hero-badge{font-size:10px;padding:5px 14px;margin-bottom:20px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
   .stats{flex-direction:column}.stat{padding:24px 20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
+  .pd-subnav{top:58px;padding-left:0}.pd-subnav-btn{padding:11px 14px;font-size:10.5px}
+  .pd-gallery{grid-template-columns:1fr 1fr}
+  .contact-layout{grid-template-columns:1fr;gap:40px}
+  .lb-arrow{display:none}
   .sec{padding:72px 20px}
   .tl-grid{grid-template-columns:1fr}
   .tgrid{grid-template-columns:1fr}
@@ -587,7 +613,7 @@ const toApiProject = (p) => ({
   problematique: p.problematique, objectifs: p.objectifs,
   process_steps: p.processSteps, metrics: p.metrics, tools: p.tools,
   plus_values: p.plusValues, featured: p.featured, confidential: p.confidential,
-  display_order: p.order, tags: p.tags,
+  display_order: p.order, tags: p.tags, images: p.images || [],
 });
 const fromDbProject = (p) => ({
   ...p,
@@ -595,6 +621,7 @@ const fromDbProject = (p) => ({
   processSteps: p.process_steps ?? p.processSteps ?? [],
   plusValues: p.plus_values ?? p.plusValues ?? [],
   order: p.display_order ?? p.order ?? 99,
+  images: p.images || [],
 });
 const toApiTestimonial = (t) => ({
   id: t.id, name: t.name, initials: t.init, role: t.role,
@@ -690,29 +717,81 @@ function useReveal() {
 
 // ── ANALYTICS TRACKER ────────────────────────────────────────────────────────
 function useAnalytics(consent) {
-  const [analytics, setAnalytics] = useStorage("tl_analytics_v4", { visits: [], events: [] });
+  const [analytics, setAnalytics] = useState(() => {
+    try { const s = localStorage.getItem("tl_analytics_v4"); return s ? JSON.parse(s) : { visits:[], events:[] }; } catch { return { visits:[], events:[] }; }
+  });
 
   const track = useCallback((type, data = {}) => {
     if (!consent) return;
     setAnalytics((prev) => {
       const now = Date.now();
+      let next;
       if (type === "visit") {
         const today = new Date().toISOString().slice(0, 10);
         const visits = [...(prev.visits || [])];
         const idx = visits.findIndex((v) => v.date === today);
         if (idx >= 0) visits[idx] = { ...visits[idx], count: (visits[idx].count || 0) + 1 };
         else visits.push({ date: today, count: 1 });
-        return { ...prev, visits: visits.slice(-30) };
-      }
-      if (type === "event") {
+        next = { ...prev, visits: visits.slice(-30) };
+      } else if (type === "event") {
         const events = [...(prev.events || []), { ...data, ts: now }];
-        return { ...prev, events: events.slice(-200) };
-      }
-      return prev;
+        next = { ...prev, events: events.slice(-200) };
+      } else { next = prev; }
+      try { localStorage.setItem("tl_analytics_v4", JSON.stringify(next)); } catch {}
+      return next;
     });
-  }, [consent, setAnalytics]);
+  }, [consent]);
 
   return { analytics, track };
+}
+
+// ── LIGHTBOX ─────────────────────────────────────────────────────────────────
+function Lightbox({ images, startIndex = 0, onClose }) {
+  const [idx, setIdx] = useState(startIndex);
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight" && idx < images.length-1) setIdx(i=>i+1);
+      if (e.key === "ArrowLeft" && idx > 0) setIdx(i=>i-1);
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  }, [idx, onClose, images.length]);
+  return (
+    <div className="lb-overlay" onClick={onClose}>
+      <button className="lb-close" onClick={onClose}>✕</button>
+      {idx > 0 && <button className="lb-arrow lb-prev" onClick={(e)=>{e.stopPropagation();setIdx(i=>i-1);}}>‹</button>}
+      <img className="lb-img" src={images[idx]} alt={`Photo ${idx+1}`} onClick={(e)=>e.stopPropagation()}/>
+      {idx < images.length-1 && <button className="lb-arrow lb-next" onClick={(e)=>{e.stopPropagation();setIdx(i=>i+1);}}>›</button>}
+      {images.length > 1 && <div className="lb-counter">{idx+1} / {images.length}</div>}
+    </div>
+  );
+}
+
+// ── PROJECT SUB-NAV (scrollspy sticky) ───────────────────────────────────────
+function ProjectSubNav({ sections }) {
+  const [active, setActive] = useState(sections[0]?.id || "");
+  useEffect(() => {
+    const els = sections.map(s => document.getElementById("pds-"+s.id)).filter(Boolean);
+    if (!els.length) return;
+    const obs = new IntersectionObserver(
+      (entries) => { const vis = entries.filter(e=>e.isIntersecting); if(vis.length) setActive(vis[0].target.id.replace("pds-","")); },
+      { rootMargin:"-80px 0px -55% 0px", threshold:0 }
+    );
+    els.forEach(el=>obs.observe(el));
+    return () => obs.disconnect();
+  }, [sections]);
+  return (
+    <div className="pd-subnav">
+      {sections.map(s => (
+        <button key={s.id} className={`pd-subnav-btn${active===s.id?" on":""}`}
+          onClick={()=>document.getElementById("pds-"+s.id)?.scrollIntoView({behavior:"smooth",block:"start"})}>
+          {s.label}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 // ── STARS + CONSTELLATION BACKGROUND ─────────────────────────────────────────
@@ -1233,7 +1312,7 @@ function DoubleHatTree({ visible }) {
 
 
 // ── NAV ───────────────────────────────────────────────────────────────────────
-function Nav({ scrolled, onBack, onTrack }) {
+function Nav({ scrolled, onBack, onTrack, onNavigate }) {
   const [mobOpen, setMobOpen] = useState(false);
   const [closing, setClosing] = useState(false);
 
@@ -1253,10 +1332,10 @@ function Nav({ scrolled, onBack, onTrack }) {
 
   const go = (id) => {
     closeMenu();
+    if (onNavigate) { onNavigate(id); return; }
     const scrollTimer = setTimeout(() => {
       document.getElementById(id)?.scrollIntoView({ behavior:"smooth" });
     }, 260);
-    // scrollTimer intentionally not cleared — 260ms is safe on unmount
     if (onTrack) onTrack("event", { type:"nav_click", section:id });
   };
 
@@ -1660,44 +1739,35 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
         <div className="contact-layout rv">
           {/* Left — info */}
           <div className="contact-info">
+            <div className="contact-avail">
+              <div className="contact-avail-dot"/>
+              Disponible — CDI · Freelance · Mission
+            </div>
             <p className="contact-info-desc">
-              Disponible pour des opportunités en <strong>CDI</strong>, <strong>freelance</strong> ou <strong>mission de conseil</strong>.
-              Basé à Paris, ouvert au remote.<br/><br/>
-              Je réponds à tous les messages sous 24h.
+              Basé à Paris, ouvert au remote.<br/>Je réponds sous 24h.
             </p>
-            <div className="contact-detail">
-              <div className="contact-detail-ico">📧</div>
+            <a className="contact-card" href="mailto:leloupthomas.pro@gmail.com"
+              onClick={()=>{ if(onTrack) onTrack("event",{type:"contact_click",label:"email"}); }}>
+              <div className="contact-card-icon" style={{ background:"rgba(124,58,237,.12)" }}>📧</div>
               <div>
-                <div className="contact-detail-txt">Email</div>
-                <a className="contact-detail-val" href="mailto:leloupthomas.pro@gmail.com" style={{ color:"var(--acc)", fontWeight:600 }}>
-                  leloupthomas.pro@gmail.com
-                </a>
+                <div className="contact-card-label">Email</div>
+                <div className="contact-card-val">leloupthomas.pro@gmail.com</div>
               </div>
-            </div>
-            <div className="contact-detail">
-              <div className="contact-detail-ico">💼</div>
+            </a>
+            <a className="contact-card" href="https://www.linkedin.com/in/thomas--leloup/" target="_blank" rel="noopener"
+              onClick={()=>{ if(onTrack) onTrack("event",{type:"contact_click",label:"linkedin"}); }}>
+              <div className="contact-card-icon" style={{ background:"rgba(75,127,250,.12)" }}>💼</div>
               <div>
-                <div className="contact-detail-txt">LinkedIn</div>
-                <a className="contact-detail-val" href="https://www.linkedin.com/in/thomas--leloup/" target="_blank" rel="noopener" style={{ color:"var(--acc)", fontWeight:600 }}>
-                  linkedin.com/in/thomas--leloup
-                </a>
+                <div className="contact-card-label">LinkedIn</div>
+                <div className="contact-card-val">linkedin.com/in/thomas--leloup</div>
               </div>
-            </div>
-            <div className="contact-detail">
-              <div className="contact-detail-ico">📍</div>
+            </a>
+            <div className="contact-card" style={{ cursor:"default" }}>
+              <div className="contact-card-icon" style={{ background:"rgba(6,214,160,.1)" }}>📍</div>
               <div>
-                <div className="contact-detail-txt">Localisation</div>
-                <div className="contact-detail-val">Paris, France · Remote OK</div>
+                <div className="contact-card-label">Localisation</div>
+                <div className="contact-card-val">Paris, France · Remote OK</div>
               </div>
-            </div>
-            <div className="contact-socials">
-              <a className="clk" href="https://www.linkedin.com/in/thomas--leloup/" target="_blank" rel="noopener"
-                onClick={() => { if (onTrack) onTrack("event", { type:"contact_click", label:"linkedin" }); }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
-              </a>
-              <a className="clk" href="https://www.thomas-leloup.fr/cv_thomas_leloup.pdf" target="_blank" rel="noopener">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-              </a>
             </div>
           </div>
           {/* Right — form */}
@@ -1721,6 +1791,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack }) {
 // ── PROJECT DETAIL ────────────────────────────────────────────────────────────
 function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack }) {
   const [scrolled, setScrolled] = useState(false);
+  const [lb, setLb] = useState(null); // { images, idx }
   useReveal();
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -1734,12 +1805,27 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
   const idx = sorted.findIndex((x) => x.id === p.id);
   const prev = sorted[idx-1], next = sorted[idx+1];
   const pvIcons = ["✦","◈","⬡","◆","✶","◉","⬟","◇"];
+
+  // Build sections for sub-nav (only those with data)
+  const subSections = [
+    p.context && { id:"context", label:"Contexte" },
+    p.problematique && { id:"problematique", label:"Problématique" },
+    p.objectifs?.length && { id:"objectifs", label:"Objectifs" },
+    p.processSteps?.length && { id:"processus", label:"Processus" },
+    p.metrics?.length && { id:"resultats", label:"Résultats" },
+    p.images?.length && { id:"gallery", label:"Visuels" },
+    p.plusValues?.length && { id:"plusvalues", label:"Plus-values" },
+    p.tools?.length && { id:"outils", label:"Outils" },
+  ].filter(Boolean);
+
   return (
     <div className="pd-page">
       <BgCanvas/>
-      <Nav scrolled={scrolled} onBack={onBack} onTrack={onTrack}/>
+      <Nav scrolled={scrolled} onBack={()=>onBack()} onTrack={onTrack} onNavigate={(id)=>onBack(id)}/>
+      {subSections.length > 0 && <ProjectSubNav sections={subSections}/>}
+      {lb && <Lightbox images={lb.images} startIndex={lb.idx} onClose={()=>setLb(null)}/>}
       <div className="pd-hero">
-        <button className="pdbk afu" onClick={onBack}>← Retour aux projets</button>
+        <button className="pdbk afu" onClick={()=>onBack()}>← Retour aux projets</button>
         <div className="pd-hero-inner">
           <div>
             <div className="pd-cat afu">{p.category}</div>
@@ -1761,7 +1847,7 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
       <div className="pd-cover rv"><ProjectCoverSVG type={p.coverType||"cabin"} featured={true}/></div>
       <div className="pd-content">
         {p.context && (<>
-          <div className="pd-slbl rv">Contexte <span className="pd-slbl-num">01</span></div>
+          <div id="pds-context" className="pd-slbl rv">Contexte <span className="pd-slbl-num">01</span></div>
           <div className="pd-intro-grid rv">
             <p className="pd-intro-txt">{p.context}</p>
             <div className="pd-intro-sidebar">
@@ -1772,11 +1858,11 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
           </div>
         </>)}
         {p.problematique && (<>
-          <div className="pd-slbl rv">Problématique <span className="pd-slbl-num">02</span></div>
+          <div id="pds-problematique" className="pd-slbl rv">Problématique <span className="pd-slbl-num">02</span></div>
           <div className="pd-problem rv"><p className="pd-problem-q">{p.problematique}</p></div>
         </>)}
         {p.objectifs?.length > 0 && (<>
-          <div className="pd-slbl rv">Objectifs <span className="pd-slbl-num">03</span></div>
+          <div id="pds-objectifs" className="pd-slbl rv">Objectifs <span className="pd-slbl-num">03</span></div>
           <div className="pd-obj-grid rv">
             {p.objectifs.map((o,i) => (
               <div className="pd-obj-card" key={i}><div className="pd-obj-num">0{i+1}</div><div className="pd-obj-txt">{o}</div></div>
@@ -1784,7 +1870,7 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
           </div>
         </>)}
         {p.processSteps?.length > 0 && (<>
-          <div className="pd-slbl rv">Processus <span className="pd-slbl-num">04</span></div>
+          <div id="pds-processus" className="pd-slbl rv">Processus <span className="pd-slbl-num">04</span></div>
           <div className="pd-process rv">
             {p.processSteps.map((s,i) => (
               <div className="pd-step" key={i}>
@@ -1802,15 +1888,24 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
           </div>
         </>)}
         {p.metrics?.length > 0 && (<>
-          <div className="pd-slbl rv">Résultats <span className="pd-slbl-num">05</span></div>
+          <div id="pds-resultats" className="pd-slbl rv">Résultats <span className="pd-slbl-num">05</span></div>
           <div className="pd-metrics rv">
             {p.metrics.map((m,i) => (
               <div className="pd-metric" key={i}><div className="pd-metric-val">{m.value}</div><div className="pd-metric-lbl">{m.label}</div></div>
             ))}
           </div>
         </>)}
+        {p.images?.length > 0 && (<>
+          <div id="pds-gallery" className="pd-slbl rv">Visuels <span className="pd-slbl-num">06</span></div>
+          <div className="pd-gallery rv">
+            {p.images.map((src, i) => (
+              <img key={i} src={src} alt={`${p.title} — visuel ${i+1}`} className="pd-gallery-img"
+                onClick={()=>setLb({ images:p.images, idx:i })}/>
+            ))}
+          </div>
+        </>)}
         {p.plusValues?.length > 0 && (<>
-          <div className="pd-slbl rv">Plus-values <span className="pd-slbl-num">06</span></div>
+          <div id="pds-plusvalues" className="pd-slbl rv">Plus-values <span className="pd-slbl-num">0{p.images?.length?7:6}</span></div>
           <div className="pd-pv rv">
             {p.plusValues.map((v,i) => (
               <div className="pd-pv-item" key={i}><div className="pd-pv-icon">{pvIcons[i%pvIcons.length]}</div><div className="pd-pv-txt">{v}</div></div>
@@ -1818,7 +1913,7 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
           </div>
         </>)}
         {p.tools?.length > 0 && (<>
-          <div className="pd-slbl rv">Outils <span className="pd-slbl-num">07</span></div>
+          <div id="pds-outils" className="pd-slbl rv">Outils <span className="pd-slbl-num">0{[p.context,p.problematique,p.objectifs?.length,p.processSteps?.length,p.metrics?.length,p.images?.length,p.plusValues?.length].filter(Boolean).length+1}</span></div>
           <div className="pd-tools-row rv">
             {p.tools.map((t) => <div className="pd-tool" key={t}><div className="pd-tool-dot"/><span className="pd-tool-name">{t}</span></div>)}
           </div>
@@ -2009,34 +2104,20 @@ function ContactForm({ onTrack }) {
     return e;
   };
 
-  const send = () => {
+  const send = async () => {
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     setStatus("sending");
-
     try {
-      const subject = encodeURIComponent("[Portfolio] " + form.subject + " — " + form.name);
-      const body = encodeURIComponent(
-        "Bonjour Thomas,\n\n" +
-        "Nom : " + form.name + "\n" +
-        "Email : " + form.email + "\n" +
-        "Objet : " + form.subject + "\n\n" +
-        "Message :\n" + form.message + "\n\n" +
-        "---\nEnvoyé depuis thomas-leloup.fr"
-      );
-      const mailto = "mailto:leloupthomas.pro@gmail.com?subject=" + subject + "&body=" + body;
-
-      // Open in new tab — page stays visible
-      const opened = window.open(mailto, "_blank", "noopener,noreferrer");
-
+      const r = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name:form.name, email:form.email, subject:form.subject, message:form.message }),
+      });
+      if (!r.ok) { setStatus("error"); return; }
       if (onTrack) onTrack("event", { type:"contact_form_send", subject:form.subject });
-
-      // Show success regardless (mailto opened or not)
-      const successTimer = setTimeout(() => setStatus("success"), 400);
-      return () => clearTimeout(successTimer); // cleanup if component unmounts
-    } catch (err) {
-      setStatus("error");
-    }
+      setStatus("success");
+    } catch { setStatus("error"); }
   };
 
   if (status === "error") {
@@ -2066,10 +2147,9 @@ function ContactForm({ onTrack }) {
       <div className="cform-wrap">
         <div className="cform-success">
           <div className="cform-success-ico">🚀</div>
-          <div className="cform-success-title">Message prêt pour le lancement !</div>
+          <div className="cform-success-title">Message envoyé avec succès !</div>
           <div className="cform-success-txt">
-            Votre messagerie s'est ouverte avec le message pré-rempli.<br/>
-            Cliquez sur <strong>"Envoyer"</strong> dans votre client email pour m'atteindre à<br/>
+            Je vous répondrai sous 24h à<br/>
             <strong style={{ color:"var(--acc)" }}>leloupthomas.pro@gmail.com</strong><br/>
             <span style={{ fontSize:12, color:"var(--tx3)", marginTop:8, display:"block" }}>Je réponds sous 24h — promis, même depuis l'espace 🛸</span>
           </div>
@@ -2300,7 +2380,7 @@ function MetricsField({ items, onChange }) {
 
 function ProjectModal({ project, tags, onSave, onClose }) {
   const isEdit = !!project;
-  const empty = { id:"", title:"", subtitle:"", category:"Case Study", year:new Date().getFullYear().toString(), role:"", duration:"", platform:"", client:"", tags:[], coverType:"cabin", context:"", problematique:"", objectifs:[""], processSteps:[{num:"01",title:"",desc:"",tools:[]}], metrics:[{value:"",label:""}], tools:[""], plusValues:[""], featured:false, confidential:false, order:99 };
+  const empty = { id:"", title:"", subtitle:"", category:"Case Study", year:new Date().getFullYear().toString(), role:"", duration:"", platform:"", client:"", tags:[], coverType:"cabin", context:"", problematique:"", objectifs:[""], processSteps:[{num:"01",title:"",desc:"",tools:[]}], metrics:[{value:"",label:""}], tools:[""], plusValues:[""], images:[], featured:false, confidential:false, order:99 };
   const [f, setF] = useState(isEdit ? { ...project, processSteps:project.processSteps||[{num:"01",title:"",desc:"",tools:[]}], metrics:project.metrics||[{value:"",label:""}] } : empty);
   const [err, setErr] = useState({});
   const [tab, setTab] = useState("info");
@@ -2364,6 +2444,7 @@ function ProjectModal({ project, tags, onSave, onClose }) {
           {tab==="results" && (<>
             <MetricsField items={f.metrics} onChange={(v)=>set("metrics",v)}/>
             <ArrayField label="Plus-values" items={f.plusValues} onChange={(v)=>set("plusValues",v)} placeholder="Plus-value"/>
+            <ArrayField label="Photos du projet (URLs)" items={f.images||[]} onChange={(v)=>set("images",v)} placeholder="https://... (URL de l'image)"/>
           </>)}
         </div>
         <div className="modft"><button className="btn-sec" onClick={onClose}>Annuler</button><button className="btn-pri" onClick={submit}>{isEdit?"Enregistrer":"Créer"}</button></div>
@@ -2617,8 +2698,15 @@ function AdminPage({ onBack }) {
 export default function App({ initialData = {} }) {
   const [view, setView] = useState("home");
   const [projectId, setProjectId] = useState(null);
-  const [loading, setLoading] = useState(true); // loading screen
-  const [cookieState, setCookieState] = useStorage("tl_cookie_consent", null);
+  const [loading, setLoading] = useState(true);
+  const [scrollTarget, setScrollTarget] = useState(null);
+  const [cookieState, _setCookieState] = useState(() => {
+    try { return localStorage.getItem("tl_cookie_consent") || null; } catch { return null; }
+  });
+  const setCookieState = (val) => {
+    _setCookieState(val);
+    try { localStorage.setItem("tl_cookie_consent", val); } catch {}
+  };
   const [showCookie, setShowCookie] = useState(false);
 
   // Seed from server-side data (Next.js SSR) — normalize DB snake_case → frontend camelCase
@@ -2659,7 +2747,17 @@ export default function App({ initialData = {} }) {
   }, [loading, cookieState]);
 
   const goProject = (id) => { setProjectId(id); setView("project"); window.scrollTo(0,0); };
-  const goHome = () => { setView("home"); setProjectId(null); };
+  const goHome = (target = "projets") => { setView("home"); setProjectId(null); setScrollTarget(target); };
+
+  useEffect(() => {
+    if (view === "home" && scrollTarget) {
+      const t = setTimeout(() => {
+        document.getElementById(scrollTarget)?.scrollIntoView({ behavior:"smooth" });
+        setScrollTarget(null);
+      }, 200);
+      return () => clearTimeout(t);
+    }
+  }, [view, scrollTarget]);
 
   // Show loading screen only on first visit to home (not on project->home transition)
   if (loading && view === "home") {
@@ -2680,7 +2778,7 @@ export default function App({ initialData = {} }) {
     return (
       <ErrorBoundary onHome={goHome}>
         <>
-          <ProjectPage project={p} allProjects={projects} tags={tags} onBack={goHome} onProject={goProject} onTrack={track}/>
+          <ProjectPage project={p} allProjects={projects} tags={tags} onBack={(target)=>goHome(target||"projets")} onProject={goProject} onTrack={track}/>
           {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
         </>
       </ErrorBoundary>

@@ -29,6 +29,7 @@ export const projectSchema = z.object({
   confidential:  z.boolean().optional(),
   display_order: z.number().optional(),
   tags:          z.array(z.string()).optional(),
+  images:        z.array(z.string()).optional(),
 });
 
 export const tagSchema = z.object({
