@@ -388,10 +388,15 @@ button{cursor:pointer;font-family:var(--fb)}
 .pd-metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc);opacity:.5}
 .pd-metric-val{font-family:var(--fd);font-size:38px;font-weight:800;color:var(--acc);letter-spacing:-2px;line-height:1}
 .pd-metric-lbl{font-size:12px;color:var(--tx2);margin-top:8px;line-height:1.55;font-weight:500}
-.pd-tools-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px}
-.pd-tool{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;background:var(--bg3);border:1px solid var(--bdr)}
-.pd-tool-dot{width:7px;height:7px;border-radius:50%;background:var(--acc);flex-shrink:0;opacity:.7}
-.pd-tool-name{font-size:12.5px;font-weight:600;color:var(--tx2)}
+.pd-tools-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.pd-tool{display:flex;align-items:center;gap:9px;padding:10px 18px;border-radius:9px;background:var(--bg3);border:1px solid var(--bdr)}
+.pd-tool-logo{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800;color:#fff;object-fit:contain}
+.pd-tool-name{font-size:13px;font-weight:600;color:var(--tx)}
+/* Horizontal image strip in project */
+.pd-img-strip{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-top:8px;padding-bottom:4px}
+.pd-img-strip::-webkit-scrollbar{display:none}
+.pd-img-strip-item{flex-shrink:0;width:280px;height:180px;border-radius:10px;object-fit:cover;cursor:zoom-in;border:1px solid var(--bdr);transition:all .22s}
+.pd-img-strip-item:hover{border-color:rgba(124,58,237,.4);box-shadow:0 6px 20px rgba(124,58,237,.15)}
 .pd-pv{display:flex;flex-direction:column;border:1px solid var(--bdr);border-radius:11px;overflow:hidden;margin-top:8px}
 .pd-pv-item{display:flex;gap:14px;align-items:flex-start;padding:16px 20px;border-bottom:1px solid var(--bdr);transition:background .2s}
 .pd-pv-item:last-child{border-bottom:none}
@@ -712,34 +717,42 @@ function useReveal() {
   });
 }
 
-// ── ANALYTICS TRACKER ────────────────────────────────────────────────────────
-function useAnalytics(consent) {
-  const [analytics, setAnalytics] = useState(() => {
-    try { const s = localStorage.getItem("tl_analytics_v4"); return s ? JSON.parse(s) : { visits:[], events:[] }; } catch { return { visits:[], events:[] }; }
-  });
+// ── ANALYTICS — server-side, CNIL-compliant ──────────────────────────────────
+function getSessionId() {
+  try {
+    let sid = sessionStorage.getItem("tl_sid");
+    if (!sid) {
+      sid = "s_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      sessionStorage.setItem("tl_sid", sid);
+    }
+    return sid;
+  } catch { return "anon"; }
+}
 
-  const track = useCallback((type, data = {}) => {
+function useAnalytics(consent) {
+  const [analytics, setAnalytics] = useState({ visits:[], projectViews:[], recent:[], totals:{} });
+  const sessionId = useRef(getSessionId());
+
+  const track = useCallback(async (type, data = {}) => {
     if (!consent) return;
-    setAnalytics((prev) => {
-      const now = Date.now();
-      let next;
-      if (type === "visit") {
-        const today = new Date().toISOString().slice(0, 10);
-        const visits = [...(prev.visits || [])];
-        const idx = visits.findIndex((v) => v.date === today);
-        if (idx >= 0) visits[idx] = { ...visits[idx], count: (visits[idx].count || 0) + 1 };
-        else visits.push({ date: today, count: 1 });
-        next = { ...prev, visits: visits.slice(-30) };
-      } else if (type === "event") {
-        const events = [...(prev.events || []), { ...data, ts: now }];
-        next = { ...prev, events: events.slice(-200) };
-      } else { next = prev; }
-      try { localStorage.setItem("tl_analytics_v4", JSON.stringify(next)); } catch {}
-      return next;
-    });
+    try {
+      await fetch("/api/analytics", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, payload: data, session_id: sessionId.current }),
+      });
+    } catch {}
   }, [consent]);
 
-  return { analytics, track };
+  // Load analytics for admin dashboard (called from Dashboard component)
+  const loadAnalytics = useCallback(async (token) => {
+    try {
+      const r = await fetch("/api/analytics", { headers: { "Authorization": `Bearer ${token}` } });
+      if (r.ok) { const d = await r.json(); setAnalytics(d); }
+    } catch {}
+  }, []);
+
+  return { analytics, track, loadAnalytics };
 }
 
 // ── LIGHTBOX ─────────────────────────────────────────────────────────────────
@@ -894,12 +907,12 @@ function LoadingScreen({ onDone }) {
   );
 }
 
-// ── COOKIE BANNER ─────────────────────────────────────────────────────────────
+// ── COOKIE BANNER — CNIL/RGPD compliant ──────────────────────────────────────
 function CookieBanner({ onAccept, onDecline }) {
   return (
     <div className="cookie">
       <div className="cookie-txt">
-        <strong>Cookies d'analyse</strong> — Ce site utilise des données anonymes (pages visitées, clics) pour améliorer le portfolio. Aucune donnée personnelle n'est transmise à des tiers. Conforme RGPD / CNIL.
+        <strong>Mesure d'audience</strong> — Ce site collecte des statistiques de visite <strong>anonymes</strong> (pages vues, projets consultés) sans aucune donnée personnelle ni cookie tiers. Les données sont conservées <strong>13 mois</strong> puis supprimées, conformément aux recommandations de la <strong>CNIL</strong>. Vous pouvez refuser sans impact sur votre navigation.
       </div>
       <div className="cookie-btns">
         <button className="cookie-dec" onClick={onDecline}>Refuser</button>
@@ -1902,6 +1915,19 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
           <ProjectCoverSVG type={p.coverType||"cabin"} featured={true}/>
         )}
       </div>
+
+      {/* Images strip — right after cover */}
+      {p.images?.length > 0 && (
+        <div style={{ padding:"0 64px", marginBottom:24 }}>
+          <div className="pd-img-strip">
+            {p.images.map((src, i) => (
+              <img key={i} src={src} alt={`${p.title} — ${i+1}`} className="pd-img-strip-item"
+                onClick={()=>setLb({ images:p.images, idx:i })}/>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="pd-content">
         {p.context && (<>
           <div id="pds-context" className="pd-slbl rv">Contexte <span className="pd-slbl-num">01</span></div>
@@ -1952,15 +1978,6 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
             ))}
           </div>
         </>)}
-        {p.images?.length > 0 && (<>
-          <div id="pds-gallery" className="pd-slbl rv">Visuels <span className="pd-slbl-num">06</span></div>
-          <div className="pd-gallery rv">
-            {p.images.map((src, i) => (
-              <img key={i} src={src} alt={`${p.title} — visuel ${i+1}`} className="pd-gallery-img"
-                onClick={()=>setLb({ images:p.images, idx:i })}/>
-            ))}
-          </div>
-        </>)}
         {p.plusValues?.length > 0 && (<>
           <div id="pds-plusvalues" className="pd-slbl rv">Plus-values <span className="pd-slbl-num">0{p.images?.length?7:6}</span></div>
           <div className="pd-pv rv">
@@ -1970,9 +1987,14 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
           </div>
         </>)}
         {p.tools?.length > 0 && (<>
-          <div id="pds-outils" className="pd-slbl rv">Outils <span className="pd-slbl-num">0{[p.context,p.problematique,p.objectifs?.length,p.processSteps?.length,p.metrics?.length,p.images?.length,p.plusValues?.length].filter(Boolean).length+1}</span></div>
+          <div id="pds-outils" className="pd-slbl rv">Outils</div>
           <div className="pd-tools-row rv">
-            {p.tools.map((t) => <div className="pd-tool" key={t}><div className="pd-tool-dot"/><span className="pd-tool-name">{t}</span></div>)}
+            {p.tools.map((t) => (
+              <div className="pd-tool" key={t}>
+                <ToolLogo name={t}/>
+                <span className="pd-tool-name">{t}</span>
+              </div>
+            ))}
           </div>
         </>)}
       </div>
@@ -1984,158 +2006,102 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
   );
 }
 
-// ── DASHBOARD ANALYTICS ───────────────────────────────────────────────────────
-function Dashboard({ analytics }) {
-  const { visits = [], events = [] } = analytics;
+// ── DASHBOARD ANALYTICS — server-side ────────────────────────────────────────
+function Dashboard({ token }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const totalVisits = visits.reduce((s, v) => s + (v.count || 0), 0);
-  const last7 = visits.slice(-7);
-  const last7Count = last7.reduce((s, v) => s + (v.count || 0), 0);
-  const prev7 = visits.slice(-14, -7);
-  const prev7Count = prev7.reduce((s, v) => s + (v.count || 0), 0);
-  const visitTrend = prev7Count > 0 ? Math.round(((last7Count - prev7Count) / prev7Count) * 100) : 0;
+  useEffect(() => {
+    if (!token) return;
+    fetch("/api/analytics", { headers: { Authorization:`Bearer ${token}` } })
+      .then(r=>r.json()).then(d=>{ setData(d); setLoading(false); })
+      .catch(()=>setLoading(false));
+  }, [token]);
 
-  const projectClicks = events.filter((e) => e.type === "project_click");
-  const projectViews = events.filter((e) => e.type === "project_view");
-  const contactClicks = events.filter((e) => e.type === "contact_click");
-  const navClicks = events.filter((e) => e.type === "nav_click");
+  if (loading) return (
+    <div>
+      <div className="ahd"><div><div className="atit">Dashboard</div><div className="asub">Chargement des analytiques…</div></div></div>
+      <div style={{ padding:48, textAlign:"center", color:"var(--tx3)" }}>⏳ Chargement…</div>
+    </div>
+  );
 
-  // Top projects
-  const projectCount = {};
-  [...projectClicks, ...projectViews].forEach((e) => {
-    projectCount[e.project] = (projectCount[e.project] || 0) + 1;
-  });
-  const topProjects = Object.entries(projectCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  const maxProjCount = topProjects[0]?.[1] || 1;
+  const totals = data?.totals || {};
+  const visits = data?.visits || [];
+  const projectViews = data?.projectViews || [];
+  const recent = data?.recent || [];
+  const noData = !data || (Number(totals.visitors_30d)||0) === 0;
 
-  // Top sections
-  const sectionCount = {};
-  navClicks.forEach((e) => { sectionCount[e.section] = (sectionCount[e.section] || 0) + 1; });
-  const topSections = Object.entries(sectionCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  const maxSecCount = topSections[0]?.[1] || 1;
+  const maxSpark = Math.max(...visits.map(v=>Number(v.count)||0), 1);
+  const maxProj = Math.max(...projectViews.map(p=>Number(p.count)||0), 1);
 
-  // Sparkline for last 14 days
-  const spark = visits.slice(-14);
-  const maxSpark = Math.max(...spark.map((v) => v.count || 0), 1);
-
-  // Recent activity
-  const recent = [...events].reverse().slice(0, 8);
-  const actLabel = (e) => {
-    if (e.type === "project_click") return `Clic sur le projet "${e.project}"`;
-    if (e.type === "project_view") return `Vue du projet "${e.project}"`;
-    if (e.type === "contact_click") return `Clic contact (${e.label})`;
-    if (e.type === "nav_click") return `Navigation → ${e.section}`;
-    if (e.type === "cta_click") return `CTA cliqué : ${e.label}`;
-    return e.type;
-  };
   const timeAgo = (ts) => {
-    const diff = Date.now() - ts;
+    const diff = Date.now() - new Date(ts).getTime();
     if (diff < 60000) return "À l'instant";
     if (diff < 3600000) return `${Math.floor(diff/60000)}min`;
     if (diff < 86400000) return `${Math.floor(diff/3600000)}h`;
     return `${Math.floor(diff/86400000)}j`;
   };
-
-  const noData = totalVisits === 0 && events.length === 0;
-
-  if (noData) return (
-    <div>
-      <div className="ahd"><div><div className="atit">Dashboard</div><div className="asub">Analytiques du portfolio en temps réel</div></div></div>
-      <div className="no-data" style={{ background:"var(--bg3)", borderRadius:12, border:"1px solid var(--bdr)", padding:48 }}>
-        <div style={{ fontSize:32, marginBottom:16 }}>📊</div>
-        <div style={{ fontFamily:"var(--fd)", fontSize:16, fontWeight:700, marginBottom:8 }}>Aucune donnée disponible</div>
-        <div style={{ color:"var(--tx3)", fontSize:13 }}>Les statistiques s'afficheront ici une fois que des visiteurs auront accepté les cookies d'analyse et parcouru votre portfolio.</div>
-      </div>
-    </div>
-  );
+  const actLabel = (e) => {
+    if (e.type === "project_view") return `Vue projet "${e.payload?.project||""}"`;
+    if (e.type === "contact_form_send") return `Formulaire envoyé (${e.payload?.subject||""})`;
+    if (e.type === "contact_click") return `Clic contact (${e.payload?.label||""})`;
+    if (e.type === "visit") return "Nouvelle visite";
+    return e.type;
+  };
 
   return (
     <div>
       <div className="ahd">
-        <div><div className="atit">Dashboard</div><div className="asub">Analytiques du portfolio — données locales</div></div>
-        <span style={{ fontSize:11, color:"var(--tx3)", background:"var(--bg3)", border:"1px solid var(--bdr)", padding:"5px 12px", borderRadius:6 }}>
-          {events.length} événements enregistrés
-        </span>
+        <div><div className="atit">Dashboard</div><div className="asub">Analytiques serveur · 30 derniers jours · Conforme CNIL</div></div>
+        <button onClick={()=>{ setLoading(true); fetch("/api/analytics",{headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json()).then(d=>{setData(d);setLoading(false);}); }} style={{ fontSize:12, padding:"6px 14px", borderRadius:7, background:"var(--bg3)", border:"1px solid var(--bdr)", color:"var(--tx2)", cursor:"pointer" }}>
+          ↻ Actualiser
+        </button>
       </div>
 
-      {/* KPI Cards */}
-      <div className="dash-kpi-grid">
-        <div className="kpi-card c1">
-          <div className="kpi-label">Visites totales</div>
-          <div className="kpi-val" style={{ color:"#A78BFA" }}>{totalVisits}</div>
-          <div className="kpi-sub">depuis le début</div>
-          {visitTrend !== 0 && <span className={`kpi-trend ${visitTrend >= 0 ? "kpi-up" : "kpi-dn"}`}>{visitTrend >= 0 ? "+" : ""}{visitTrend}% vs 7j préc.</span>}
+      {noData ? (
+        <div className="no-data" style={{ background:"var(--bg3)", borderRadius:12, border:"1px solid var(--bdr)", padding:48 }}>
+          <div style={{ fontSize:32, marginBottom:16 }}>📊</div>
+          <div style={{ fontFamily:"var(--fd)", fontSize:16, fontWeight:700, marginBottom:8 }}>Aucune donnée pour le moment</div>
+          <div style={{ color:"var(--tx3)", fontSize:13 }}>Les visiteurs qui acceptent la mesure d'audience apparaîtront ici. Les données sont anonymes, sans cookie tiers.</div>
         </div>
-        <div className="kpi-card c2">
-          <div className="kpi-label">Cette semaine</div>
-          <div className="kpi-val" style={{ color:"#93C5FD" }}>{last7Count}</div>
-          <div className="kpi-sub">7 derniers jours</div>
+      ) : (<>
+        <div className="dash-kpi-grid">
+          <div className="kpi-card c1"><div className="kpi-label">Visiteurs uniques</div><div className="kpi-val" style={{ color:"#A78BFA" }}>{Number(totals.visitors_30d)||0}</div><div className="kpi-sub">30 derniers jours</div></div>
+          <div className="kpi-card c2"><div className="kpi-label">Cette semaine</div><div className="kpi-val" style={{ color:"#93C5FD" }}>{Number(totals.visitors_7d)||0}</div><div className="kpi-sub">7 derniers jours</div></div>
+          <div className="kpi-card c3"><div className="kpi-label">Vues projets</div><div className="kpi-val" style={{ color:"#6EE7B7" }}>{Number(totals.project_views_30d)||0}</div><div className="kpi-sub">30 derniers jours</div></div>
+          <div className="kpi-card c4"><div className="kpi-label">Contacts</div><div className="kpi-val" style={{ color:"#FCD34D" }}>{Number(totals.contacts_30d)||0}</div><div className="kpi-sub">formulaires envoyés</div></div>
         </div>
-        <div className="kpi-card c3">
-          <div className="kpi-label">Projets consultés</div>
-          <div className="kpi-val" style={{ color:"#6EE7B7" }}>{projectViews.length}</div>
-          <div className="kpi-sub">vues de projets</div>
-        </div>
-        <div className="kpi-card c4">
-          <div className="kpi-label">Clics contact</div>
-          <div className="kpi-val" style={{ color:"#FCD34D" }}>{contactClicks.length}</div>
-          <div className="kpi-sub">email + LinkedIn</div>
-        </div>
-      </div>
-
-      {/* Charts row */}
-      <div className="dash-grid2">
-        <div className="dash-card">
-          <div className="dash-card-title">
-            Activité — 14 derniers jours
-            <span className="dash-card-sub">visites / jour</span>
-          </div>
-          {spark.length > 0 ? (
+        <div className="dash-grid2">
+          <div className="dash-card">
+            <div className="dash-card-title">Visiteurs / jour<span className="dash-card-sub">30 jours</span></div>
             <div className="sparkline">
-              {Array.from({ length: 14 }, (_, i) => {
-                const d = spark[spark.length - 14 + i];
-                const h = d ? Math.max(4, ((d.count || 0) / maxSpark) * 100) : 4;
-                return <div key={i} className="spark-bar" style={{ height:`${h}%`, opacity: d ? 1 : 0.2 }} title={d ? `${d.date}: ${d.count}` : "0"}/>;
-              })}
+              {visits.length > 0 ? visits.map((v,i)=>(
+                <div key={i} className="spark-bar" style={{ height:`${Math.max(4,(Number(v.count)/maxSpark)*100)}%` }} title={`${v.date}: ${v.count}`}/>
+              )) : <div style={{ color:"var(--tx3)", fontSize:12, padding:16 }}>Pas de données</div>}
             </div>
-          ) : <div className="no-data">Pas encore de données</div>}
-          <div style={{ display:"flex", justifyContent:"space-between", marginTop:8, fontSize:10.5, color:"var(--tx3)" }}>
-            <span>J-14</span><span>Aujourd'hui</span>
+          </div>
+          <div className="dash-card">
+            <div className="dash-card-title">Top projets<span className="dash-card-sub">30 jours</span></div>
+            {projectViews.length > 0 ? projectViews.slice(0,5).map((p,i)=>(
+              <div className="bar-row" key={i}>
+                <span className="bar-lbl">{p.project||"—"}</span>
+                <div className="bar-track"><div className="bar-fill" style={{ width:`${(Number(p.count)/maxProj)*100}%` }}/></div>
+                <span className="bar-count">{p.count}</span>
+              </div>
+            )) : <div className="no-data" style={{ padding:20 }}>Aucun projet consulté</div>}
           </div>
         </div>
-        <div className="dash-card">
-          <div className="dash-card-title">Top projets<span className="dash-card-sub">clics + vues</span></div>
-          {topProjects.length > 0 ? topProjects.map(([id, count]) => (
-            <div className="bar-row" key={id}>
-              <span className="bar-lbl">{id}</span>
-              <div className="bar-track"><div className="bar-fill" style={{ width:`${(count/maxProjCount)*100}%` }}/></div>
-              <span className="bar-count">{count}</span>
-            </div>
-          )) : <div className="no-data" style={{ padding:20 }}>Aucun clic projet</div>}
-        </div>
-      </div>
-      <div className="dash-grid2">
-        <div className="dash-card">
-          <div className="dash-card-title">Sections populaires<span className="dash-card-sub">clics nav</span></div>
-          {topSections.length > 0 ? topSections.map(([id, count]) => (
-            <div className="bar-row" key={id}>
-              <span className="bar-lbl">{id}</span>
-              <div className="bar-track"><div className="bar-fill" style={{ width:`${(count/maxSecCount)*100}%`, background:"#4B7FFA" }}/></div>
-              <span className="bar-count">{count}</span>
-            </div>
-          )) : <div className="no-data" style={{ padding:20 }}>Pas encore de navigation</div>}
-        </div>
-        <div className="dash-card">
-          <div className="dash-card-title">Activité récente<span className="dash-card-sub">derniers événements</span></div>
-          {recent.length > 0 ? recent.map((e, i) => (
+        <div className="dash-card" style={{ marginTop:16 }}>
+          <div className="dash-card-title">Activité récente<span className="dash-card-sub">50 derniers événements</span></div>
+          {recent.slice(0,10).map((e,i)=>(
             <div className="activity-row" key={i}>
-              <div className="activity-dot" style={{ background: e.type.includes("project") ? "#7C3AED" : e.type.includes("contact") ? "#06D6A0" : "#4B7FFA" }}/>
+              <div className="activity-dot" style={{ background:e.type.includes("project")?"#7C3AED":e.type.includes("contact")?"#06D6A0":"#4B7FFA" }}/>
               <span className="activity-desc">{actLabel(e)}</span>
-              <span className="activity-time">{timeAgo(e.ts)}</span>
+              <span className="activity-time">{timeAgo(e.created_at)}</span>
             </div>
-          )) : <div className="no-data" style={{ padding:20 }}>Aucune activité récente</div>}
+          ))}
         </div>
-      </div>
+      </>)}
     </div>
   );
 }
@@ -2334,6 +2300,62 @@ class ErrorBoundary extends React.Component {
     }
     return this.props.children;
   }
+}
+
+// ── TOOL LOGOS ───────────────────────────────────────────────────────────────
+const TOOL_ICONS = {
+  "figma":{"slug":"figma","bg":"#1E1E1E"},
+  "figjam":{"slug":"figma","bg":"#F24E1E"},
+  "jira":{"slug":"jira","bg":"#0052CC"},
+  "confluence":{"slug":"confluence","bg":"#0052CC"},
+  "notion":{"slug":"notion","bg":"#000"},
+  "slack":{"slug":"slack","bg":"#4A154B"},
+  "miro":{"slug":"miro","bg":"#FFD02F","dark":true},
+  "sketch":{"slug":"sketch","bg":"#F7B500","dark":true},
+  "zeplin":{"slug":"zeplin","bg":"#FDBD39","dark":true},
+  "invision":{"slug":"invision","bg":"#FF3366"},
+  "maze":{"slug":"maze","bg":"#F44A64"},
+  "hotjar":{"slug":"hotjar","bg":"#F94D3A"},
+  "adobe xd":{"slug":"adobexd","bg":"#FF61F6"},
+  "illustrator":{"slug":"adobeillustrator","bg":"#FF9A00"},
+  "photoshop":{"slug":"adobephotoshop","bg":"#31A8FF"},
+  "after effects":{"slug":"adobeaftereffects","bg":"#9999FF"},
+  "premiere":{"slug":"adobepremierepro","bg":"#9999FF"},
+  "trello":{"slug":"trello","bg":"#0052CC"},
+  "asana":{"slug":"asana","bg":"#F06A6A"},
+  "linear":{"slug":"linear","bg":"#5E6AD2"},
+  "github":{"slug":"github","bg":"#181717"},
+  "teams":{"slug":"microsoftteams","bg":"#6264A7"},
+  "microsoft teams":{"slug":"microsoftteams","bg":"#6264A7"},
+  "react":{"slug":"react","bg":"#222","icon":"#61DAFB"},
+  "next.js":{"slug":"nextdotjs","bg":"#000"},
+  "typescript":{"slug":"typescript","bg":"#3178C6"},
+  "loom":{"slug":"loom","bg":"#625DF5"},
+  "notion":{"slug":"notion","bg":"#fff","dark":true},
+  "google analytics":{"slug":"googleanalytics","bg":"#E37400"},
+  "framer":{"slug":"framer","bg":"#0055FF"},
+  "principle":{"emoji":"✦","bg":"#7C3AED"},
+  "entretiens":{"emoji":"🎙","bg":"#4B7FFA"},
+  "tests utilisateurs":{"emoji":"🧪","bg":"#06D6A0"},
+  "personas":{"emoji":"👤","bg":"#F59E0B"},
+  "user journey":{"emoji":"🗺","bg":"#EC4899"},
+  "prototype":{"emoji":"⚡","bg":"#7C3AED"},
+  "prototype hf":{"emoji":"⚡","bg":"#7C3AED"},
+  "workshop":{"emoji":"🤝","bg":"#F97316"},
+  "benchmark":{"emoji":"📊","bg":"#38BDF8"},
+  "co-conception":{"emoji":"✏️","bg":"#8B5CF6"},
+  "pitch":{"emoji":"🎯","bg":"#F59E0B"},
+};
+
+function ToolLogo({ name }) {
+  const key = name.toLowerCase().trim();
+  const cfg = TOOL_ICONS[key];
+  if (!cfg) {
+    const initials = name.split(/[\s/]+/).map(w=>w[0]).join("").toUpperCase().slice(0,2);
+    return <div className="pd-tool-logo" style={{ background:"var(--accd)", color:"var(--acc)", fontSize:10 }}>{initials}</div>;
+  }
+  if (cfg.emoji) return <div className="pd-tool-logo" style={{ background:cfg.bg, fontSize:13 }}>{cfg.emoji}</div>;
+  return <img className="pd-tool-logo" src={`https://cdn.simpleicons.org/${cfg.slug}/ffffff`} alt={name} onError={e=>{ e.target.style.display="none"; }} style={{ background:cfg.bg, padding:2, borderRadius:4 }}/>;
 }
 
 // ── IMAGE UPLOADER (Cloudinary) ───────────────────────────────────────────────
@@ -2679,7 +2701,6 @@ function AdminPage({ onBack }) {
   const [projects, setProjects] = useState(DEFAULT_PROJECTS);
   const [tags, setTags] = useStorage("tl_v4_tags", DEFAULT_TAGS);
   const [testimonials, setTestimonials] = useState(DEFAULT_TESTIMONIALS);
-  const [analytics] = useStorage("tl_analytics_v4", { visits:[], events:[] });
   const [editProject, setEditProject] = useState(null);
   const [addProject, setAddProject] = useState(false);
   const [addTag, setAddTag] = useState(false);
@@ -2757,7 +2778,7 @@ function AdminPage({ onBack }) {
         </div>
       </div>
       <div className="ama">
-        {tab==="dashboard" && <Dashboard analytics={analytics}/>}
+        {tab==="dashboard" && <Dashboard token={token}/>}
 
         {tab==="projects" && (<>
           <div className="ahd"><div><div className="atit">Projets</div><div className="asub">{projects.length} projet{projects.length>1?"s":""}</div></div><button className="btn-pri" onClick={()=>setAddProject(true)}>+ Nouveau projet</button></div>
@@ -2879,7 +2900,7 @@ export default function App({ initialData = {} }) {
   const [tags] = useStorage("tl_v4_tags", DEFAULT_TAGS);
   const [testimonials] = useStorage("tl_v4_testimonials", serverTestimonials || DEFAULT_TESTIMONIALS);
   const [cvUrl, setCvUrlApp] = useState("https://www.thomas-leloup.fr/cv_thomas_leloup.pdf");
-  const { analytics, track } = useAnalytics(cookieState === "accepted");
+  const { track } = useAnalytics(cookieState === "accepted");
 
   useEffect(() => {
     fetch('/api/settings').then(r=>r.json()).then(s=>{ if(s?.cv_url) setCvUrlApp(s.cv_url); }).catch(()=>{});
