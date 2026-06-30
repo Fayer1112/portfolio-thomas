@@ -215,10 +215,10 @@ button{cursor:pointer;font-family:var(--fb)}
 .pf-sep{width:1px;background:var(--bdr);margin:0 4px;align-self:stretch}
 .pgallery{display:grid;gap:4px}
 .pgallery-row{display:grid;gap:3px}
-.pgallery-row.r1{grid-template-columns:2fr 1fr}
-.pgallery-row.r2{grid-template-columns:1fr 2fr}
-.pgallery-row.r3{grid-template-columns:1fr 1fr 1fr}
-.pgallery-row.rfull{grid-template-columns:1fr}
+.pgallery-row.r1{grid-template-columns:var(--row-cols, 2fr 1fr)}
+.pgallery-row.r2{grid-template-columns:var(--row-cols, 1fr 2fr)}
+.pgallery-row.r3{grid-template-columns:var(--row-cols, 1fr 1fr 1fr)}
+.pgallery-row.rfull{grid-template-columns:var(--row-cols, 1fr)}
 .pcard{position:relative;overflow:hidden;cursor:pointer;background:var(--bg2);transition:transform .35s var(--ease)}
 .pcard-h-sm{height:260px}
 .pcard-h-md{height:340px}
@@ -1324,6 +1324,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
   const [px, setPx] = useState({ x:0, y:0 });
   const [mobCtaMode, setMobCtaMode] = useState("projects"); // "projects" | "contact"
   const [mobCtaVisible, setMobCtaVisible] = useState(false);
+  const [coverRatios, setCoverRatios] = useState({}); // project id -> natural width/height of uploaded cover image
   const heroRef = useRef(null);
   const dhRef = useRef(null);
   useReveal();
@@ -1395,6 +1396,20 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
     return rows;
   };
   const galleryRows = buildGallery(filtered);
+
+  // Card width follows the uploaded cover image's aspect ratio (height is fixed per row);
+  // falls back to the curated fr proportions until the image loads or when there's no upload.
+  const MIN_CARD_PX = 240;
+  const DEFAULT_FR = { r1:[2,1], r2:[1,2], r3:[1,1,1], rfull:[1] };
+  const rowGridColumns = (row) => row.items
+    .map((p, pi) => coverRatios[p.id] || DEFAULT_FR[row.cls]?.[pi] || 1)
+    .map((fr) => `minmax(${MIN_CARD_PX}px, ${fr}fr)`)
+    .join(" ");
+  const handleCoverLoad = (id) => (e) => {
+    const ratio = e.target.naturalWidth / e.target.naturalHeight;
+    if (!ratio || !isFinite(ratio)) return;
+    setCoverRatios((prev) => (prev[id] === ratio ? prev : { ...prev, [id]: ratio }));
+  };
 
   const sortedTesti = [...testimonials].sort((a,b) => (a.order||99)-(b.order||99));
   const featuredTesti = sortedTesti[0];
@@ -1614,12 +1629,17 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
         ) : (
           <div className="pgallery">
             {galleryRows.map((row, ri) => (
-              <div key={ri} className={`pgallery-row ${row.cls}`}>
+              <div key={ri} className={`pgallery-row ${row.cls}`} style={{ "--row-cols": rowGridColumns(row) }}>
                 {row.items.map((p, pi) => (
                   <div key={p.id} className={`pcard ${row.sizes[pi] || "pcard-h-md"}`}
                     onClick={() => { onProject(p.id); if (onTrack) onTrack("event", { type:"project_click", project:p.id }); }}>
                     <div className="pcard-img" style={{ height:"100%" }}>
-                      <ProjectCoverSVG type={p.coverType||"cabin"} featured={row.cls==="rfull"}/>
+                      {p.coverImage ? (
+                        <img src={p.coverImage} alt={p.title} onLoad={handleCoverLoad(p.id)}
+                          style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }}/>
+                      ) : (
+                        <ProjectCoverSVG type={p.coverType||"cabin"} featured={row.cls==="rfull"}/>
+                      )}
                     </div>
                     <div className="pcard-ov"/>
                     {p.confidential && <div className="pcard-lock">🔒 Confidentiel</div>}

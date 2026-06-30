@@ -1,8 +1,40 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   useStorage, toApiProject, fromDbProject, toApiTestimonial, fromDbTestimonial,
   TAG_COLORS, DEFAULT_TAGS, DEFAULT_PROJECTS, DEFAULT_TESTIMONIALS,
 } from "./shared";
+
+const TOAST_DURATION = 10000;
+
+function useToast() {
+  const [toast, setToast] = useState(null);
+  const notify = useCallback((message, type = "success") => {
+    setToast({ message, type, id: Date.now() });
+  }, []);
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), TOAST_DURATION);
+    return () => clearTimeout(t);
+  }, [toast]);
+  return [toast, notify];
+}
+
+function Toast({ toast }) {
+  if (!toast) return null;
+  const isError = toast.type === "error";
+  return (
+    <div key={toast.id} style={{
+      position:"fixed", bottom:24, left:"50%", transform:"translateX(-50%)", zIndex:9999,
+      padding:"12px 20px", borderRadius:10, display:"flex", alignItems:"center", gap:9,
+      background: isError ? "rgba(239,68,68,.96)" : "rgba(6,214,160,.96)", color:"#fff",
+      fontSize:13.5, fontWeight:600, fontFamily:"var(--fb)", boxShadow:"0 12px 32px rgba(0,0,0,.35)",
+      maxWidth:"calc(100vw - 32px)",
+    }}>
+      <span>{isError ? "⚠️" : "✓"}</span>
+      <span>{toast.message}</span>
+    </div>
+  );
+}
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
 function Dashboard({ token }) {
@@ -105,7 +137,7 @@ function Dashboard({ token }) {
 }
 
 // ── IMAGE UPLOADER (Cloudinary) ───────────────────────────────────────────────
-function ImageUploader({ value = [], onChange, maxFiles = 10, accept = "image/*", label = "Images" }) {
+function ImageUploader({ value = [], onChange, maxFiles = 10, accept = "image/*", label = "Images", notify }) {
   const [uploading, setUploading] = useState(false);
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "portfolio_uploads";
@@ -114,6 +146,7 @@ function ImageUploader({ value = [], onChange, maxFiles = 10, accept = "image/*"
     if (!cloudName) { alert("Configure NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME dans .env.local"); return; }
     setUploading(true);
     const urls = [];
+    let hadError = false;
     for (const file of Array.from(files)) {
       const fd = new FormData();
       fd.append("file", file);
@@ -121,11 +154,16 @@ function ImageUploader({ value = [], onChange, maxFiles = 10, accept = "image/*"
       try {
         const r = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, { method:"POST", body:fd });
         const d = await r.json();
-        if (d.secure_url) urls.push(d.secure_url);
-      } catch(e) { console.error("Upload error", e); }
+        if (d.secure_url) urls.push(d.secure_url); else hadError = true;
+      } catch(e) { console.error("Upload error", e); hadError = true; }
     }
     onChange([...value, ...urls].slice(0, maxFiles));
     setUploading(false);
+    if (notify) {
+      if (urls.length && !hadError) notify(`${urls.length} fichier${urls.length>1?"s":""} envoyé${urls.length>1?"s":""}`);
+      else if (urls.length && hadError) notify("Upload partiellement réussi", "error");
+      else notify("Échec de l'upload", "error");
+    }
   };
 
   const remove = (idx) => onChange(value.filter((_,i)=>i!==idx));
@@ -261,7 +299,7 @@ function MetricsField({ items, onChange }) {
   );
 }
 
-function ProjectModal({ project, tags, onSave, onClose }) {
+function ProjectModal({ project, tags, onSave, onClose, notify }) {
   const isEdit = !!project;
   const empty = { id:"", title:"", subtitle:"", category:"Case Study", year:new Date().getFullYear().toString(), role:"", duration:"", platform:"", client:"", tags:[], coverType:"cabin", coverImage:"", context:"", problematique:"", objectifs:[""], processSteps:[{num:"01",title:"",desc:"",tools:[]}], metrics:[{value:"",label:""}], tools:[""], plusValues:[""], images:[], featured:false, confidential:false, order:99 };
   const [f, setF] = useState(isEdit ? { ...project, processSteps:project.processSteps||[{num:"01",title:"",desc:"",tools:[]}], metrics:project.metrics||[{value:"",label:""}] } : empty);
@@ -307,7 +345,7 @@ function ProjectModal({ project, tags, onSave, onClose }) {
             </div>
             <div className="fgrp">
               <label className="flbl">Image de couverture <span style={{fontWeight:400,color:"var(--tx3)",fontSize:11}}>— remplace le SVG si uploadé</span></label>
-              <ImageUploader value={f.coverImage?[f.coverImage]:[]} onChange={(v)=>set("coverImage",v[0]||"")} maxFiles={1} accept="image/*" label="Cover"/>
+              <ImageUploader value={f.coverImage?[f.coverImage]:[]} onChange={(v)=>set("coverImage",v[0]||"")} maxFiles={1} accept="image/*" label="Cover" notify={notify}/>
             </div>
             <div className="fgrp">
               <label className="flbl">Tags</label>
@@ -333,7 +371,7 @@ function ProjectModal({ project, tags, onSave, onClose }) {
             <ArrayField label="Plus-values" items={f.plusValues} onChange={(v)=>set("plusValues",v)} placeholder="Plus-value"/>
             <div className="fgrp">
               <label className="flbl">Photos du projet <span style={{fontWeight:400,color:"var(--tx3)",fontSize:11}}>— upload direct (PNG, JPG)</span></label>
-              <ImageUploader value={f.images||[]} onChange={(v)=>set("images",v)} maxFiles={12} accept="image/*" label="Photo"/>
+              <ImageUploader value={f.images||[]} onChange={(v)=>set("images",v)} maxFiles={12} accept="image/*" label="Photo" notify={notify}/>
             </div>
           </>)}
         </div>
@@ -457,6 +495,7 @@ export default function AdminPage({ onBack }) {
   const [loadingData, setLoadingData] = useState(true);
   const [cvUrl, setCvUrl] = useState("");
   const [cvSaving, setCvSaving] = useState(false);
+  const [toast, notify] = useToast();
 
   useEffect(() => {
     if (!authed) return;
@@ -474,7 +513,10 @@ export default function AdminPage({ onBack }) {
 
   const saveCv = async (url) => {
     setCvSaving(true);
-    await fetch('/api/settings', { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${token}` }, body:JSON.stringify({ key:'cv_url', value:url }) });
+    try {
+      const r = await fetch('/api/settings', { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${token}` }, body:JSON.stringify({ key:'cv_url', value:url }) });
+      notify(r.ok ? (url ? "CV mis à jour" : "CV retiré") : "Erreur lors de l'enregistrement du CV", r.ok ? "success" : "error");
+    } catch(e) { console.error(e); notify("Erreur lors de l'enregistrement du CV", "error"); }
     setCvUrl(url);
     setCvSaving(false);
   };
@@ -488,11 +530,13 @@ export default function AdminPage({ onBack }) {
 
   const saveProject = async (p) => {
     const isEdit = !!editProject;
+    let ok = true;
     try {
       const url = isEdit ? `/api/projects/${p.id}` : '/api/projects';
       const r = await fetch(url, { method: isEdit ? 'PUT' : 'POST', headers: authHeaders, body: JSON.stringify(toApiProject(p)) });
-      if (!r.ok) console.error('Erreur API projet', r.status);
-    } catch(e) { console.error(e); }
+      if (!r.ok) { ok = false; console.error('Erreur API projet', r.status); }
+    } catch(e) { ok = false; console.error(e); }
+    notify(ok ? (isEdit ? "Projet mis à jour" : "Projet créé") : "Erreur lors de l'enregistrement du projet", ok ? "success" : "error");
     refreshData();
     setEditProject(null); setAddProject(false);
   };
@@ -563,7 +607,7 @@ export default function AdminPage({ onBack }) {
 
         {tab==="tags" && (<>
           <div className="ahd"><div><div className="atit">Tags</div><div className="asub">{tags.length} tag{tags.length>1?"s":""}</div></div><button className="btn-pri" onClick={()=>setAddTag(true)}>+ Nouveau tag</button></div>
-          <div className="tgmgrid">{tags.map((t)=><div className="tgmitem" key={t.id}><div className="tgmdot" style={{ background:t.color }}/><span style={{ fontWeight:600 }}>{t.name}</span><button className="tgmdel" onClick={()=>setTags((ts)=>ts.filter((x)=>x.id!==t.id))}>×</button></div>)}</div>
+          <div className="tgmgrid">{tags.map((t)=><div className="tgmitem" key={t.id}><div className="tgmdot" style={{ background:t.color }}/><span style={{ fontWeight:600 }}>{t.name}</span><button className="tgmdel" onClick={()=>{setTags((ts)=>ts.filter((x)=>x.id!==t.id)); notify("Tag supprimé");}}>×</button></div>)}</div>
           {tags.length===0&&<div className="aempty">Aucun tag.</div>}
           <div className="tusage" style={{ marginTop:24 }}>
             <div style={{ fontSize:13, fontWeight:700, marginBottom:12, fontFamily:"var(--fd)" }}>Utilisation des tags</div>
@@ -591,7 +635,7 @@ export default function AdminPage({ onBack }) {
                 </div>
               )}
               <div style={{ fontSize:13, fontWeight:600, color:"var(--tx2)", marginBottom:10 }}>Uploader un nouveau PDF</div>
-              <ImageUploader value={cvUrl ? [cvUrl] : []} onChange={(urls)=>saveCv(urls[urls.length-1]||"")} maxFiles={1} accept="application/pdf,.pdf" label="PDF"/>
+              <ImageUploader value={cvUrl ? [cvUrl] : []} onChange={(urls)=>saveCv(urls[urls.length-1]||"")} maxFiles={1} accept="application/pdf,.pdf" label="PDF" notify={notify}/>
               {cvSaving && <div style={{ marginTop:8, fontSize:12, color:"var(--tx3)" }}>Sauvegarde…</div>}
             </div>
             <div style={{ fontSize:12, color:"var(--tx3)", lineHeight:1.6 }}>
@@ -601,24 +645,27 @@ export default function AdminPage({ onBack }) {
         </>)}
       </div>
 
-      {(editProject||addProject) && <ProjectModal project={editProject} tags={tags} onSave={saveProject} onClose={()=>{setEditProject(null);setAddProject(false);}}/>}
-      {addTag && <TagModal onSave={(t)=>{setTags((ts)=>ts.find((x)=>x.id===t.id)?ts:[...ts,t]);setAddTag(false);}} onClose={()=>setAddTag(false)}/>}
+      {(editProject||addProject) && <ProjectModal project={editProject} tags={tags} onSave={saveProject} onClose={()=>{setEditProject(null);setAddProject(false);}} notify={notify}/>}
+      {addTag && <TagModal onSave={(t)=>{setTags((ts)=>ts.find((x)=>x.id===t.id)?ts:[...ts,t]);setAddTag(false); notify("Tag créé");}} onClose={()=>setAddTag(false)}/>}
       {(editTesti||addTesti) && <TestimonialModal testimonial={editTesti} onSave={async (t)=>{
+        let ok = true;
         try {
           const r = await fetch('/api/testimonials', { method:'POST', headers:authHeaders, body:JSON.stringify(toApiTestimonial(t)) });
-          if (!r.ok) console.error('Erreur API témoignage', r.status);
-        } catch(e) { console.error(e); }
+          if (!r.ok) { ok = false; console.error('Erreur API témoignage', r.status); }
+        } catch(e) { ok = false; console.error(e); }
+        notify(ok ? (editTesti ? "Témoignage mis à jour" : "Témoignage ajouté") : "Erreur lors de l'enregistrement du témoignage", ok ? "success" : "error");
         refreshData();
         setEditTesti(null); setAddTesti(false);
       }} onClose={()=>{setEditTesti(null);setAddTesti(false);}}/>}
       {confirm && <div className="movl" onClick={()=>setConfirm(null)}><div className="mod" style={{ maxWidth:400 }} onClick={(e)=>e.stopPropagation()}><div className="modt">Supprimer ce projet ?</div><div className="mods">Cette action est irréversible.</div><div className="modft"><button className="btn-sec" onClick={()=>setConfirm(null)}>Annuler</button><button className="btn-pri" style={{ background:"#ef4444" }} onClick={async ()=>{
-        try { await fetch(`/api/projects/${confirm}`, { method:'DELETE', headers:authHeaders }); } catch(e) { console.error(e); }
+        try { await fetch(`/api/projects/${confirm}`, { method:'DELETE', headers:authHeaders }); notify("Projet supprimé"); } catch(e) { console.error(e); notify("Erreur lors de la suppression", "error"); }
         refreshData(); setConfirm(null);
       }}>Supprimer</button></div></div></div>}
       {confirmTesti && <div className="movl" onClick={()=>setConfirmTesti(null)}><div className="mod" style={{ maxWidth:400 }} onClick={(e)=>e.stopPropagation()}><div className="modt">Supprimer ce témoignage ?</div><div className="mods">Cette action est irréversible.</div><div className="modft"><button className="btn-sec" onClick={()=>setConfirmTesti(null)}>Annuler</button><button className="btn-pri" style={{ background:"#ef4444" }} onClick={async ()=>{
-        try { await fetch('/api/testimonials', { method:'DELETE', headers:authHeaders, body:JSON.stringify({ id:confirmTesti }) }); } catch(e) { console.error(e); }
+        try { await fetch('/api/testimonials', { method:'DELETE', headers:authHeaders, body:JSON.stringify({ id:confirmTesti }) }); notify("Témoignage supprimé"); } catch(e) { console.error(e); notify("Erreur lors de la suppression", "error"); }
         refreshData(); setConfirmTesti(null);
       }}>Supprimer</button></div></div></div>}
+      <Toast toast={toast}/>
     </div>
   );
 }
