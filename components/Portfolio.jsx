@@ -732,74 +732,183 @@ function ProjectSubNav({ sections }) {
 }
 
 // ── STARS + CONSTELLATION BACKGROUND ─────────────────────────────────────────
+// Constellations inspirées des outils design : Pen, Component, Type, Frame, Auto-layout, Align, Grid
 const CONSTELLATIONS = [
-  // Figma logo constellation at top-right
-  { x: 72, y: 8, pts: [[0,0],[2,0],[4,0],[2,2],[2,4]], label: "Figma" },
-  // Frame icon bottom-left
-  { x: 8, y: 65, pts: [[0,0],[4,0],[4,3],[0,3],[1,1],[3,1],[3,2],[1,2]], label: "Frame" },
-  // Component icon middle
-  { x: 42, y: 30, pts: [[2,0],[4,2],[2,4],[0,2]], label: "Component" },
-  // Arrow / cursor top-left
-  { x: 15, y: 15, pts: [[0,0],[2,3],[1,2],[1,4]], label: "Cursor" },
-  // Layers icon right
-  { x: 78, y: 45, pts: [[0,1],[2,0],[4,1],[2,2],[0,3],[2,2],[4,3]], label: "Layers" },
-  // Auto-layout middle-bottom
-  { x: 55, y: 72, pts: [[0,0],[3,0],[3,2],[0,2],[1.5,1]], label: "AutoLayout" },
+  { x:76, y:7, scale:2.2, label:"Pen",
+    pts:[[0,3],[1.2,-0.5],[3.2,-0.5],[4.4,2.2]],
+    conns:[[0,1],[2,3],[0,3]], handles:[1,2] },
+  { x:9, y:24, scale:2.1, label:"Component",
+    pts:[[2,0],[4,2],[2,4],[0,2]],
+    conns:[[0,1],[1,2],[2,3],[3,0]] },
+  { x:5, y:10, scale:2, label:"Type",
+    pts:[[0,0],[4,0],[2,0],[2,4.5]],
+    conns:[[0,1],[2,3]] },
+  { x:5, y:58, scale:1.7, label:"Frame",
+    pts:[[0,0],[1.6,0],[0,1.6],[4.2,0],[5.8,0],[5.8,1.6],[0,4.4],[0,6],[1.6,6],[4.2,6],[5.8,6],[5.8,4.4]],
+    conns:[[0,1],[0,2],[3,4],[4,5],[6,7],[7,8],[9,10],[10,11]] },
+  { x:83, y:36, scale:1.9, label:"AutoLayout",
+    pts:[[0,0],[4.5,0],[4.5,2.8],[0,2.8],[2.25,0],[2.25,2.8],[0,1.4],[4.5,1.4]],
+    conns:[[0,1],[1,2],[2,3],[3,0],[4,5],[6,7]] },
+  { x:44, y:22, scale:1.9, label:"Align",
+    pts:[[0,2],[4,2],[2,0],[2,4],[0,0],[4,0],[0,4],[4,4]],
+    conns:[[0,1],[2,3],[4,5],[6,7]] },
+  { x:73, y:64, scale:1.7, label:"Grid",
+    pts:[[0,0],[2,0],[4,0],[0,2],[2,2],[4,2],[0,4],[2,4],[4,4]],
+    conns:[[0,2],[6,8],[0,6],[2,8],[3,5],[1,7]] },
 ];
 
-// Pre-computed once at module level — never recalculated
-const STATIC_STARS = Object.freeze(
-  Array.from({ length: 90 }, (_, i) => ({
-    id: "star-" + i,
-    x: Math.round(Math.random() * 1000) / 10,
-    y: Math.round(Math.random() * 1000) / 10,
-    s: Math.round((Math.random() * 1.5 + 0.3) * 10) / 10,
-    d: Math.round(Math.random() * 50) / 10,
-    t: Math.round((2.5 + Math.random() * 3.5) * 10) / 10,
-    op: Math.round((0.15 + Math.random() * 0.5) * 100) / 100,
-  }))
-);
+const STATIC_STARS = Object.freeze([]);
 
 function BgCanvas() {
-  const stars = STATIC_STARS;
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    let raf, W, H, ctx;
+    const dpr = window.devicePixelRatio || 1;
+    let stars = [], shootingStars = [];
+    let elapsed = 0, lastTs = 0, nextShootAt = 5000 + Math.random() * 6000;
+
+    const init = () => {
+      W = canvas.offsetWidth; H = canvas.offsetHeight;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      stars = Array.from({length:130}, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        r: 0.25 + Math.random() * 1.3,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.3 + Math.random() * 0.9,
+        bright: 0.12 + Math.random() * 0.52,
+        hue: 240 + Math.random() * 65,
+        sat: 15 + Math.random() * 55,
+      }));
+    };
+
+    const tick = (ts) => {
+      const dt = Math.min(ts - lastTs, 50); lastTs = ts; elapsed += dt;
+      ctx.clearRect(0, 0, W, H);
+
+      // Twinkling stars
+      for (const s of stars) {
+        const op = s.bright * (0.45 + 0.55 * Math.sin(elapsed * 0.001 * s.speed + s.phase));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${s.hue},${s.sat}%,88%,${op})`;
+        ctx.fill();
+        if (s.r > 0.9) { // subtle glow on bigger stars
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r * 2.8, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${s.hue},70%,80%,${op * 0.12})`;
+          ctx.fill();
+        }
+      }
+
+      // Spawn shooting star
+      if (elapsed > nextShootAt) {
+        nextShootAt = elapsed + 5000 + Math.random() * 9000;
+        const angle = Math.PI / 4 + (Math.random() - 0.5) * 0.45;
+        shootingStars.push({
+          sx: Math.random() * W * 0.6, sy: Math.random() * H * 0.3,
+          angle, progress: 0,
+          dur: 750 + Math.random() * 550,
+          len: 80 + Math.random() * 90,
+        });
+      }
+
+      // Draw shooting stars
+      shootingStars = shootingStars.filter(ss => {
+        ss.progress = Math.min(1, ss.progress + dt / ss.dur);
+        const p = ss.progress;
+        const op = p < 0.12 ? p / 0.12 : p > 0.72 ? (1 - p) / 0.28 : 1;
+        const dist = W * 0.52 * p;
+        const hx = ss.sx + Math.cos(ss.angle) * dist;
+        const hy = ss.sy + Math.sin(ss.angle) * dist;
+        const tx = hx - Math.cos(ss.angle) * ss.len;
+        const ty = hy - Math.sin(ss.angle) * ss.len;
+
+        const g = ctx.createLinearGradient(hx, hy, tx, ty);
+        g.addColorStop(0,    `rgba(255,255,255,${op})`);
+        g.addColorStop(0.1,  `rgba(215,185,255,${op * 0.85})`);
+        g.addColorStop(0.45, `rgba(124,58,237,${op * 0.35})`);
+        g.addColorStop(1,    'rgba(100,20,200,0)');
+
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(tx, ty);
+        ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.stroke();
+
+        const hg = ctx.createRadialGradient(hx, hy, 0, hx, hy, 5);
+        hg.addColorStop(0, `rgba(255,255,255,${op * 0.9})`);
+        hg.addColorStop(0.5, `rgba(190,140,255,${op * 0.4})`);
+        hg.addColorStop(1, 'rgba(124,58,237,0)');
+        ctx.beginPath(); ctx.arc(hx, hy, 5, 0, Math.PI * 2);
+        ctx.fillStyle = hg; ctx.fill();
+        ctx.restore();
+        return p < 1;
+      });
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    init();
+    raf = requestAnimationFrame(tick);
+
+    const ro = new ResizeObserver(() => init());
+    ro.observe(canvas.parentElement || document.body);
+
+    const vis = () => { if (document.hidden) cancelAnimationFrame(raf); else { lastTs = 0; raf = requestAnimationFrame(tick); }};
+    document.addEventListener('visibilitychange', vis);
+
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); document.removeEventListener('visibilitychange', vis); };
+  }, []);
 
   return (
     <div className="bg-canvas" aria-hidden="true">
-      {stars.map((s) => (
-        <div key={s.id} className="star" style={{
-          left: `${s.x}%`, top: `${s.y}%`,
-          width: s.s, height: s.s,
-          animationDuration: `${s.t}s`, animationDelay: `${s.d}s`,
-          opacity: s.op,
-        }}/>
-      ))}
-      <svg width="100%" height="100%" style={{ position:"absolute", inset:0 }} viewBox="0 0 100 100" preserveAspectRatio="none">
-        {CONSTELLATIONS.map((cst, ci) => (
-          <g key={ci} opacity=".35">
-            {cst.pts.slice(0, -1).map((p, pi) => {
-              const n = cst.pts[pi + 1];
-              const scale = 1.8;
-              return (
-                <line key={pi}
-                  x1={cst.x + p[0] * scale} y1={cst.y + p[1] * scale}
-                  x2={cst.x + n[0] * scale} y2={cst.y + n[1] * scale}
-                  stroke="rgba(124,58,237,.4)" strokeWidth=".12"
-                  strokeDasharray="2" style={{ animation:`constellationDraw 3s ${ci * 0.4}s ease both` }}
-                />
-              );
-            })}
-            {cst.pts.map((p, pi) => {
-              const scale = 1.8;
-              return (
-                <circle key={pi}
-                  cx={cst.x + p[0] * scale} cy={cst.y + p[1] * scale}
-                  r=".25" fill="rgba(124,58,237,.7)"
-                />
-              );
-            })}
-            <text x={cst.x} y={cst.y - 0.8} fontSize="1" fill="rgba(124,58,237,.25)" fontFamily="Syne">{cst.label}</text>
-          </g>
-        ))}
+      <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%'}}/>
+      <svg width="100%" height="100%" style={{position:'absolute',inset:0}} viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+          <filter id="cst-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="0.25" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        {CONSTELLATIONS.map((cst, ci) => {
+          const sc = cst.scale || 2;
+          const px = i => cst.x + cst.pts[i][0] * sc;
+          const py = i => cst.y + cst.pts[i][1] * sc;
+          const conns = cst.conns || cst.pts.slice(0,-1).map((_,i)=>[i,i+1]);
+          return (
+            <g key={ci} opacity=".55" filter="url(#cst-glow)">
+              {conns.map(([a,b], li) => {
+                const isHandle = cst.handles && (cst.handles.includes(a) || cst.handles.includes(b));
+                return (
+                  <line key={li}
+                    x1={px(a)} y1={py(a)} x2={px(b)} y2={py(b)}
+                    stroke={isHandle ? 'rgba(160,100,255,.45)' : 'rgba(124,58,237,.6)'}
+                    strokeWidth={isHandle ? '.08' : '.11'}
+                    strokeDasharray={isHandle ? '.3 .5' : 'none'}
+                    style={{animation:`constellationDraw ${2.8 + li * 0.35}s ${ci * 0.5 + li * 0.18}s ease both`}}
+                  />
+                );
+              })}
+              {cst.pts.map((_, pi) => {
+                const isHandle = cst.handles?.includes(pi);
+                return (
+                  <circle key={pi}
+                    cx={px(pi)} cy={py(pi)}
+                    r={isHandle ? '.16' : '.26'}
+                    fill={isHandle ? 'none' : 'rgba(148,76,255,.9)'}
+                    stroke={isHandle ? 'rgba(148,76,255,.5)' : 'rgba(180,120,255,.35)'}
+                    strokeWidth='.07'
+                    style={{animation:`starBlink ${2.5 + pi * 0.6}s ${ci * 0.35 + pi * 0.25}s ease-in-out infinite`}}
+                  />
+                );
+              })}
+              {cst.label && <text x={cst.x} y={cst.y - 0.9} fontSize=".85" fill="rgba(124,58,237,.18)" fontFamily="Syne,sans-serif" letterSpacing=".08">{cst.label}</text>}
+            </g>
+          );
+        })}
       </svg>
     </div>
   );
