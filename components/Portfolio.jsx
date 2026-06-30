@@ -55,6 +55,13 @@ button{cursor:pointer;font-family:var(--fb)}
 @keyframes chipGlow{0%,100%{box-shadow:0 0 10px rgba(124,58,237,.2)}50%{box-shadow:0 0 22px rgba(124,58,237,.45)}}
 @keyframes scanline{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes curtainIn{from{transform:translateY(105%)}to{transform:translateY(0%)}}
+@keyframes curtainOut{from{transform:translateY(0%)}to{transform:translateY(-105%)}}
+@keyframes projectEnter{from{opacity:0;transform:translateY(32px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.page-curtain{position:fixed;inset:0;z-index:9998;pointer-events:none;background:linear-gradient(170deg,#060812 0%,#0c0d1e 45%,#130f35 75%,#1a0847 100%);transform:translateY(105%);will-change:transform}
+.page-curtain.cin{animation:curtainIn .42s cubic-bezier(.77,0,.175,1) forwards}
+.page-curtain.cout{animation:curtainOut .42s cubic-bezier(.77,0,.175,1) forwards}
+.page-proj-enter{animation:projectEnter .55s cubic-bezier(.22,1,.36,1) .05s both}
 
 .afu{animation:fadeUp .7s var(--ease) both}
 .asc{animation:scaleIn .3s var(--ease) both}
@@ -2259,6 +2266,20 @@ export default function App({ initialData = {} }) {
     }
   }, [loading, cookieState]);
 
+  const [transPhase, setTransPhase] = useState("idle"); // "idle" | "in" | "out"
+
+  // Rideau dark : couvre l'écran (in), change la vue, repart vers le haut (out)
+  const CURTAIN_MS = 420;
+  const runTransition = useCallback((fn) => {
+    setTransPhase("in");
+    setTimeout(() => {
+      fn();
+      window.scrollTo(0, 0);
+      setTransPhase("out");
+      setTimeout(() => setTransPhase("idle"), CURTAIN_MS + 60);
+    }, CURTAIN_MS);
+  }, []);
+
   // Seed history state on mount so popstate works from the very first page
   useEffect(() => {
     const m = window.location.pathname.match(/^\/projets\/([^/]+)$/);
@@ -2269,27 +2290,33 @@ export default function App({ initialData = {} }) {
     );
   }, []);
 
-  // Browser back / forward — rétablit la vue sans recharger la page
+  // Browser back / forward — rétablit la vue avec le rideau
   useEffect(() => {
     const onPop = (e) => {
       const s = e.state;
-      if (s?.view === "project" && s.id) {
-        setProjectId(s.id); setView("project"); window.scrollTo(0, 0);
-      } else {
-        setView("home"); setProjectId(null);
-      }
+      runTransition(() => {
+        if (s?.view === "project" && s.id) {
+          setProjectId(s.id); setView("project");
+        } else {
+          setView("home"); setProjectId(null);
+        }
+      });
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
-  }, []);
+  }, [runTransition]);
 
   const goProject = (id) => {
-    setProjectId(id); setView("project"); window.scrollTo(0, 0);
-    window.history.pushState({ view: "project", id }, "", `/projets/${id}`);
+    runTransition(() => {
+      setProjectId(id); setView("project");
+      window.history.pushState({ view: "project", id }, "", `/projets/${id}`);
+    });
   };
   const goHome = (target = "projets") => {
-    setView("home"); setProjectId(null); setScrollTarget(target);
-    window.history.pushState({ view: "home" }, "", "/");
+    runTransition(() => {
+      setView("home"); setProjectId(null); setScrollTarget(target);
+      window.history.pushState({ view: "home" }, "", "/");
+    });
   };
 
   useEffect(() => {
@@ -2312,7 +2339,9 @@ export default function App({ initialData = {} }) {
     );
   }
 
-  if (view === "admin") return <AdminPage onBack={goHome}/>;
+  const curtainClass = `page-curtain${transPhase === "in" ? " cin" : transPhase === "out" ? " cout" : ""}`;
+
+  if (view === "admin") return <><AdminPage onBack={goHome}/><div className={curtainClass}/></>;
   if (view === "404") return <NotFoundPage onHome={goHome}/>;
 
   if (view === "project") {
@@ -2321,8 +2350,11 @@ export default function App({ initialData = {} }) {
     return (
       <ErrorBoundary onHome={goHome}>
         <>
-          <ProjectPage project={p} allProjects={projects} tags={tags} onBack={(target)=>goHome(target||"projets")} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
+          <div key={projectId} className="page-proj-enter">
+            <ProjectPage project={p} allProjects={projects} tags={tags} onBack={(target)=>goHome(target||"projets")} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
+          </div>
           {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
+          <div className={curtainClass}/>
         </>
       </ErrorBoundary>
     );
@@ -2333,6 +2365,7 @@ export default function App({ initialData = {} }) {
       <>
         <HomePage projects={projects} tags={tags} testimonials={testimonials} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
         {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
+        <div className={curtainClass}/>
       </>
     </ErrorBoundary>
   );
