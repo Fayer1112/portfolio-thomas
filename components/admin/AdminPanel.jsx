@@ -201,7 +201,7 @@ function ImageUploader({ value = [], onChange, maxFiles = 10, accept = "image/*"
 }
 
 // ── ADMIN COMPONENTS ─────────────────────────────────────────────────────────
-function AdminLogin({ onLogin }) {
+function AdminLogin({ onLogin, onBack }) {
   const [pw, setPw] = useState("");
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
@@ -240,6 +240,11 @@ function AdminLogin({ onLogin }) {
           </div>
           <button className="btn-pri" onClick={submit} style={{ justifyContent:"center" }} disabled={loading}>{loading ? "Connexion…" : "Accéder →"}</button>
         </div>
+        {onBack && (
+          <button onClick={onBack} style={{ marginTop:16, width:"100%", background:"none", border:"none", color:"var(--tx3)", fontSize:12, cursor:"pointer", fontFamily:"var(--fb)", padding:"6px 0" }}>
+            ← Retour au site
+          </button>
+        )}
       </div>
     </div>
   );
@@ -521,7 +526,7 @@ export default function AdminPage({ onBack }) {
     setCvSaving(false);
   };
 
-  if (!authed) return <AdminLogin onLogin={(tok) => {
+  if (!authed) return <AdminLogin onBack={onBack} onLogin={(tok) => {
     try { sessionStorage.setItem("tl_admin_session", "1"); sessionStorage.setItem("tl_admin_token", tok); } catch {}
     setToken(tok); setAuthed(true);
   }}/>;

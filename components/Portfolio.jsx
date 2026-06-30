@@ -2194,8 +2194,18 @@ function ToolLogo({ name }) {
 
 // ── ROOT ──────────────────────────────────────────────────────────────────────
 export default function App({ initialData = {} }) {
-  const [view, setView] = useState("home");
-  const [projectId, setProjectId] = useState(null);
+  // Initialise depuis l'URL courante pour éviter tout flash au mount (composant client-only, window toujours dispo)
+  const [view, setView] = useState(() => {
+    if (typeof window !== "undefined" && /^\/projets\/[^/]+$/.test(window.location.pathname)) return "project";
+    return "home";
+  });
+  const [projectId, setProjectId] = useState(() => {
+    if (typeof window !== "undefined") {
+      const m = window.location.pathname.match(/^\/projets\/([^/]+)$/);
+      if (m) return m[1];
+    }
+    return null;
+  });
   const [loading, setLoading] = useState(true);
   const [scrollTarget, setScrollTarget] = useState(null);
   const [cookieState, _setCookieState] = useState(() => {
@@ -2249,8 +2259,38 @@ export default function App({ initialData = {} }) {
     }
   }, [loading, cookieState]);
 
-  const goProject = (id) => { setProjectId(id); setView("project"); window.scrollTo(0,0); };
-  const goHome = (target = "projets") => { setView("home"); setProjectId(null); setScrollTarget(target); };
+  // Seed history state on mount so popstate works from the very first page
+  useEffect(() => {
+    const m = window.location.pathname.match(/^\/projets\/([^/]+)$/);
+    window.history.replaceState(
+      m ? { view: "project", id: m[1] } : { view: "home" },
+      "",
+      window.location.pathname
+    );
+  }, []);
+
+  // Browser back / forward — rétablit la vue sans recharger la page
+  useEffect(() => {
+    const onPop = (e) => {
+      const s = e.state;
+      if (s?.view === "project" && s.id) {
+        setProjectId(s.id); setView("project"); window.scrollTo(0, 0);
+      } else {
+        setView("home"); setProjectId(null);
+      }
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  const goProject = (id) => {
+    setProjectId(id); setView("project"); window.scrollTo(0, 0);
+    window.history.pushState({ view: "project", id }, "", `/projets/${id}`);
+  };
+  const goHome = (target = "projets") => {
+    setView("home"); setProjectId(null); setScrollTarget(target);
+    window.history.pushState({ view: "home" }, "", "/");
+  };
 
   useEffect(() => {
     if (view === "home" && scrollTarget) {
