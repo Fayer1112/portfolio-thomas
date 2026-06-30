@@ -213,7 +213,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .pf-btn:hover{border-color:var(--bdr2);color:var(--tx)}
 .pf-btn.on{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 4px 16px rgba(124,58,237,.28)}
 .pf-sep{width:1px;background:var(--bdr);margin:0 4px;align-self:stretch}
-.pgallery{display:grid;gap:4px}
+.pgallery{display:grid;gap:4px;margin-left:-64px;margin-right:-64px}
 .pgallery-row{display:grid;gap:3px}
 .pgallery-row.r1{grid-template-columns:var(--row-cols, 2fr 1fr)}
 .pgallery-row.r2{grid-template-columns:var(--row-cols, 1fr 2fr)}
@@ -523,6 +523,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .hero{padding:0 80px}
 .sec{padding:180px 80px}
 .foot{padding:20px 80px}
+.pgallery{margin-left:-80px;margin-right:-80px}
 }
 @media(max-width:1024px){
   .hero{grid-template-columns:1fr;padding:110px 52px 80px;text-align:left;gap:40px;max-width:100%}
@@ -558,6 +559,7 @@ button{cursor:pointer;font-family:var(--fb)}
   .testi-grid{grid-template-columns:1fr}
   .contact-layout{grid-template-columns:1fr}.cwrap{padding:44px 22px}
   .foot{padding:16px 24px}
+  .pgallery{margin-left:-20px;margin-right:-20px}
   .pgallery-row.r1,.pgallery-row.r2,.pgallery-row.r3{grid-template-columns:1fr}
   .dash-kpi-grid{grid-template-columns:1fr 1fr}
   .dash-grid2{grid-template-columns:1fr}
