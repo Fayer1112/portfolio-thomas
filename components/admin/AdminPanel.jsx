@@ -4,7 +4,7 @@ import {
   TAG_COLORS, DEFAULT_TAGS, DEFAULT_PROJECTS, DEFAULT_TESTIMONIALS,
 } from "./shared";
 
-const TOAST_DURATION = 10000;
+const TOAST_DURATION = 4000;
 
 function useToast() {
   const [toast, setToast] = useState(null);

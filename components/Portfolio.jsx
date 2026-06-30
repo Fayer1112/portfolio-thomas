@@ -229,7 +229,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .pcard:hover .pcard-body{transform:translateY(0);opacity:1}
 .pcard:hover .pcard-arr{opacity:1;transform:scale(1) rotate(0)}
 .pcard-img{width:100%;height:100%;transition:transform .65s var(--ease);display:block;object-fit:cover}
-.pcard-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,8,15,.97) 30%,rgba(7,8,15,.08) 100%);opacity:0;transition:opacity .3s}
+.pcard-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,8,15,.97) 25%,rgba(7,8,15,.55) 55%,rgba(7,8,15,.22) 80%,rgba(7,8,15,.1) 100%);opacity:.45;transition:opacity .3s}
 .pcard-body{position:absolute;bottom:0;left:0;right:0;padding:24px;transform:translateY(12px);opacity:0;transition:all .3s var(--ease)}
 .pcard-cat{font-size:9.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--acc);margin-bottom:5px}
 .pcard-title{font-family:var(--fd);font-size:20px;font-weight:800;margin-bottom:5px;letter-spacing:-.4px}
