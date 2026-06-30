@@ -9,8 +9,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
   }
   try {
-    const r = await sql`DELETE FROM analytics_events WHERE created_at < NOW() - INTERVAL '13 months'`;
-    return NextResponse.json({ deleted: r.rowCount });
+    const r = await sql`DELETE FROM analytics_events WHERE created_at < NOW() - INTERVAL '13 months' RETURNING id`;
+    return NextResponse.json({ deleted: r.length });
   } catch (err) {
     console.error('Cron purge-analytics error:', err);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
