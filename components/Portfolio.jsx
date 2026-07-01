@@ -1397,8 +1397,8 @@ function Nav({ scrolled, onBack, onTrack, onNavigate, hidden, cvUrl }) {
         <ul className="nlinks">
           {links.map(([id,lbl]) => <li key={id}><button onClick={() => go(id)}>{lbl}</button></li>)}
         </ul>
-        <a className="ncv" href={cvUrl||"#"} target="_blank" rel="noopener">Mon CV ↗</a>
-        <a className="ncv-mobile" href={cvUrl||"#"} target="_blank" rel="noopener">CV ↗</a>
+        <a className="ncv" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener">Mon CV ↗</a>
+        <a className="ncv-mobile" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener">CV ↗</a>
         {!mobOpen && (
           <button className="nhb" onClick={openMenu} aria-label="Ouvrir le menu">☰</button>
         )}
@@ -1421,7 +1421,7 @@ function Nav({ scrolled, onBack, onTrack, onNavigate, hidden, cvUrl }) {
           <div className="nmob-divider" style={{ animation:`linkFadeUp .35s ${0.12+links.length*.07}s var(--ease) both` }}/>
           <a className="btn-pri"
             style={{ marginTop:4, textDecoration:"none", animation:`linkFadeUp .35s ${0.18+links.length*.07}s var(--ease) both` }}
-            href={cvUrl||"#"} target="_blank" rel="noopener"
+            href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener"
             onClick={closeMenu}>
             Télécharger CV ↗
           </a>
@@ -1579,7 +1579,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               <button className="btn-pri" onClick={() => { document.getElementById("projets")?.scrollIntoView({ behavior:"smooth" }); if (onTrack) onTrack("event", { type:"cta_click", label:"hero_projects" }); }}>
                 Voir mes projets →
               </button>
-              <a className="btn-sec" href={cvUrl||"#"} target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("event", { type:"cta_click", label:"hero_cv" }); }}>
+              <a className="btn-sec" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("event", { type:"cta_click", label:"hero_cv" }); }}>
                 Mon CV
               </a>
             </div>
