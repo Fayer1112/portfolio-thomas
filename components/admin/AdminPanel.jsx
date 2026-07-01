@@ -6,6 +6,9 @@ import {
 
 const TOAST_DURATION = 4000;
 
+// Les PDFs Cloudinary doivent être servis via /raw/upload/ et non /image/upload/ (qui renvoie 401)
+const fixPdfUrl = (url) => (url && url.includes('.pdf')) ? url.replace('/image/upload/', '/raw/upload/') : url;
+
 function useToast() {
   const [toast, setToast] = useState(null);
   const notify = useCallback((message, type = "success") => {
@@ -337,7 +340,9 @@ function ImageUploader({ value = [], onChange, maxFiles = 10, accept = "image/*"
       fd.append("file", file);
       fd.append("upload_preset", preset);
       try {
-        const r = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, { method:"POST", body:fd });
+        // Les PDFs doivent utiliser raw/upload — image/upload refuse de les servir (401)
+        const resourceType = accept.includes("pdf") ? "raw" : "auto";
+        const r = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, { method:"POST", body:fd });
         const d = await r.json();
         if (d.secure_url) urls.push(d.secure_url); else hadError = true;
       } catch(e) { console.error("Upload error", e); hadError = true; }
@@ -696,7 +701,7 @@ export default function AdminPage({ onBack }) {
     ]).then(([projs, testis, settings]) => {
       if (Array.isArray(projs)) setProjects(projs.map(fromDbProject));
       if (Array.isArray(testis)) setTestimonials(testis.map(fromDbTestimonial));
-      if (settings?.cv_url) setCvUrl(settings.cv_url);
+      if (settings?.cv_url) setCvUrl(fixPdfUrl(settings.cv_url));
       setLoadingData(false);
     });
   }, [authed]);

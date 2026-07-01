@@ -2344,7 +2344,7 @@ export default function App({ initialData = {} }) {
   const { track } = useAnalytics(cookieState === "accepted");
 
   useEffect(() => {
-    fetch('/api/settings').then(r=>r.json()).then(s=>{ if(s?.cv_url) setCvUrlApp(s.cv_url); }).catch(()=>{});
+    fetch('/api/settings').then(r=>r.json()).then(s=>{ if(s?.cv_url) setCvUrlApp(s.cv_url.replace('/image/upload/', '/raw/upload/')); }).catch(()=>{});
   }, []);
 
   // Sync server data into local storage on each render so fresh BDD data is always used
