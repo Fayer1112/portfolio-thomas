@@ -36,100 +36,285 @@ function Toast({ toast }) {
   );
 }
 
+// ── GRAPHE AIRE SVG ──────────────────────────────────────────────────────────
+function AreaChart({ data, color = "#7C3AED", h = 110 }) {
+  if (!data || data.length < 2) return <div style={{ height:h, display:"flex", alignItems:"center", justifyContent:"center", color:"var(--tx3)", fontSize:12 }}>Pas assez de données</div>;
+  const W = 300; const pad = 4;
+  const maxV = Math.max(...data.map(d => d.v), 1);
+  const pts = data.map((d, i) => ({
+    x: pad + (i / (data.length - 1)) * (W - pad * 2),
+    y: pad + (1 - d.v / maxV) * (h - pad * 2 - 20),
+    v: d.v, l: d.l,
+  }));
+  const line = pts.reduce((acc, pt, i) => {
+    if (i === 0) return `M${pt.x},${pt.y}`;
+    const prev = pts[i - 1];
+    const cx1 = prev.x + (pt.x - prev.x) * 0.45;
+    const cx2 = pt.x - (pt.x - prev.x) * 0.45;
+    return `${acc} C${cx1},${prev.y} ${cx2},${pt.y} ${pt.x},${pt.y}`;
+  }, "");
+  const area = `${line} L${pts[pts.length-1].x},${h-20} L${pts[0].x},${h-20} Z`;
+  const gid = `ag${color.replace(/[^a-z0-9]/gi,"")}`;
+  const [hover, setHover] = useState(null);
+  return (
+    <svg viewBox={`0 0 ${W} ${h}`} style={{ width:"100%", height:h, overflow:"visible" }} preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity=".28"/>
+          <stop offset="100%" stopColor={color} stopOpacity=".02"/>
+        </linearGradient>
+      </defs>
+      <path d={area} fill={`url(#${gid})`}/>
+      <path d={line} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      {pts.map((pt, i) => (
+        <g key={i}>
+          <circle cx={pt.x} cy={pt.y} r="3.5" fill="var(--bg2)" stroke={color} strokeWidth="1.5"/>
+          <rect x={pt.x - W/(data.length*2)} y={0} width={W/data.length} height={h-20} fill="transparent"
+            onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}/>
+          {hover === i && (
+            <g>
+              <rect x={Math.min(pt.x - 18, W - 40)} y={pt.y - 28} width={38} height={18} rx="4"
+                fill="var(--bg3)" stroke={color} strokeWidth=".8" strokeOpacity=".5"/>
+              <text x={Math.min(pt.x - 18, W - 40) + 19} y={pt.y - 15} fontSize="9" fill={color} textAnchor="middle" fontWeight="700">{pt.v}</text>
+            </g>
+          )}
+        </g>
+      ))}
+      {/* X axis labels — show only first, middle, last */}
+      {[0, Math.floor((data.length-1)/2), data.length-1].filter((v,i,a) => a.indexOf(v) === i).map(i => (
+        <text key={i} x={pts[i].x} y={h - 5} fontSize="8" fill="var(--tx3)" textAnchor="middle">{pts[i].l}</text>
+      ))}
+    </svg>
+  );
+}
+
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
+const PERIOD_CFG = {
+  day:   { label:"24h",  sub:"Dernières 24 heures", unit:"heure" },
+  week:  { label:"7j",   sub:"7 derniers jours",    unit:"jour" },
+  month: { label:"30j",  sub:"30 derniers jours",   unit:"jour" },
+  year:  { label:"1 an", sub:"12 derniers mois",    unit:"mois" },
+};
+
+function Trend({ pct }) {
+  if (pct === null || pct === undefined) return null;
+  const up = pct >= 0;
+  return <span style={{ fontSize:11, fontWeight:700, color: up ? "#06D6A0" : "#f87171", marginLeft:5 }}>{up ? "↑" : "↓"}{Math.abs(pct)}%</span>;
+}
+
+function KpiCard({ label, value, sub, color, trend, hint }) {
+  return (
+    <div style={{ background:"var(--bg3)", border:"1px solid var(--bdr)", borderRadius:12, padding:"18px 20px" }}>
+      <div style={{ fontSize:11, fontWeight:600, color:"var(--tx3)", letterSpacing:"1px", textTransform:"uppercase", marginBottom:8 }}>{label}</div>
+      <div style={{ display:"flex", alignItems:"baseline", gap:4 }}>
+        <div style={{ fontFamily:"var(--fd)", fontSize:32, fontWeight:800, color, letterSpacing:"-1px", lineHeight:1 }}>{value}</div>
+        {trend !== undefined && <Trend pct={trend}/>}
+      </div>
+      <div style={{ fontSize:11.5, color:"var(--tx3)", marginTop:6 }}>{sub}</div>
+      {hint && <div style={{ fontSize:10.5, color:"var(--tx3)", marginTop:4, opacity:.7, fontStyle:"italic" }}>{hint}</div>}
+    </div>
+  );
+}
+
 function Dashboard({ token }) {
+  const [period, setPeriod] = useState("month");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     if (!token) return;
-    fetch("/api/analytics", { headers: { Authorization:`Bearer ${token}` } })
-      .then(r=>r.json()).then(d=>{ setData(d); setLoading(false); })
-      .catch(()=>setLoading(false));
-  }, [token]);
+    setLoading(true);
+    fetch(`/api/analytics?period=${period}`, { headers: { Authorization:`Bearer ${token}` } })
+      .then(r => r.json()).then(d => { setData(d); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [token, period, tick]);
 
-  if (loading) return (
-    <div>
-      <div className="ahd"><div><div className="atit">Dashboard</div><div className="asub">Chargement des analytiques…</div></div></div>
-      <div style={{ padding:48, textAlign:"center", color:"var(--tx3)" }}>⏳ Chargement…</div>
-    </div>
-  );
+  const periodLabel = PERIOD_CFG[period]?.sub || "";
 
-  const totals = data?.totals || {};
-  const visits = data?.visits || [];
-  const projectViews = data?.projectViews || [];
-  const recent = data?.recent || [];
-  const noData = !data || (Number(totals.visitors_30d)||0) === 0;
+  const totals     = data?.totals || {};
+  const visits     = data?.visits || [];
+  const projViews  = data?.projectViews || [];
+  const recent     = data?.recent || [];
 
-  const maxSpark = Math.max(...visits.map(v=>Number(v.count)||0), 1);
-  const maxProj = Math.max(...projectViews.map(p=>Number(p.count)||0), 1);
+  // Derived KPIs
+  const visitors       = Number(totals.visitors) || 0;
+  const projectViews   = Number(totals.project_views) || 0;
+  const engagedSess    = Number(totals.engaged_sessions) || 0;
+  const contacts       = Number(totals.contacts) || 0;
+  const cvClicks       = Number(totals.cv_clicks) || 0;
+  const prevVisitors   = Number(data?.prevTotals?.visitors) || 0;
+  const trendPct       = prevVisitors > 0 ? Math.round((visitors - prevVisitors) / prevVisitors * 100) : null;
+  const engagementRate = visitors > 0 ? Math.round(engagedSess / visitors * 100) : 0;
+  const convRate       = visitors > 0 ? Math.round(contacts / visitors * 100) : 0;
+  const avgProj        = visitors > 0 ? (projectViews / visitors).toFixed(1) : "0";
+  const maxProj        = Math.max(...projViews.map(p => Number(p.count) || 0), 1);
+  const noData         = !data || visitors === 0;
+
+  const fmtTs = (ts) => {
+    const d = new Date(ts);
+    if (period === "year") return d.toLocaleDateString("fr-FR", { month:"short" });
+    if (period === "day")  return `${String(d.getHours()).padStart(2,"0")}h`;
+    return d.toLocaleDateString("fr-FR", { day:"2-digit", month:"2-digit" });
+  };
+  const chartData = visits.map(v => ({ v: Number(v.count) || 0, l: fmtTs(v.ts) }));
 
   const timeAgo = (ts) => {
-    const diff = Date.now() - new Date(ts).getTime();
-    if (diff < 60000) return "À l'instant";
-    if (diff < 3600000) return `${Math.floor(diff/60000)}min`;
-    if (diff < 86400000) return `${Math.floor(diff/3600000)}h`;
-    return `${Math.floor(diff/86400000)}j`;
+    const d = Date.now() - new Date(ts).getTime();
+    if (d < 60000) return "À l'instant";
+    if (d < 3600000) return `${Math.floor(d/60000)}min`;
+    if (d < 86400000) return `${Math.floor(d/3600000)}h`;
+    return `${Math.floor(d/86400000)}j`;
   };
-  const actLabel = (e) => {
-    if (e.type === "project_view") return `Vue projet "${e.payload?.project||""}"`;
-    if (e.type === "contact_form_send") return `Formulaire envoyé (${e.payload?.subject||""})`;
-    if (e.type === "contact_click") return `Clic contact (${e.payload?.label||""})`;
-    if (e.type === "visit") return "Nouvelle visite";
+  const evtLabel = (e) => {
+    if (e.type === "project_view")      return `📁 Projet "${e.payload?.project || "?"}"`;
+    if (e.type === "contact_form_send") return `✉️ Formulaire contact`;
+    if (e.type === "contact_click")     return `👆 Clic ${e.payload?.label || "contact"}`;
+    if (e.type === "cta_click")         return `🔗 CTA ${e.payload?.label || ""}`;
+    if (e.type === "visit")             return `👁 Nouvelle visite`;
     return e.type;
   };
+  const evtColor = (e) => e.type.includes("project") ? "#7C3AED" : e.type.includes("contact") ? "#06D6A0" : e.type === "cta_click" ? "#F59E0B" : "#4B7FFA";
+
+  const periodBtnStyle = (p) => ({
+    padding:"5px 13px", borderRadius:6, fontSize:12, fontWeight:600, cursor:"pointer", border:"1px solid",
+    borderColor: period === p ? "var(--acc)" : "var(--bdr)",
+    background: period === p ? "var(--accd)" : "transparent",
+    color: period === p ? "var(--acc)" : "var(--tx2)",
+    fontFamily:"var(--fb)",
+  });
+
+  // Funnel steps
+  const funnel = [
+    { label:"Visiteurs",             val:visitors,     color:"#A78BFA" },
+    { label:"Ont vu un projet",       val:engagedSess,  color:"#60A5FA" },
+    { label:"Ont cliqué Mon CV",      val:cvClicks,     color:"#34D399" },
+    { label:"Ont pris contact",       val:contacts,     color:"#FBBF24" },
+  ];
+  const funnelMax = Math.max(visitors, 1);
 
   return (
     <div>
-      <div className="ahd">
-        <div><div className="atit">Dashboard</div><div className="asub">Analytiques serveur · 30 derniers jours · Conforme CNIL</div></div>
-        <button onClick={()=>{ setLoading(true); fetch("/api/analytics",{headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json()).then(d=>{setData(d);setLoading(false);}); }} style={{ fontSize:12, padding:"6px 14px", borderRadius:7, background:"var(--bg3)", border:"1px solid var(--bdr)", color:"var(--tx2)", cursor:"pointer" }}>
-          ↻ Actualiser
-        </button>
+      {/* Header */}
+      <div className="ahd" style={{ marginBottom:20, flexWrap:"wrap", gap:12 }}>
+        <div>
+          <div className="atit">Dashboard</div>
+          <div className="asub">Analytiques anonymes CNIL · {periodLabel}</div>
+        </div>
+        <div style={{ display:"flex", gap:6, alignItems:"center", flexWrap:"wrap" }}>
+          {["day","week","month","year"].map(p => (
+            <button key={p} style={periodBtnStyle(p)} onClick={() => setPeriod(p)}>{PERIOD_CFG[p].label}</button>
+          ))}
+          <button onClick={() => { setLoading(true); setTick(t => t+1); }}
+            style={{ padding:"5px 11px", borderRadius:6, fontSize:12, background:"var(--bg3)", border:"1px solid var(--bdr)", color:"var(--tx2)", cursor:"pointer", fontFamily:"var(--fb)" }}>
+            ↻
+          </button>
+        </div>
       </div>
 
-      {noData ? (
-        <div className="no-data" style={{ background:"var(--bg3)", borderRadius:12, border:"1px solid var(--bdr)", padding:48 }}>
-          <div style={{ fontSize:32, marginBottom:16 }}>📊</div>
-          <div style={{ fontFamily:"var(--fd)", fontSize:16, fontWeight:700, marginBottom:8 }}>Aucune donnée pour le moment</div>
-          <div style={{ color:"var(--tx3)", fontSize:13 }}>Les visiteurs qui acceptent la mesure d'audience apparaîtront ici. Les données sont anonymes, sans cookie tiers.</div>
+      {loading ? (
+        <div style={{ padding:60, textAlign:"center", color:"var(--tx3)" }}>⏳ Chargement…</div>
+      ) : noData ? (
+        <div style={{ background:"var(--bg3)", borderRadius:12, border:"1px solid var(--bdr)", padding:48, textAlign:"center" }}>
+          <div style={{ fontSize:32, marginBottom:12 }}>📊</div>
+          <div style={{ fontFamily:"var(--fd)", fontSize:15, fontWeight:700, marginBottom:8 }}>Aucune donnée sur cette période</div>
+          <div style={{ color:"var(--tx3)", fontSize:13 }}>Les visiteurs ayant accepté la mesure d'audience apparaîtront ici.</div>
         </div>
       ) : (<>
-        <div className="dash-kpi-grid">
-          <div className="kpi-card c1"><div className="kpi-label">Visiteurs uniques</div><div className="kpi-val" style={{ color:"#A78BFA" }}>{Number(totals.visitors_30d)||0}</div><div className="kpi-sub">30 derniers jours</div></div>
-          <div className="kpi-card c2"><div className="kpi-label">Cette semaine</div><div className="kpi-val" style={{ color:"#93C5FD" }}>{Number(totals.visitors_7d)||0}</div><div className="kpi-sub">7 derniers jours</div></div>
-          <div className="kpi-card c3"><div className="kpi-label">Vues projets</div><div className="kpi-val" style={{ color:"#6EE7B7" }}>{Number(totals.project_views_30d)||0}</div><div className="kpi-sub">30 derniers jours</div></div>
-          <div className="kpi-card c4"><div className="kpi-label">Contacts</div><div className="kpi-val" style={{ color:"#FCD34D" }}>{Number(totals.contacts_30d)||0}</div><div className="kpi-sub">formulaires envoyés</div></div>
+        {/* KPI Row 1 */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))", gap:12, marginBottom:16 }}>
+          <KpiCard label="Visiteurs uniques" value={visitors} color="#A78BFA"
+            sub={periodLabel} trend={trendPct}
+            hint={trendPct !== null ? `vs période précédente` : undefined}/>
+          <KpiCard label="Taux d'engagement" value={`${engagementRate}%`} color="#60A5FA"
+            sub={`${engagedSess} ont ouvert un projet`}
+            hint="Visiteurs qui consultent ton travail"/>
+          <KpiCard label="Projets / visiteur" value={avgProj} color="#34D399"
+            sub={`${projectViews} vues au total`}
+            hint="Plus élevé = plus d'intérêt"/>
+          <KpiCard label="Taux de contact" value={`${convRate}%`} color="#FBBF24"
+            sub={`${contacts} message${contacts > 1 ? "s" : ""} reçu${contacts > 1 ? "s" : ""}`}
+            hint="Objectif : > 2%"/>
+          <KpiCard label="Clics Mon CV" value={cvClicks} color="#F472B6"
+            sub="Téléchargements CV"
+            hint="Intérêt recruteur direct"/>
         </div>
-        <div className="dash-grid2">
-          <div className="dash-card">
-            <div className="dash-card-title">Visiteurs / jour<span className="dash-card-sub">30 jours</span></div>
-            <div className="sparkline">
-              {visits.length > 0 ? visits.map((v,i)=>(
-                <div key={i} className="spark-bar" style={{ height:`${Math.max(4,(Number(v.count)/maxSpark)*100)}%` }} title={`${v.date}: ${v.count}`}/>
-              )) : <div style={{ color:"var(--tx3)", fontSize:12, padding:16 }}>Pas de données</div>}
+
+        {/* Visiteur trend chart */}
+        <div style={{ background:"var(--bg3)", border:"1px solid var(--bdr)", borderRadius:12, padding:"20px 20px 12px", marginBottom:16 }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
+            <div style={{ fontSize:13, fontWeight:700, fontFamily:"var(--fd)" }}>
+              Évolution visiteurs
+              <span style={{ fontSize:11, color:"var(--tx3)", fontWeight:400, marginLeft:8 }}>par {PERIOD_CFG[period].unit}</span>
             </div>
-          </div>
-          <div className="dash-card">
-            <div className="dash-card-title">Top projets<span className="dash-card-sub">30 jours</span></div>
-            {projectViews.length > 0 ? projectViews.slice(0,5).map((p,i)=>(
-              <div className="bar-row" key={i}>
-                <span className="bar-lbl">{p.project||"—"}</span>
-                <div className="bar-track"><div className="bar-fill" style={{ width:`${(Number(p.count)/maxProj)*100}%` }}/></div>
-                <span className="bar-count">{p.count}</span>
+            {trendPct !== null && (
+              <div style={{ fontSize:12, color:"var(--tx3)" }}>
+                vs période précédente : <Trend pct={trendPct}/>
               </div>
-            )) : <div className="no-data" style={{ padding:20 }}>Aucun projet consulté</div>}
+            )}
+          </div>
+          <AreaChart data={chartData} color="#7C3AED" h={120}/>
+        </div>
+
+        {/* Projects + Funnel */}
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:16 }}>
+          {/* Top Projects */}
+          <div style={{ background:"var(--bg3)", border:"1px solid var(--bdr)", borderRadius:12, padding:"18px 20px" }}>
+            <div style={{ fontSize:13, fontWeight:700, fontFamily:"var(--fd)", marginBottom:14 }}>Projets les + consultés</div>
+            {projViews.length === 0 ? <div style={{ color:"var(--tx3)", fontSize:12 }}>Aucun projet</div> :
+              projViews.slice(0,6).map((p, i) => (
+                <div key={i} style={{ display:"flex", alignItems:"center", gap:10, marginBottom:10 }}>
+                  <span style={{ fontSize:10, fontWeight:800, color:"var(--tx3)", minWidth:14 }}>#{i+1}</span>
+                  <span style={{ fontSize:12.5, fontWeight:600, flex:1, textTransform:"capitalize" }}>{p.project || "—"}</span>
+                  <div style={{ flex:2, height:5, borderRadius:3, background:"rgba(124,58,237,.1)" }}>
+                    <div style={{ height:"100%", borderRadius:3, background:"var(--acc)", width:`${(Number(p.count)/maxProj)*100}%`, transition:"width .6s ease" }}/>
+                  </div>
+                  <span style={{ fontSize:11.5, fontWeight:700, color:"var(--acc)", minWidth:22, textAlign:"right" }}>{p.count}</span>
+                </div>
+              ))
+            }
+          </div>
+
+          {/* Conversion Funnel */}
+          <div style={{ background:"var(--bg3)", border:"1px solid var(--bdr)", borderRadius:12, padding:"18px 20px" }}>
+            <div style={{ fontSize:13, fontWeight:700, fontFamily:"var(--fd)", marginBottom:14 }}>Funnel recruteur</div>
+            <div style={{ fontSize:10, color:"var(--tx3)", marginBottom:14, lineHeight:1.5 }}>
+              Suit le chemin d'un recruteur : visite → intérêt projet → CV → contact
+            </div>
+            {funnel.map((f, i) => (
+              <div key={i} style={{ marginBottom:10 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
+                  <span style={{ fontSize:11.5, color:"var(--tx2)" }}>{f.label}</span>
+                  <span style={{ fontSize:12, fontWeight:700, color:f.color }}>{f.val}</span>
+                </div>
+                <div style={{ height:6, borderRadius:3, background:"rgba(255,255,255,.05)" }}>
+                  <div style={{ height:"100%", borderRadius:3, background:f.color, width:`${(f.val/funnelMax)*100}%`, transition:"width .7s ease", opacity:.85 }}/>
+                </div>
+                {i < funnel.length - 1 && f.val > 0 && funnel[i+1].val > 0 && (
+                  <div style={{ fontSize:9.5, color:"var(--tx3)", textAlign:"right", marginTop:2 }}>
+                    → {Math.round(funnel[i+1].val/f.val*100)}% passent à l'étape suivante
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
-        <div className="dash-card" style={{ marginTop:16 }}>
-          <div className="dash-card-title">Activité récente<span className="dash-card-sub">50 derniers événements</span></div>
-          {recent.slice(0,10).map((e,i)=>(
-            <div className="activity-row" key={i}>
-              <div className="activity-dot" style={{ background:e.type.includes("project")?"#7C3AED":e.type.includes("contact")?"#06D6A0":"#4B7FFA" }}/>
-              <span className="activity-desc">{actLabel(e)}</span>
-              <span className="activity-time">{timeAgo(e.created_at)}</span>
-            </div>
-          ))}
+
+        {/* Activity feed */}
+        <div style={{ background:"var(--bg3)", border:"1px solid var(--bdr)", borderRadius:12, padding:"18px 20px" }}>
+          <div style={{ fontSize:13, fontWeight:700, fontFamily:"var(--fd)", marginBottom:14 }}>
+            Activité récente
+            <span style={{ fontSize:11, color:"var(--tx3)", fontWeight:400, marginLeft:8 }}>toutes périodes</span>
+          </div>
+          {recent.length === 0 ? <div style={{ color:"var(--tx3)", fontSize:12 }}>Aucune activité</div> :
+            recent.slice(0,12).map((e, i) => (
+              <div key={i} style={{ display:"flex", alignItems:"center", gap:10, padding:"7px 0", borderBottom:i<11?"1px solid rgba(255,255,255,.04)":"none" }}>
+                <div style={{ width:7, height:7, borderRadius:"50%", background:evtColor(e), flexShrink:0 }}/>
+                <span style={{ fontSize:12.5, color:"var(--tx2)", flex:1 }}>{evtLabel(e)}</span>
+                <span style={{ fontSize:11, color:"var(--tx3)", flexShrink:0 }}>{timeAgo(e.created_at)}</span>
+              </div>
+            ))
+          }
         </div>
       </>)}
     </div>
