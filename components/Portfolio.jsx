@@ -141,10 +141,10 @@ button{cursor:pointer;font-family:var(--fb)}
 .hero-line1,.hero-line2{display:block;position:relative}
 .hero-line1{z-index:1}
 .hero-line2{z-index:3;text-shadow:0 8px 44px rgba(7,8,15,.9),0 2px 12px rgba(7,8,15,.75)}
-.hero-castro{position:absolute;left:50%;top:50%;transform:translate(-50%,-52%);width:min(22vw,380px);z-index:2;pointer-events:none;filter:drop-shadow(0 30px 70px rgba(75,127,250,.3))}
+.hero-castro{position:absolute;left:50%;top:44%;transform:translate(-50%,-58%);width:min(19vw,330px);z-index:2;pointer-events:none;filter:drop-shadow(0 30px 70px rgba(75,127,250,.3))}
 .hero-castro svg{width:100%;height:auto;display:block}
-.hero-planet-bg{position:absolute;top:max(-52vw,-680px);right:max(-26vw,-360px);width:min(88vw,1250px);aspect-ratio:1;border-radius:50%;z-index:0;pointer-events:none;background:radial-gradient(circle at 30% 32%,#31186B 0%,#1C0B44 45%,#0A041D 75%);box-shadow:0 0 160px 40px rgba(124,58,237,.2),inset -90px -130px 240px rgba(0,0,0,.88),inset 70px 70px 180px rgba(183,156,255,.1);-webkit-mask-image:linear-gradient(200deg,#000 42%,transparent 74%);mask-image:linear-gradient(200deg,#000 42%,transparent 74%)}
-.hero-c .hero-spec{justify-content:center;position:relative;z-index:2}
+.hero-planet-bg{position:absolute;top:max(-52vw,-680px);right:max(-26vw,-360px);width:min(88vw,1250px);aspect-ratio:1;border-radius:50%;z-index:0;pointer-events:none;background:radial-gradient(circle at 30% 32%,#3D2184 0%,#241056 45%,#0D0526 75%);box-shadow:0 0 180px 50px rgba(124,58,237,.28),inset -90px -130px 240px rgba(0,0,0,.85),inset 70px 70px 180px rgba(183,156,255,.14);-webkit-mask-image:linear-gradient(200deg,#000 42%,transparent 74%);mask-image:linear-gradient(200deg,#000 42%,transparent 74%)}
+.hero-c .hero-spec{justify-content:center;position:relative;z-index:4}
 .hero-c .hero-desc{margin-left:auto;margin-right:auto}
 .hero-c .hero-acts{justify-content:center}
 .hero-name-grad{background:linear-gradient(135deg,#FFFFFF 0%,#EDE9FE 35%,#C4B5FD 65%,#9B6DFF 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;padding-right:8px}
@@ -616,7 +616,7 @@ button{cursor:pointer;font-family:var(--fb)}
   .nhb{display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--tx);font-size:18px}
   .ncv-mobile{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;font-size:12.5px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#6025C0);color:#fff;border:none;text-decoration:none;flex-shrink:0;box-shadow:0 4px 14px rgba(124,58,237,.35);white-space:nowrap}
   .hero{padding:80px 20px 48px;gap:32px;grid-template-columns:1fr}.hero-left{padding:24px 0;max-width:100%}.hero-h1{letter-spacing:-2px;font-size:clamp(44px,12vw,80px)}
-  .hero-h1c{font-size:clamp(54px,15.5vw,110px)}.hero-castro{width:48vw}.hero-c{padding-top:110px}.hero-desc{font-size:15px;line-height:1.75}.hero-badge{font-size:10px;padding:5px 14px;margin-bottom:20px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
+  .hero-h1c{font-size:clamp(54px,14.5vw,110px)}.hero-castro{width:42vw}.hero-c{padding-top:110px}.hero-desc{font-size:15px;line-height:1.75}.hero-badge{font-size:10px;padding:5px 14px;margin-bottom:20px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
   .stats{flex-direction:column}.stat{padding:24px 20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
   .pd-subnav{padding:0 16px}.pd-subnav-btn{padding:12px 14px;font-size:12px}
   .pd-gallery{grid-template-columns:1fr 1fr}
@@ -830,7 +830,7 @@ const hexRgb = (hex) => {
 };
 // trailHue = teinte HSL des étoiles filantes ; scrollHue = dérive de teinte au scroll ; holes = trous noirs décoratifs
 const BG_VARIANTS = {
-  home:   { accent:"#7C3AED", hueMin:240, hueMax:305, trailHue:263, scrollHue:65, subset:[0,1,2,3,4,5,6], shift:{x:0,y:0},  flip:false, holes:[{x:89,y:34,s:150},{x:7,y:76,s:105}] },
+  home:   { accent:"#7C3AED", hueMin:240, hueMax:305, trailHue:263, scrollHue:65, subset:[0,1,2,3,4,5,6], shift:{x:0,y:0},  flip:false, holes:[{x:92,y:11,s:130},{x:7,y:76,s:105}] },
   cabin:  { accent:"#4B7FFA", hueMin:210, hueMax:250, trailHue:222, scrollHue:30, subset:[0,2,4,6],       shift:{x:3,y:5},  flip:true,  holes:[{x:11,y:32,s:130}] },
   skylib: { accent:"#06D6A0", hueMin:150, hueMax:195, trailHue:162, scrollHue:30, subset:[1,3,5,6],       shift:{x:6,y:8},  flip:false, holes:[{x:87,y:62,s:140}] },
   ds:     { accent:"#5B8AF5", hueMin:215, hueMax:255, trailHue:224, scrollHue:30, subset:[1,2,3,5],       shift:{x:-4,y:10},flip:true,  holes:[{x:88,y:22,s:120}] },
@@ -1728,14 +1728,16 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               <div className="hero-badge-dot"/>
               Product Designer · Design Ops · Paris
             </div>
-            {/* Sandwich 3D : « Thomas » derrière l'astronaute, « Leloup » devant */}
-            <div className="hero-cstage">
-              <div className="hero-castro afu d2" aria-hidden="true">
+            {/* Sandwich 3D : « Thomas » derrière l'astronaute, « Leloup » devant.
+                L'animation d'entrée est portée par cstage (pas le h1) pour ne pas
+                créer de stacking context qui emprisonnerait les z-index des lignes. */}
+            <div className="hero-cstage afu d1">
+              <div className="hero-castro" aria-hidden="true">
                 <div style={{ transform:`perspective(900px) translate3d(${px.x*18}px, ${px.y*12}px, 0) rotateY(${-px.x*4}deg) rotateX(${px.y*2.5}deg)`, transition:"transform .18s ease-out" }}>
                   <AstronautSVG size={420}/>
                 </div>
               </div>
-              <h1 className="hero-h1c afu d1">
+              <h1 className="hero-h1c">
                 <span className="hero-name-grad hero-line1" style={{ transform:`translate(${px.x*-7}px, ${px.y*-4}px)`, transition:"transform .18s ease-out" }}>Thomas</span>
                 <span className="hero-name-grad hero-line2" style={{ transform:`translate(${px.x*-10}px, ${px.y*-6}px)`, transition:"transform .18s ease-out" }}>Leloup</span>
               </h1>
