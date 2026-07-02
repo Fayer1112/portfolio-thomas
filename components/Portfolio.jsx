@@ -133,12 +133,20 @@ button{cursor:pointer;font-family:var(--fb)}
 .hero-badge{display:inline-flex;align-items:center;gap:9px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.35);border-radius:100px;padding:8px 18px;font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:#C4B5FD;margin-bottom:32px;backdrop-filter:blur(8px)}
 .hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#06D6A0;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 6px #06D6A0}
 .hero-h1{font-size:clamp(48px,7.2vw,118px);font-weight:800;line-height:.9;letter-spacing:-3px;position:relative;z-index:2}
-.hero-title-stage{position:relative;width:max-content;max-width:100%}
-.hero-title-astro{position:absolute;top:max(-9vw,-170px);left:calc(100% - 15vw);width:26vw;max-width:470px;z-index:1;pointer-events:none}
-.hero-spec{position:relative;z-index:2}
-.hero-title-astro img{width:100%;height:auto;display:block;filter:drop-shadow(0 32px 80px rgba(75,127,250,.25))}
-.hero-title-astro.front{z-index:3}
-.hero-title-astro.front img{clip-path:polygon(0 36%,33% 36%,33% 73%,0 73%)}
+/* hero centré — sandwich 3D titre/astronaute + planète d'arrière-plan */
+.hero-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:150px;padding-bottom:50px;text-align:center}
+.hero-cwrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%}
+.hero-cstage{position:relative;display:flex;flex-direction:column;align-items:center;margin-top:4px}
+.hero-h1c{margin:0;font-weight:800;line-height:.85;letter-spacing:-.045em;font-size:clamp(64px,11.5vw,190px)}
+.hero-line1,.hero-line2{display:block;position:relative}
+.hero-line1{z-index:1}
+.hero-line2{z-index:3;text-shadow:0 8px 44px rgba(7,8,15,.9),0 2px 12px rgba(7,8,15,.75)}
+.hero-castro{position:absolute;left:50%;top:50%;transform:translate(-50%,-52%);width:min(22vw,380px);z-index:2;pointer-events:none;filter:drop-shadow(0 30px 70px rgba(75,127,250,.3))}
+.hero-castro svg{width:100%;height:auto;display:block}
+.hero-planet-bg{position:absolute;top:max(-52vw,-680px);right:max(-26vw,-360px);width:min(88vw,1250px);aspect-ratio:1;border-radius:50%;z-index:0;pointer-events:none;background:radial-gradient(circle at 30% 32%,#31186B 0%,#1C0B44 45%,#0A041D 75%);box-shadow:0 0 160px 40px rgba(124,58,237,.2),inset -90px -130px 240px rgba(0,0,0,.88),inset 70px 70px 180px rgba(183,156,255,.1);-webkit-mask-image:linear-gradient(200deg,#000 42%,transparent 74%);mask-image:linear-gradient(200deg,#000 42%,transparent 74%)}
+.hero-c .hero-spec{justify-content:center;position:relative;z-index:2}
+.hero-c .hero-desc{margin-left:auto;margin-right:auto}
+.hero-c .hero-acts{justify-content:center}
 .hero-name-grad{background:linear-gradient(135deg,#FFFFFF 0%,#EDE9FE 35%,#C4B5FD 65%,#9B6DFF 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;padding-right:8px}
 .hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:rgba(255,255,255,.35);font-size:clamp(18px,.52em,48px);letter-spacing:0px;display:block;margin-top:14px;-webkit-text-fill-color:rgba(255,255,255,.35)}
 .hero-spec{display:flex;gap:9px;flex-wrap:wrap;margin:28px 0 0}
@@ -267,12 +275,16 @@ button{cursor:pointer;font-family:var(--fb)}
 .planet-sat{position:absolute;inset:-15%;animation:spinSlow 16s linear infinite;pointer-events:none}
 .planet-sat::after{content:"";position:absolute;top:50%;left:-4px;width:9px;height:9px;border-radius:50%;background:#B79CFF;box-shadow:0 0 14px #A78BFA}
 .planet-star{position:absolute;color:rgba(183,156,255,.7);font-size:12px;animation:starBlink 3s ease-in-out infinite;pointer-events:none}
-/* soleil traversant — éclaire la page en orange à son passage (blend screen), puis le violet revient */
-.sun-sweep{position:fixed;inset:0;pointer-events:none;z-index:45;mix-blend-mode:screen;overflow:hidden}
-.sun-core{position:absolute;top:14vh;left:0;width:44vmin;height:44vmin;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(255,244,214,.95) 0%,rgba(255,196,98,.8) 16%,rgba(255,140,44,.42) 36%,rgba(255,106,20,.16) 56%,transparent 72%);animation:sunTravel 24s ease-in-out infinite}
-.sun-core::before{content:"";position:absolute;inset:-100%;border-radius:50%;background:radial-gradient(circle,rgba(255,150,60,.26) 0%,rgba(255,120,40,.1) 42%,transparent 70%)}
-.sun-core::after{content:"";position:absolute;inset:-42%;border-radius:50%;background:conic-gradient(from 0deg,transparent 0deg,rgba(255,195,115,.2) 12deg,transparent 26deg,transparent 62deg,rgba(255,195,115,.16) 76deg,transparent 92deg,transparent 132deg,rgba(255,195,115,.18) 146deg,transparent 162deg,transparent 202deg,rgba(255,195,115,.15) 216deg,transparent 232deg,transparent 276deg,rgba(255,195,115,.18) 292deg,transparent 308deg,transparent 360deg);animation:spinSlow 38s linear infinite;filter:blur(4px)}
-@media(max-width:768px){.sun-sweep{display:none}}
+/* soleil traversant — disque DERRIÈRE les composants, nappe de lumière au-dessus (blend screen) */
+.sun-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.sun-behind{z-index:0}
+.sun-light{z-index:45;mix-blend-mode:screen}
+.sun-disc,.sun-wash{position:absolute;top:13vh;left:0;width:42vmin;height:42vmin;border-radius:50%;animation:sunTravel 38s ease-in-out infinite}
+.sun-disc{background:radial-gradient(circle at 50% 50%,#FFF6DC 0%,#FFC868 14%,rgba(255,150,52,.85) 30%,rgba(255,116,26,.35) 52%,transparent 70%);filter:blur(1px)}
+.sun-disc::before{content:"";position:absolute;inset:-55%;border-radius:50%;background:radial-gradient(circle,rgba(255,160,70,.35) 0%,rgba(255,130,45,.12) 45%,transparent 70%)}
+.sun-wash{background:radial-gradient(circle,rgba(255,170,80,.32) 0%,rgba(255,130,45,.15) 38%,rgba(255,110,30,.05) 60%,transparent 74%)}
+.sun-wash::before{content:"";position:absolute;inset:-110%;border-radius:50%;background:radial-gradient(circle,rgba(255,150,60,.15) 0%,rgba(255,120,40,.06) 45%,transparent 70%)}
+@media(max-width:768px){.sun-layer{display:none}}
 /* trou noir XL de section — disque double contre-rotatif, lentille, logos Figma aspirés */
 .bhx{position:absolute;width:340px;aspect-ratio:1;pointer-events:none;z-index:0}
 .bhx-lens{position:absolute;inset:-12%;border-radius:50%;background:radial-gradient(circle,transparent 42%,rgba(124,58,237,.13) 50%,rgba(183,156,255,.07) 56%,transparent 66%)}
@@ -581,8 +593,10 @@ button{cursor:pointer;font-family:var(--fb)}
   .hero{grid-template-columns:1fr;padding:110px 52px 80px;text-align:left;gap:40px;max-width:100%}
   .hero-outer{padding-top:0}
   .hero-right{display:none}
-  .hero-title-astro{display:none}
-  .hero-title-stage{width:auto}
+  .hero-c{text-align:center;padding-left:28px;padding-right:28px}
+  .hero-c .hero-float-card{display:none}
+  .hero-castro{width:34vw}
+  .hero-planet-bg{opacity:.6}
   .about-grid{grid-template-columns:1fr}
   .dh-wrap{grid-template-columns:1fr}
   .dh-tree-wrap{display:none}
@@ -601,7 +615,8 @@ button{cursor:pointer;font-family:var(--fb)}
   .nav{padding:10px 18px;gap:10px}.nlinks{display:none}.ncv{display:none}
   .nhb{display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--tx);font-size:18px}
   .ncv-mobile{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;font-size:12.5px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#6025C0);color:#fff;border:none;text-decoration:none;flex-shrink:0;box-shadow:0 4px 14px rgba(124,58,237,.35);white-space:nowrap}
-  .hero{padding:80px 20px 48px;gap:32px;grid-template-columns:1fr}.hero-left{padding:24px 0;max-width:100%}.hero-h1{letter-spacing:-2px;font-size:clamp(44px,12vw,80px)}.hero-desc{font-size:15px;line-height:1.75}.hero-badge{font-size:10px;padding:5px 14px;margin-bottom:20px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
+  .hero{padding:80px 20px 48px;gap:32px;grid-template-columns:1fr}.hero-left{padding:24px 0;max-width:100%}.hero-h1{letter-spacing:-2px;font-size:clamp(44px,12vw,80px)}
+  .hero-h1c{font-size:clamp(54px,15.5vw,110px)}.hero-castro{width:48vw}.hero-c{padding-top:110px}.hero-desc{font-size:15px;line-height:1.75}.hero-badge{font-size:10px;padding:5px 14px;margin-bottom:20px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
   .stats{flex-direction:column}.stat{padding:24px 20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
   .pd-subnav{padding:0 16px}.pd-subnav-btn{padding:12px 14px;font-size:12px}
   .pd-gallery{grid-template-columns:1fr 1fr}
@@ -1272,12 +1287,13 @@ function AstronautSVG({ size = 520, style = {} }) {
 
 
 // ── PROJECT COVER SVG ─────────────────────────────────────────────────────────
-// Soleil traversant l'écran de gauche à droite — la lumière orange balaie les éléments
+// Soleil traversant l'écran — disque derrière les composants, lumière ressentie au-dessus
 function SunSweep() {
   return (
-    <div className="sun-sweep" aria-hidden="true">
-      <div className="sun-core"/>
-    </div>
+    <>
+      <div className="sun-layer sun-behind" aria-hidden="true"><div className="sun-disc"/></div>
+      <div className="sun-layer sun-light" aria-hidden="true"><div className="sun-wash"/></div>
+    </>
   );
 }
 
@@ -1704,29 +1720,27 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
         <div className="hero-spotlight" style={{ transform:`translate(calc(-50% + ${px.x*25}px), calc(-50% + ${px.y*15}px))` }}/>
         <div className="hero-blob" style={{ transform:`translate(${px.x*-20}px, ${px.y*-12}px)` }}/>
 
-        <section className="hero" id="hero">
-          <div className="hero-left">
+        <section className="hero hero-c" id="hero">
+          {/* Planète géante qui se fond dans le noir — arrière-plan du hero */}
+          <div className="hero-planet-bg" style={{ transform:`translate(${px.x*9}px, ${px.y*6}px)` }} aria-hidden="true"/>
+          <div className="hero-cwrap">
             <div className="hero-badge afu">
               <div className="hero-badge-dot"/>
               Product Designer · Design Ops · Paris
             </div>
-            {/* Titre + astronaute en couches : corps derrière les lettres, bras/bureau devant (clip-path) */}
-            <div className="hero-title-stage">
-              <h1 className="hero-h1 afu d1">
-                <span className="hero-name-grad" style={{ transform:`translate(${px.x*-8}px, ${px.y*-5}px)`, transition:"transform .18s ease-out" }}>Thomas<br/>Leloup</span>
-                <span className="hero-h1-sub">Design &amp; Engineering</span>
+            {/* Sandwich 3D : « Thomas » derrière l'astronaute, « Leloup » devant */}
+            <div className="hero-cstage">
+              <div className="hero-castro afu d2" aria-hidden="true">
+                <div style={{ transform:`perspective(900px) translate3d(${px.x*18}px, ${px.y*12}px, 0) rotateY(${-px.x*4}deg) rotateX(${px.y*2.5}deg)`, transition:"transform .18s ease-out" }}>
+                  <AstronautSVG size={420}/>
+                </div>
+              </div>
+              <h1 className="hero-h1c afu d1">
+                <span className="hero-name-grad hero-line1" style={{ transform:`translate(${px.x*-7}px, ${px.y*-4}px)`, transition:"transform .18s ease-out" }}>Thomas</span>
+                <span className="hero-name-grad hero-line2" style={{ transform:`translate(${px.x*-10}px, ${px.y*-6}px)`, transition:"transform .18s ease-out" }}>Leloup</span>
               </h1>
-              <div className="hero-title-astro afu d3" aria-hidden="true">
-                <div style={{ transform:`perspective(900px) translate3d(${px.x*20}px, ${px.y*14}px, 0) rotateY(${-px.x*4}deg) rotateX(${px.y*2.5}deg)`, transition:"transform .18s ease-out" }}>
-                  <img src="/astro-desk.png" alt="Astronaute designer"/>
-                </div>
-              </div>
-              <div className="hero-title-astro front afu d3" aria-hidden="true">
-                <div style={{ transform:`perspective(900px) translate3d(${px.x*20}px, ${px.y*14}px, 0) rotateY(${-px.x*4}deg) rotateX(${px.y*2.5}deg)`, transition:"transform .18s ease-out" }}>
-                  <img src="/astro-desk.png" alt=""/>
-                </div>
-              </div>
             </div>
+            <span className="hero-h1-sub afu d2" style={{ marginTop:12 }}>Design &amp; Engineering</span>
 
             {/* Spécialisations */}
             <div className="hero-spec afu d2">
@@ -1759,41 +1773,25 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
             <div className="hero-scroll-hint afu d5">Scroll pour explorer</div>
           </div>
 
-          <div className="hero-right">
-            {/* Deep glow layers */}
-            <div className="hero-glow hero-glow2" style={{ transform:`translate(calc(-50% + ${px.x*35}px), calc(-50% + ${px.y*22}px))` }}/>
-            <div className="hero-glow hero-glow1" style={{ transform:`translate(calc(-50% + ${px.x*20}px), calc(-50% + ${px.y*14}px))` }}/>
-
-            {/* Neon rings */}
-            <div className="hero-neon-ring" style={{ width:390, height:390, borderColor:"rgba(124,58,237,.18)", boxShadow:"0 0 40px rgba(124,58,237,.08) inset", transform:`translate(calc(-50% + ${px.x*10}px), calc(-50% + ${px.y*7}px)) rotate(${px.x*6}deg)`, animation:"spinSlow 50s linear infinite" }}/>
-            <div className="hero-neon-ring" style={{ width:520, height:520, borderColor:"rgba(75,127,250,.08)", transform:`translate(calc(-50% + ${px.x*5}px), calc(-50% + ${px.y*3}px)) rotate(${-px.x*4}deg)`, animation:"spinSlow 80s linear infinite reverse" }}/>
-            <div className="hero-neon-ring" style={{ width:640, height:640, borderColor:"rgba(124,58,237,.04)", transform:`translate(calc(-50% + ${px.x*2}px), calc(-50% + ${px.y*1}px))` }}/>
-
-            {/* Float card — bottom */}
-            <div className="hero-float-card afu d3" style={{ bottom:60, right:24, display:"flex", gap:20, alignItems:"center", transform:`translate(${px.x*-14}px, ${px.y*-9}px)` }}>
-              <div>
-                <div className="fc-label">Disponible</div>
-                <div className="fc-val" style={{ color:"#06D6A0" }}>Paris · Remote</div>
-              </div>
-              <div style={{ width:1, height:32, background:"rgba(255,255,255,.08)" }}/>
-              <div>
-                <div className="fc-label">Expertise</div>
-                <div className="fc-val">Design × Dev</div>
-              </div>
+          {/* Float cards aux coins du hero */}
+          <div className="hero-float-card afu d3" style={{ bottom:80, right:64, display:"flex", gap:20, alignItems:"center", transform:`translate(${px.x*-14}px, ${px.y*-9}px)` }}>
+            <div>
+              <div className="fc-label">Disponible</div>
+              <div className="fc-val" style={{ color:"#06D6A0" }}>Paris · Remote</div>
             </div>
-
-            {/* Float card — haut droite, à l'écart de l'astronaute */}
-            <div className="hero-float-card afu d2" style={{ top:90, right:120, transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
-              <div className="fc-label">Expérience</div>
-              <div className="fc-val">4+ ans</div>
+            <div style={{ width:1, height:32, background:"rgba(255,255,255,.08)" }}/>
+            <div>
+              <div className="fc-label">Expertise</div>
+              <div className="fc-val">Design × Dev</div>
             </div>
-
-            {/* Float card — bas droite */}
-            <div className="hero-float-card afu d4" style={{ bottom:140, right:24, transform:`translate(${px.x*-6}px, ${px.y*-4}px)` }}>
-              <div className="fc-label">Projets</div>
-              <div className="fc-val" style={{ fontSize:16 }}>5 livrés</div>
-            </div>
-
+          </div>
+          <div className="hero-float-card afu d2" style={{ top:120, right:64, transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
+            <div className="fc-label">Expérience</div>
+            <div className="fc-val">4+ ans</div>
+          </div>
+          <div className="hero-float-card afu d4" style={{ bottom:80, left:64, transform:`translate(${px.x*-6}px, ${px.y*-4}px)` }}>
+            <div className="fc-label">Projets</div>
+            <div className="fc-val" style={{ fontSize:16 }}>5 livrés</div>
           </div>
         </section>
       </div>
