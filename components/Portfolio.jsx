@@ -259,6 +259,13 @@ button{cursor:pointer;font-family:var(--fb)}
 .planet-sat{position:absolute;inset:-15%;animation:spinSlow 16s linear infinite;pointer-events:none}
 .planet-sat::after{content:"";position:absolute;top:50%;left:-4px;width:9px;height:9px;border-radius:50%;background:#B79CFF;box-shadow:0 0 14px #A78BFA}
 .planet-star{position:absolute;color:rgba(183,156,255,.7);font-size:12px;animation:starBlink 3s ease-in-out infinite;pointer-events:none}
+/* trous noirs décoratifs — même DA que la planète */
+.blackhole{position:absolute;aspect-ratio:1;pointer-events:none;transform:translate(-50%,-50%)}
+.bh-halo{position:absolute;inset:-30%;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.13),transparent 65%)}
+.bh-disk{position:absolute;inset:5%;border-radius:50%;transform:rotateX(68deg);background:conic-gradient(from 0deg,transparent 0deg,rgba(183,156,255,.5) 80deg,rgba(255,255,255,.75) 160deg,rgba(124,58,237,.45) 240deg,transparent 340deg);filter:blur(3px);animation:spinSlow 14s linear infinite}
+.bh-core{position:absolute;inset:27%;border-radius:50%;background:radial-gradient(circle at 40% 35%,#0A0512 0%,#000 60%);box-shadow:0 0 34px 6px rgba(0,0,0,.85)}
+.bh-ring{position:absolute;inset:25%;border-radius:50%;border:1px solid rgba(216,196,255,.45);box-shadow:0 0 12px rgba(167,139,250,.45),inset 0 0 8px rgba(167,139,250,.3)}
+@media(max-width:768px){.blackhole{display:none}}
 
 /* ─ TESTIMONIALS ─ */
 .testi-wrap{margin-top:64px;display:flex;flex-direction:column;gap:20px}
@@ -774,8 +781,28 @@ const CONSTELLATIONS = [
 
 const STATIC_STARS = Object.freeze([]);
 
-function BgCanvas() {
+// Variantes d'ambiance du fond — chaque page projet a sa teinte et son agencement de constellations
+const hexRgb = (hex) => {
+  const n = parseInt(hex.slice(1), 16);
+  return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
+};
+// trailHue = teinte HSL des étoiles filantes ; scrollHue = dérive de teinte au scroll ; holes = trous noirs décoratifs
+const BG_VARIANTS = {
+  home:   { accent:"#7C3AED", hueMin:240, hueMax:305, trailHue:263, scrollHue:65, subset:[0,1,2,3,4,5,6], shift:{x:0,y:0},  flip:false, holes:[{x:89,y:34,s:150},{x:7,y:76,s:105}] },
+  cabin:  { accent:"#4B7FFA", hueMin:210, hueMax:250, trailHue:222, scrollHue:30, subset:[0,2,4,6],       shift:{x:3,y:5},  flip:true,  holes:[{x:11,y:32,s:130}] },
+  skylib: { accent:"#06D6A0", hueMin:150, hueMax:195, trailHue:162, scrollHue:30, subset:[1,3,5,6],       shift:{x:6,y:8},  flip:false, holes:[{x:87,y:62,s:140}] },
+  ds:     { accent:"#5B8AF5", hueMin:215, hueMax:255, trailHue:224, scrollHue:30, subset:[1,2,3,5],       shift:{x:-4,y:10},flip:true,  holes:[{x:88,y:22,s:120}] },
+  sncf:   { accent:"#F97316", hueMin:18,  hueMax:45,  trailHue:25,  scrollHue:22, subset:[0,3,4,6],       shift:{x:8,y:-3}, flip:false, holes:[{x:9,y:58,s:130}] },
+  kara:   { accent:"#A78BFA", hueMin:255, hueMax:290, trailHue:262, scrollHue:40, subset:[0,1,4,5],       shift:{x:-6,y:6}, flip:true,  holes:[{x:86,y:72,s:150}] },
+};
+
+function BgCanvas({ variant = "home" }) {
   const canvasRef = useRef(null);
+  const svgRef = useRef(null);
+  const holesRef = useRef(null);
+  const cfg = BG_VARIANTS[variant] || BG_VARIANTS.home;
+  const acc = cfg.accent;
+  const accRgb = hexRgb(acc);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -784,6 +811,15 @@ function BgCanvas() {
     const dpr = window.devicePixelRatio || 1;
     let stars = [], shootingStars = [];
     let elapsed = 0, lastTs = 0, nextShootAt = 5000 + Math.random() * 6000;
+    let hueShift = 0; // dérive de teinte au fil du scroll — le fond évolue le long de la page
+
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? window.scrollY / max : 0;
+      hueShift = progress * cfg.scrollHue;
+      if (svgRef.current) svgRef.current.style.filter = `hue-rotate(${hueShift}deg)`;
+      if (holesRef.current) holesRef.current.style.filter = `hue-rotate(${hueShift}deg)`;
+    };
 
     const init = () => {
       W = canvas.offsetWidth; H = canvas.offsetHeight;
@@ -796,7 +832,7 @@ function BgCanvas() {
         phase: Math.random() * Math.PI * 2,
         speed: 0.3 + Math.random() * 0.9,
         bright: 0.12 + Math.random() * 0.52,
-        hue: 240 + Math.random() * 65,
+        hue: cfg.hueMin + Math.random() * (cfg.hueMax - cfg.hueMin),
         sat: 15 + Math.random() * 55,
       }));
     };
@@ -808,14 +844,15 @@ function BgCanvas() {
       // Twinkling stars
       for (const s of stars) {
         const op = s.bright * (0.45 + 0.55 * Math.sin(elapsed * 0.001 * s.speed + s.phase));
+        const h = s.hue + hueShift;
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${s.hue},${s.sat}%,88%,${op})`;
+        ctx.fillStyle = `hsla(${h},${s.sat}%,88%,${op})`;
         ctx.fill();
         if (s.r > 0.9) { // subtle glow on bigger stars
           ctx.beginPath();
           ctx.arc(s.x, s.y, s.r * 2.8, 0, Math.PI * 2);
-          ctx.fillStyle = `hsla(${s.hue},70%,80%,${op * 0.12})`;
+          ctx.fillStyle = `hsla(${h},70%,80%,${op * 0.12})`;
           ctx.fill();
         }
       }
@@ -843,11 +880,12 @@ function BgCanvas() {
         const tx = hx - Math.cos(ss.angle) * ss.len;
         const ty = hy - Math.sin(ss.angle) * ss.len;
 
+        const th = cfg.trailHue + hueShift;
         const g = ctx.createLinearGradient(hx, hy, tx, ty);
         g.addColorStop(0,    `rgba(255,255,255,${op})`);
-        g.addColorStop(0.1,  `rgba(215,185,255,${op * 0.85})`);
-        g.addColorStop(0.45, `rgba(124,58,237,${op * 0.35})`);
-        g.addColorStop(1,    'rgba(100,20,200,0)');
+        g.addColorStop(0.1,  `hsla(${th},82%,86%,${op * 0.85})`);
+        g.addColorStop(0.45, `hsla(${th},76%,58%,${op * 0.35})`);
+        g.addColorStop(1,    `hsla(${th},80%,43%,0)`);
 
         ctx.save();
         ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(tx, ty);
@@ -855,8 +893,8 @@ function BgCanvas() {
 
         const hg = ctx.createRadialGradient(hx, hy, 0, hx, hy, 5);
         hg.addColorStop(0, `rgba(255,255,255,${op * 0.9})`);
-        hg.addColorStop(0.5, `rgba(190,140,255,${op * 0.4})`);
-        hg.addColorStop(1, 'rgba(124,58,237,0)');
+        hg.addColorStop(0.5, `hsla(${th},80%,77%,${op * 0.4})`);
+        hg.addColorStop(1, `hsla(${th},76%,58%,0)`);
         ctx.beginPath(); ctx.arc(hx, hy, 5, 0, Math.PI * 2);
         ctx.fillStyle = hg; ctx.fill();
         ctx.restore();
@@ -867,6 +905,7 @@ function BgCanvas() {
     };
 
     init();
+    onScroll();
     raf = requestAnimationFrame(tick);
 
     const ro = new ResizeObserver(() => init());
@@ -874,33 +913,48 @@ function BgCanvas() {
 
     const vis = () => { if (document.hidden) cancelAnimationFrame(raf); else { lastTs = 0; raf = requestAnimationFrame(tick); }};
     document.addEventListener('visibilitychange', vis);
+    window.addEventListener('scroll', onScroll, { passive: true });
 
-    return () => { cancelAnimationFrame(raf); ro.disconnect(); document.removeEventListener('visibilitychange', vis); };
-  }, []);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); document.removeEventListener('visibilitychange', vis); window.removeEventListener('scroll', onScroll); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variant]);
 
   return (
     <div className="bg-canvas" aria-hidden="true">
       <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%'}}/>
-      <svg width="100%" height="100%" style={{position:'absolute',inset:0}} viewBox="0 0 100 100" preserveAspectRatio="none">
+      <div ref={holesRef} style={{position:'absolute',inset:0}}>
+        {(cfg.holes || []).map((h, i) => (
+          <div key={i} className="blackhole" style={{ left:`${h.x}%`, top:`${h.y}%`, width:h.s }}>
+            <div className="bh-halo"/>
+            <div className="bh-disk"/>
+            <div className="bh-core"/>
+            <div className="bh-ring"/>
+          </div>
+        ))}
+      </div>
+      <svg ref={svgRef} width="100%" height="100%" style={{position:'absolute',inset:0}} viewBox="0 0 100 100" preserveAspectRatio="none">
         <defs>
           <filter id="cst-glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="0.25" result="blur"/>
             <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
-        {CONSTELLATIONS.map((cst, ci) => {
+        {cfg.subset.map((cstIdx, ci) => {
+          const cst = CONSTELLATIONS[cstIdx];
           const sc = cst.scale || 2;
-          const px = i => cst.x + cst.pts[i][0] * sc;
-          const py = i => cst.y + cst.pts[i][1] * sc;
+          const ax = (cfg.flip ? 90 - cst.x : cst.x) + cfg.shift.x;
+          const ay = cst.y + cfg.shift.y;
+          const px = i => ax + cst.pts[i][0] * sc;
+          const py = i => ay + cst.pts[i][1] * sc;
           const conns = cst.conns || cst.pts.slice(0,-1).map((_,i)=>[i,i+1]);
           return (
-            <g key={ci} opacity=".55" filter="url(#cst-glow)">
+            <g key={cstIdx} opacity=".55" filter="url(#cst-glow)">
               {conns.map(([a,b], li) => {
                 const isHandle = cst.handles && (cst.handles.includes(a) || cst.handles.includes(b));
                 return (
                   <line key={li}
                     x1={px(a)} y1={py(a)} x2={px(b)} y2={py(b)}
-                    stroke={isHandle ? 'rgba(160,100,255,.45)' : 'rgba(124,58,237,.6)'}
+                    stroke={isHandle ? `rgba(${accRgb},.45)` : `rgba(${accRgb},.6)`}
                     strokeWidth={isHandle ? '.08' : '.11'}
                     strokeDasharray={isHandle ? '.3 .5' : 'none'}
                     style={{animation:`constellationDraw ${2.8 + li * 0.35}s ${ci * 0.5 + li * 0.18}s ease both`}}
@@ -913,14 +967,14 @@ function BgCanvas() {
                   <circle key={pi}
                     cx={px(pi)} cy={py(pi)}
                     r={isHandle ? '.16' : '.26'}
-                    fill={isHandle ? 'none' : 'rgba(148,76,255,.9)'}
-                    stroke={isHandle ? 'rgba(148,76,255,.5)' : 'rgba(180,120,255,.35)'}
+                    fill={isHandle ? 'none' : `rgba(${accRgb},.9)`}
+                    stroke={`rgba(${accRgb},${isHandle ? '.5' : '.35'})`}
                     strokeWidth='.07'
                     style={{animation:`starBlink ${2.5 + pi * 0.6}s ${ci * 0.35 + pi * 0.25}s ease-in-out infinite`}}
                   />
                 );
               })}
-              {cst.label && <text x={cst.x} y={cst.y - 0.9} fontSize=".85" fill="rgba(124,58,237,.18)" fontFamily="Syne,sans-serif" letterSpacing=".08">{cst.label}</text>}
+              {cst.label && <text x={ax} y={ay - 0.9} fontSize=".85" fill={`rgba(${accRgb},.18)`} fontFamily="Syne,sans-serif" letterSpacing=".08">{cst.label}</text>}
             </g>
           );
         })}
@@ -1965,7 +2019,7 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
 
   return (
     <div className="pd-page">
-      <BgCanvas/>
+      <BgCanvas variant={p.coverType || "cabin"}/>
       <Nav scrolled={scrolled} onBack={()=>onBack()} onTrack={onTrack} onNavigate={(id)=>onBack(id)} hidden={navHidden} cvUrl={cvUrl}/>
       {subSections.length > 0 && (
         <div style={{
