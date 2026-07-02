@@ -58,6 +58,8 @@ button{cursor:pointer;font-family:var(--fb)}
 @keyframes curtainIn{from{transform:translateY(105%)}to{transform:translateY(0%)}}
 @keyframes curtainOut{from{transform:translateY(0%)}to{transform:translateY(-105%)}}
 @keyframes projectEnter{from{opacity:0;transform:translateY(32px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes sunTravel{0%{transform:translate(-60vmin,8vh) scale(.85);opacity:0}6%{opacity:1}45%{transform:translate(48vw,-3vh) scale(1.06)}86%{transform:translate(104vw,9vh) scale(.88);opacity:1}93%{opacity:0}100%{transform:translate(125vw,12vh) scale(.85);opacity:0}}
+@keyframes bhxFall{0%{transform:translate(170px,-50%) rotate(0deg) scale(1);opacity:0}8%{opacity:.95}68%{transform:translate(58px,-50%) rotate(240deg) scale(.55);opacity:.9}100%{transform:translate(6px,-50%) rotate(520deg) scale(.04);opacity:0}}
 .page-curtain{position:fixed;inset:0;z-index:9998;pointer-events:none;background:linear-gradient(170deg,#060812 0%,#0c0d1e 45%,#130f35 75%,#1a0847 100%);transform:translateY(105%);will-change:transform}
 .page-curtain.cin{animation:curtainIn .42s cubic-bezier(.77,0,.175,1) forwards}
 .page-curtain.cout{animation:curtainOut .42s cubic-bezier(.77,0,.175,1) forwards}
@@ -130,7 +132,12 @@ button{cursor:pointer;font-family:var(--fb)}
 .hero-right{position:absolute;right:0;top:0;height:100%;width:46%;display:flex;align-items:center;justify-content:center;z-index:1;pointer-events:none}
 .hero-badge{display:inline-flex;align-items:center;gap:9px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.35);border-radius:100px;padding:8px 18px;font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:#C4B5FD;margin-bottom:32px;backdrop-filter:blur(8px)}
 .hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#06D6A0;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 6px #06D6A0}
-.hero-h1{font-size:clamp(48px,7.2vw,118px);font-weight:800;line-height:.9;letter-spacing:-3px;position:relative}
+.hero-h1{font-size:clamp(48px,7.2vw,118px);font-weight:800;line-height:.9;letter-spacing:-3px;position:relative;z-index:2}
+.hero-title-stage{position:relative;width:max-content;max-width:100%}
+.hero-title-astro{position:absolute;top:max(-11vw,-200px);left:calc(100% - 11vw);width:30vw;max-width:540px;z-index:1;pointer-events:none}
+.hero-title-astro img{width:100%;height:auto;display:block;filter:drop-shadow(0 32px 80px rgba(75,127,250,.25))}
+.hero-title-astro.front{z-index:3}
+.hero-title-astro.front img{clip-path:polygon(0 36%,33% 36%,33% 73%,0 73%)}
 .hero-name-grad{background:linear-gradient(135deg,#FFFFFF 0%,#EDE9FE 35%,#C4B5FD 65%,#9B6DFF 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;padding-right:8px}
 .hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:rgba(255,255,255,.35);font-size:clamp(18px,.52em,48px);letter-spacing:0px;display:block;margin-top:14px;-webkit-text-fill-color:rgba(255,255,255,.35)}
 .hero-spec{display:flex;gap:9px;flex-wrap:wrap;margin:28px 0 0}
@@ -259,6 +266,23 @@ button{cursor:pointer;font-family:var(--fb)}
 .planet-sat{position:absolute;inset:-15%;animation:spinSlow 16s linear infinite;pointer-events:none}
 .planet-sat::after{content:"";position:absolute;top:50%;left:-4px;width:9px;height:9px;border-radius:50%;background:#B79CFF;box-shadow:0 0 14px #A78BFA}
 .planet-star{position:absolute;color:rgba(183,156,255,.7);font-size:12px;animation:starBlink 3s ease-in-out infinite;pointer-events:none}
+/* soleil traversant — éclaire la page en orange à son passage (blend screen), puis le violet revient */
+.sun-sweep{position:fixed;inset:0;pointer-events:none;z-index:45;mix-blend-mode:screen;overflow:hidden}
+.sun-core{position:absolute;top:14vh;left:0;width:44vmin;height:44vmin;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(255,244,214,.95) 0%,rgba(255,196,98,.8) 16%,rgba(255,140,44,.42) 36%,rgba(255,106,20,.16) 56%,transparent 72%);animation:sunTravel 24s ease-in-out infinite}
+.sun-core::before{content:"";position:absolute;inset:-100%;border-radius:50%;background:radial-gradient(circle,rgba(255,150,60,.26) 0%,rgba(255,120,40,.1) 42%,transparent 70%)}
+.sun-core::after{content:"";position:absolute;inset:-42%;border-radius:50%;background:conic-gradient(from 0deg,transparent 0deg,rgba(255,195,115,.2) 12deg,transparent 26deg,transparent 62deg,rgba(255,195,115,.16) 76deg,transparent 92deg,transparent 132deg,rgba(255,195,115,.18) 146deg,transparent 162deg,transparent 202deg,rgba(255,195,115,.15) 216deg,transparent 232deg,transparent 276deg,rgba(255,195,115,.18) 292deg,transparent 308deg,transparent 360deg);animation:spinSlow 38s linear infinite;filter:blur(4px)}
+@media(max-width:768px){.sun-sweep{display:none}}
+/* trou noir XL de section — disque double contre-rotatif, lentille, logos Figma aspirés */
+.bhx{position:absolute;width:340px;aspect-ratio:1;pointer-events:none;z-index:0}
+.bhx-lens{position:absolute;inset:-12%;border-radius:50%;background:radial-gradient(circle,transparent 42%,rgba(124,58,237,.13) 50%,rgba(183,156,255,.07) 56%,transparent 66%)}
+.bhx-disk{position:absolute;border-radius:50%;filter:blur(3px)}
+.bhx-disk.d1{inset:4%;transform:rotateX(70deg);background:conic-gradient(from 0deg,transparent 0deg,rgba(183,156,255,.55) 70deg,rgba(255,255,255,.8) 150deg,rgba(124,58,237,.5) 235deg,transparent 335deg);animation:spinSlow 11s linear infinite}
+.bhx-disk.d2{inset:-6%;transform:rotateX(75deg);background:conic-gradient(from 180deg,transparent 0deg,rgba(124,58,237,.3) 90deg,rgba(167,139,250,.45) 180deg,rgba(91,33,182,.25) 260deg,transparent 340deg);animation:spinSlow 17s linear infinite reverse;filter:blur(5px)}
+.bhx-core{position:absolute;inset:29%;border-radius:50%;background:radial-gradient(circle at 42% 36%,#0A0512 0%,#000 58%);box-shadow:0 0 54px 12px rgba(0,0,0,.9)}
+.bhx-ring{position:absolute;inset:27%;border-radius:50%;border:1.5px solid rgba(224,206,255,.6);box-shadow:0 0 18px rgba(167,139,250,.6),0 0 44px rgba(124,58,237,.35),inset 0 0 12px rgba(167,139,250,.4)}
+.bhx-orbit{position:absolute;top:50%;left:50%;width:0;height:0;animation:spinSlow 9s linear infinite}
+.bhx-figma{width:100%;display:block;filter:drop-shadow(0 0 8px rgba(124,58,237,.5))}
+@media(max-width:768px){.bhx{display:none}}
 /* trous noirs décoratifs — même DA que la planète */
 .blackhole{position:absolute;aspect-ratio:1;pointer-events:none;transform:translate(-50%,-50%)}
 .bh-halo{position:absolute;inset:-30%;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.13),transparent 65%)}
@@ -556,6 +580,8 @@ button{cursor:pointer;font-family:var(--fb)}
   .hero{grid-template-columns:1fr;padding:110px 52px 80px;text-align:left;gap:40px;max-width:100%}
   .hero-outer{padding-top:0}
   .hero-right{display:none}
+  .hero-title-astro{display:none}
+  .hero-title-stage{width:auto}
   .about-grid{grid-template-columns:1fr}
   .dh-wrap{grid-template-columns:1fr}
   .dh-tree-wrap{display:none}
@@ -1245,6 +1271,47 @@ function AstronautSVG({ size = 520, style = {} }) {
 
 
 // ── PROJECT COVER SVG ─────────────────────────────────────────────────────────
+// Soleil traversant l'écran de gauche à droite — la lumière orange balaie les éléments
+function SunSweep() {
+  return (
+    <div className="sun-sweep" aria-hidden="true">
+      <div className="sun-core"/>
+    </div>
+  );
+}
+
+// Trou noir XL décoratif de section — version détaillée qui aspire des logos Figma
+function FigmaMark() {
+  return (
+    <svg className="bhx-figma" viewBox="0 0 38 57" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#F24E1E" d="M19 0H9.5a9.5 9.5 0 0 0 0 19H19V0Z"/>
+      <path fill="#FF7262" d="M19 0h9.5a9.5 9.5 0 1 1 0 19H19V0Z"/>
+      <path fill="#A259FF" d="M19 19H9.5a9.5 9.5 0 0 0 0 19H19V19Z"/>
+      <circle fill="#1ABCFE" cx="28.5" cy="28.5" r="9.5"/>
+      <path fill="#0ACF83" d="M19 38H9.5a9.5 9.5 0 1 0 9.5 9.5V38Z"/>
+    </svg>
+  );
+}
+
+function BlackHoleXL({ style }) {
+  return (
+    <div className="bhx" style={style} aria-hidden="true">
+      <div className="bhx-lens"/>
+      <div className="bhx-disk d2"/>
+      <div className="bhx-disk d1"/>
+      <div className="bhx-core"/>
+      <div className="bhx-ring"/>
+      {[0, 1, 2].map(i => (
+        <div key={i} className="bhx-orbit" style={{ animationDelay:`${i*3}s` }}>
+          <div style={{ animation:`bhxFall 9s ease-in ${i*3}s infinite`, position:"absolute", width:26 }}>
+            <FigmaMark/>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // Tuile décorative de la grille projets — orbe planète, anneaux, satellite en orbite
 function PlanetCard() {
   return (
@@ -1642,10 +1709,23 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               <div className="hero-badge-dot"/>
               Product Designer · Design Ops · Paris
             </div>
-            <h1 className="hero-h1 afu d1">
-              <span className="hero-name-grad">Thomas<br/>Leloup</span>
-              <span className="hero-h1-sub">Design &amp; Engineering</span>
-            </h1>
+            {/* Titre + astronaute en couches : corps derrière les lettres, bras/bureau devant (clip-path) */}
+            <div className="hero-title-stage">
+              <h1 className="hero-h1 afu d1">
+                <span className="hero-name-grad" style={{ transform:`translate(${px.x*-8}px, ${px.y*-5}px)`, transition:"transform .18s ease-out" }}>Thomas<br/>Leloup</span>
+                <span className="hero-h1-sub">Design &amp; Engineering</span>
+              </h1>
+              <div className="hero-title-astro afu d3" aria-hidden="true">
+                <div style={{ transform:`perspective(900px) translate3d(${px.x*20}px, ${px.y*14}px, 0) rotateY(${-px.x*4}deg) rotateX(${px.y*2.5}deg)`, transition:"transform .18s ease-out" }}>
+                  <img src="/astro-desk.png" alt="Astronaute designer"/>
+                </div>
+              </div>
+              <div className="hero-title-astro front afu d3" aria-hidden="true">
+                <div style={{ transform:`perspective(900px) translate3d(${px.x*20}px, ${px.y*14}px, 0) rotateY(${-px.x*4}deg) rotateX(${px.y*2.5}deg)`, transition:"transform .18s ease-out" }}>
+                  <img src="/astro-desk.png" alt=""/>
+                </div>
+              </div>
+            </div>
 
             {/* Spécialisations */}
             <div className="hero-spec afu d2">
@@ -1713,15 +1793,6 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               <div className="fc-val" style={{ fontSize:16 }}>5 livrés</div>
             </div>
 
-            {/* Astronaut — parallaxe 3D avec perspective */}
-            <div className="hero-mascots afu d3">
-              <div className="hero-mascot-main" style={{
-                transform:`perspective(900px) translate3d(${px.x*20}px, ${px.y*14}px, 0) rotateY(${-px.x*4}deg) rotateX(${px.y*2.5}deg)`,
-                transition:"transform .18s ease-out"
-              }}>
-                <img src="/astro-desk.png" alt="Astronaute designer" className="hero-astro" style={{ width:440, height:"auto", maxWidth:"100%" }}/>
-              </div>
-            </div>
           </div>
         </section>
       </div>
@@ -1801,6 +1872,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
 
       {/* ── PARCOURS ── */}
       <section className="sec" id="parcours" style={{ paddingTop:0 }}>
+        <BlackHoleXL style={{ right:"-60px", top:"-40px" }}/>
         <div className="seye rv">Parcours</div>
         <h2 className="stit rv">Mon parcours</h2>
         <div className="tl-grid">
@@ -1874,6 +1946,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
 
       {/* ── TÉMOIGNAGES ── */}
       <section className="sec" id="testimonials" style={{ paddingTop:0 }}>
+        <BlackHoleXL style={{ left:"-90px", bottom:"-20px", width:280 }}/>
         <div className="seye rv">Recommandations</div>
         <h2 className="stit rv">Ce qu'on dit de moi</h2>
         <div className="testi-wrap">
@@ -2559,6 +2632,7 @@ export default function App({ initialData = {} }) {
       <ErrorBoundary onHome={goHome}>
         <>
           <ProjectPage key={projectId} project={p} allProjects={projects} tags={tags} onBack={(target)=>goHome(target||"projets")} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
+          <SunSweep/>
           {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
           <div className={curtainClass}/>
         </>
@@ -2570,6 +2644,7 @@ export default function App({ initialData = {} }) {
     <ErrorBoundary onHome={goHome}>
       <>
         <HomePage projects={projects} tags={tags} testimonials={testimonials} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
+        <SunSweep/>
         {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
         <div className={curtainClass}/>
       </>
