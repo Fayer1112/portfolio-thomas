@@ -88,6 +88,10 @@ button{cursor:pointer;font-family:var(--fb)}
 .cookie-acc:hover{background:#8B47FF}
 .cookie-dec{background:transparent;color:var(--tx3);border:1px solid var(--bdr);padding:8px 16px;border-radius:7px;font-size:12px;font-weight:600;transition:all .2s}
 .cookie-dec:hover{border-color:var(--bdr2);color:var(--tx2)}
+@media(max-width:640px){
+  .cookie{flex-direction:column;align-items:stretch;gap:12px;padding:16px 18px;bottom:16px}
+  .cookie-btns{justify-content:flex-end}
+}
 
 /* ─ STARS / CONSTELLATIONS ─ */
 .bg-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
@@ -565,13 +569,14 @@ button{cursor:pointer;font-family:var(--fb)}
   .tgrid{grid-template-columns:1fr}
   .testi-grid{grid-template-columns:1fr}
   .contact-layout{grid-template-columns:1fr}.cwrap{padding:44px 22px}
-  .foot{padding:16px 24px}
+  .foot{padding:16px 24px 96px;flex-wrap:wrap;gap:10px}
   .pgallery{margin-left:-20px;margin-right:-20px}
   .pgallery-row.r1,.pgallery-row.r2,.pgallery-row.r3{grid-template-columns:1fr}
   .dash-kpi-grid{grid-template-columns:1fr 1fr}
   .dash-grid2{grid-template-columns:1fr}
   .pd-hero{padding:90px 20px 0}.pd-cover,.pd-content,.pd-nav{padding-left:20px;padding-right:20px}
   .pd-brief{grid-template-columns:repeat(2,1fr);margin-left:20px;margin-right:20px}
+  .pd-brief-item:last-child:nth-child(odd){grid-column:1/-1}
   .pd-metrics{grid-template-columns:1fr}
   .aly{flex-direction:column}.asb{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap;overflow-x:auto}.ama{padding:20px 16px}
   .asblo{padding:14px 16px;border-bottom:none;border-right:1px solid var(--bdr)}
@@ -1192,7 +1197,7 @@ function ProjectCoverSVG({ type = "cabin", featured = false }) {
     kara:(<g opacity=".55"><rect x="136" y="48" width="528" height="384" rx="16" fill="none" stroke="#7040CC" strokeWidth="1.5" strokeOpacity=".4"/><rect x="136" y="48" width="528" height="50" rx="16" fill="#14053A" fillOpacity=".85"/><circle cx="172" cy="73" r="16" fill="#26135A" stroke="#7040CC" strokeWidth="1" strokeOpacity=".5"/><text x="172" y="79" textAnchor="middle" fill={TOKENS.acc} fontSize="14" fontFamily="Syne" fontWeight="800">K</text><rect x="197" y="64" width="80" height="9" rx="4" fill="white" fillOpacity=".14"/><rect x="155" y="120" width="280" height="42" rx="12" fill="#26135A" fillOpacity=".85"/><rect x="155" y="172" width="220" height="34" rx="12" fill="#26135A" fillOpacity=".65"/><rect x="355" y="222" width="265" height="42" rx="12" fill="#18063A" fillOpacity=".85" stroke="#7040CC" strokeWidth=".5" strokeOpacity=".4"/><rect x="355" y="274" width="200" height="34" rx="12" fill="#18063A" fillOpacity=".65" stroke="#7040CC" strokeWidth=".5" strokeOpacity=".3"/>{[[163,134,185],[163,184,140],[363,236,165],[363,286,125]].map(([x,y,w],i)=><rect key={i} x={x} y={y} width={w*(.5+i*.08)} height="7" rx="3" fill="white" fillOpacity=".1"/>)}<rect x="144" y="400" width="512" height="28" rx="14" fill="#26135A" fillOpacity=".5" stroke="#7040CC" strokeOpacity=".2" strokeWidth="1"/><circle cx="640" cy="414" r="10" fill={TOKENS.acc} fillOpacity=".6"/></g>),
   };
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" style={{ width:"100%", height:"100%", display:"block" }}>
+    <svg viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style={{ width:"100%", height:"100%", display:"block" }}>
       <defs>
         <linearGradient id={`g_${uid}`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={d.g1}/><stop offset="55%" stopColor={d.g2}/><stop offset="100%" stopColor={d.g3}/></linearGradient>
         <radialGradient id={`rg_${uid}`} cx="50%" cy="38%" r="58%"><stop offset="0%" stopColor={d.g3} stopOpacity=".14"/><stop offset="100%" stopColor="transparent"/></radialGradient>
@@ -2064,7 +2069,7 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
 
 // ── CONTACT FORM ─────────────────────────────────────────────────────────────
 function ContactForm({ onTrack }) {
-  const MAX_MESSAGE = 1500; // prevent mailto URI overflow (2048 char browser limit)
+  const MAX_MESSAGE = 1500; // limite alignée sur le schéma Zod côté API
   const [form, setForm] = useState({ name:"", email:"", subject:"CDI", message:"" });
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState("idle"); // idle | sending | success | error
@@ -2180,15 +2185,15 @@ function ContactForm({ onTrack }) {
             <span style={{ fontSize:11, color: form.message.length < 20 ? "var(--acc)" : "#06D6A0" }}>
               {form.message.length < 20 ? `Minimum 20 caractères (${20-form.message.length} restants)` : "✓ Longueur OK"}
             </span>
-            <span style={{ fontSize:11, color:"var(--tx3)" }}>{form.message.length} / 1000</span>
+            <span style={{ fontSize:11, color:"var(--tx3)" }}>{form.message.length} / {MAX_MESSAGE}</span>
           </div>
         </div>
         <button className="cform-submit" onClick={send} disabled={status === "sending"}>
-          {status === "sending" ? "🚀 Ouverture en cours…" : "Envoyer le message →"}
+          {status === "sending" ? "🚀 Envoi en cours…" : "Envoyer le message →"}
         </button>
         <p style={{ fontSize:11, color:"var(--tx3)", textAlign:"center", lineHeight:1.6 }}>
-          Ce formulaire ouvre votre messagerie avec le message pré-rempli.<br/>
-          Aucune donnée n'est stockée — envoi direct via votre client email.
+          Votre message m'arrive directement par e-mail — je réponds sous 24h.<br/>
+          Aucune donnée n'est conservée en base.
         </p>
       </div>
     </div>
