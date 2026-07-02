@@ -1936,6 +1936,7 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
         </div>
       )}
       {lb && <Lightbox images={lb.images} startIndex={lb.idx} onClose={()=>setLb(null)}/>}
+      <div className="page-proj-enter">
       <div className="pd-hero">
         <button className="pdbk afu" onClick={()=>onBack()}>← Retour aux projets</button>
         <div className="pd-hero-inner">
@@ -2049,6 +2050,7 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
       <div className="pd-nav">
         <div>{prev && <><div className="pd-nav-lbl">← Précédent</div><div className="pd-nav-t" onClick={() => onProject(prev.id)}>{prev.title}</div></>}</div>
         <div style={{ textAlign:"right" }}>{next && <><div className="pd-nav-lbl">Suivant →</div><div className="pd-nav-t" onClick={() => onProject(next.id)}>{next.title}</div></>}</div>
+      </div>
       </div>
     </div>
   );
@@ -2459,9 +2461,7 @@ export default function App({ initialData = {} }) {
     return (
       <ErrorBoundary onHome={goHome}>
         <>
-          <div key={projectId} className="page-proj-enter">
-            <ProjectPage project={p} allProjects={projects} tags={tags} onBack={(target)=>goHome(target||"projets")} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
-          </div>
+          <ProjectPage key={projectId} project={p} allProjects={projects} tags={tags} onBack={(target)=>goHome(target||"projets")} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
           {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
           <div className={curtainClass}/>
         </>
