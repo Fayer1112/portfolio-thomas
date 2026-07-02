@@ -940,7 +940,7 @@ function CookieBanner({ onAccept, onDecline }) {
   return (
     <div className="cookie">
       <div className="cookie-txt">
-        <strong>Mesure d'audience</strong> — Ce site collecte des statistiques de visite <strong>anonymes</strong> (pages vues, projets consultés) sans aucune donnée personnelle ni cookie tiers. Les données sont conservées <strong>13 mois</strong> puis supprimées, conformément aux recommandations de la <strong>CNIL</strong>. Vous pouvez refuser sans impact sur votre navigation.
+        <strong>Mesure d'audience</strong> — Ce site collecte des statistiques de visite <strong>anonymes</strong> (pages vues, projets consultés) sans aucune donnée personnelle ni cookie tiers. Les données sont conservées <strong>13 mois</strong> puis supprimées, conformément aux recommandations de la <strong>CNIL</strong>. Vous pouvez refuser sans impact sur votre navigation. <a href="/mentions-legales" style={{ color:"inherit", textDecoration:"underline", textUnderlineOffset:2 }}>En savoir plus</a>
       </div>
       <div className="cookie-btns">
         <button className="cookie-dec" onClick={onDecline}>Refuser</button>
@@ -1855,8 +1855,11 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
 
       {/* ── FOOTER ── */}
       <footer className="foot">
-        <div className="foot-copy">© L9_agency 2025</div>
-        <div style={{ color:"var(--tx3)", fontSize:11 }}>Product Designer · Design Ops · Paris</div>
+        <div className="foot-copy">© {new Date().getFullYear()} Thomas Leloup</div>
+        <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+          <span style={{ color:"var(--tx3)", fontSize:11 }}>Product Designer · Design Ops · Paris</span>
+          <a href="/mentions-legales" style={{ color:"var(--tx3)", fontSize:11, textDecoration:"underline", textUnderlineOffset:3 }}>Mentions légales</a>
+        </div>
         <button className="foot-admin-btn" onClick={() => setGoAdmin(true)}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
           Admin
