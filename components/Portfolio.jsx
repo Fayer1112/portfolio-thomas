@@ -1782,8 +1782,8 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               </div>
             </div>
 
-            {/* Float card — top left de la zone droite */}
-            <div className="hero-float-card afu d2" style={{ top:100, left:40, transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
+            {/* Float card — haut droite, à l'écart de l'astronaute */}
+            <div className="hero-float-card afu d2" style={{ top:90, right:120, transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
               <div className="fc-label">Expérience</div>
               <div className="fc-val">4+ ans</div>
             </div>
