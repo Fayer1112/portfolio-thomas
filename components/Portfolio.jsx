@@ -224,13 +224,13 @@ button{cursor:pointer;font-family:var(--fb)}
 .pf-btn:hover{border-color:var(--bdr2);color:var(--tx)}
 .pf-btn.on{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 4px 16px rgba(124,58,237,.28)}
 .pf-sep{width:1px;background:var(--bdr);margin:0 4px;align-self:stretch}
-.pgallery{display:grid;gap:4px;margin-left:-64px;margin-right:-64px}
-.pgallery-row{display:grid;gap:3px}
+.pgallery{display:grid;gap:14px;margin-left:-40px;margin-right:-40px}
+.pgallery-row{display:grid;gap:14px}
 .pgallery-row.r1{grid-template-columns:var(--row-cols, 2fr 1fr)}
 .pgallery-row.r2{grid-template-columns:var(--row-cols, 1fr 2fr)}
 .pgallery-row.r3{grid-template-columns:var(--row-cols, 1fr 1fr 1fr)}
 .pgallery-row.rfull{grid-template-columns:var(--row-cols, 1fr)}
-.pcard{position:relative;overflow:hidden;cursor:pointer;background:var(--bg2);transition:transform .35s var(--ease)}
+.pcard{position:relative;overflow:hidden;cursor:pointer;background:var(--bg2);border-radius:20px;transition:transform .35s var(--ease)}
 .pcard-h-sm{height:260px}
 .pcard-h-md{height:340px}
 .pcard-h-lg{height:420px}
@@ -250,6 +250,15 @@ button{cursor:pointer;font-family:var(--fb)}
 .pcard-arr{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.6) rotate(-45deg);transition:all .35s var(--ease);color:#fff;font-size:14px}
 .pcard-lock{position:absolute;top:10px;left:10px;background:rgba(7,8,15,.72);backdrop-filter:blur(8px);border:1px solid var(--bdr);border-radius:4px;padding:3px 10px;font-size:10px;color:var(--tx2);font-weight:500}
 .pno{text-align:center;padding:60px;color:var(--tx3);font-size:14px}
+/* tuile décorative planète */
+.planet-cell{position:relative;background:radial-gradient(ellipse at 50% 115%,rgba(124,58,237,.18),transparent 62%),var(--bg2);border:1px solid rgba(124,58,237,.14);border-radius:20px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.planet-wrap{position:relative;width:56%;max-width:220px;aspect-ratio:1;animation:floatY 9s ease-in-out infinite}
+.planet-orb{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 32% 28%,#C9B2FF 0%,#8B5CF6 30%,#5B21B6 56%,#1E0B4E 80%,#0D0524 100%);box-shadow:0 0 90px rgba(124,58,237,.4),0 0 28px rgba(124,58,237,.3),inset -18px -14px 50px rgba(0,0,0,.55),inset 10px 10px 40px rgba(255,255,255,.1)}
+.planet-ring{position:absolute;inset:-15%;border-radius:50%;border:2px solid rgba(167,139,250,.32);transform:rotateX(72deg);pointer-events:none}
+.planet-ring2{position:absolute;inset:-28%;border-radius:50%;border:1px solid rgba(167,139,250,.12);transform:rotateX(72deg);pointer-events:none}
+.planet-sat{position:absolute;inset:-15%;animation:spinSlow 16s linear infinite;pointer-events:none}
+.planet-sat::after{content:"";position:absolute;top:50%;left:-4px;width:9px;height:9px;border-radius:50%;background:#B79CFF;box-shadow:0 0 14px #A78BFA}
+.planet-star{position:absolute;color:rgba(183,156,255,.7);font-size:12px;animation:starBlink 3s ease-in-out infinite;pointer-events:none}
 
 /* ─ TESTIMONIALS ─ */
 .testi-wrap{margin-top:64px;display:flex;flex-direction:column;gap:20px}
@@ -534,7 +543,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .hero{padding:0 80px}
 .sec{padding:180px 80px}
 .foot{padding:20px 80px}
-.pgallery{margin-left:-80px;margin-right:-80px}
+.pgallery{margin-left:-56px;margin-right:-56px}
 }
 @media(max-width:1024px){
   .hero{grid-template-columns:1fr;padding:110px 52px 80px;text-align:left;gap:40px;max-width:100%}
@@ -570,8 +579,9 @@ button{cursor:pointer;font-family:var(--fb)}
   .testi-grid{grid-template-columns:1fr}
   .contact-layout{grid-template-columns:1fr}.cwrap{padding:44px 22px}
   .foot{padding:16px 24px 96px;flex-wrap:wrap;gap:10px}
-  .pgallery{margin-left:-20px;margin-right:-20px}
+  .pgallery{margin-left:-8px;margin-right:-8px}
   .pgallery-row.r1,.pgallery-row.r2,.pgallery-row.r3{grid-template-columns:1fr}
+  .planet-cell{display:none}
   .dash-kpi-grid{grid-template-columns:1fr 1fr}
   .dash-grid2{grid-template-columns:1fr}
   .pd-hero{padding:90px 20px 0}.pd-cover,.pd-content,.pd-nav{padding-left:20px;padding-right:20px}
@@ -1181,6 +1191,24 @@ function AstronautSVG({ size = 520, style = {} }) {
 
 
 // ── PROJECT COVER SVG ─────────────────────────────────────────────────────────
+// Tuile décorative de la grille projets — orbe planète, anneaux, satellite en orbite
+function PlanetCard() {
+  return (
+    <div className="planet-cell" aria-hidden="true">
+      <span className="planet-star" style={{ top:"14%", left:"15%" }}>✦</span>
+      <span className="planet-star" style={{ top:"20%", right:"13%", animationDelay:"1.2s", fontSize:9 }}>✦</span>
+      <span className="planet-star" style={{ bottom:"18%", left:"20%", animationDelay:".6s", fontSize:10 }}>✦</span>
+      <span className="planet-star" style={{ bottom:"26%", right:"18%", animationDelay:"1.8s" }}>✦</span>
+      <div className="planet-wrap">
+        <div className="planet-ring2"/>
+        <div className="planet-orb"/>
+        <div className="planet-ring"/>
+        <div className="planet-sat"/>
+      </div>
+    </div>
+  );
+}
+
 function ProjectCoverSVG({ type = "cabin", featured = false }) {
   const d = COVER_DEFS[type] || COVER_DEFS.cabin;
   const W = 800, H = featured ? 340 : 480;
@@ -1518,7 +1546,12 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
     }
     return rows;
   };
-  const galleryRows = buildGallery(filtered);
+  // Tuile planète décorative insérée en 2e position, uniquement en vue non filtrée
+  const showPlanet = filter === "Tous" && !tagFilter && filtered.length > 1;
+  const galleryItems = showPlanet
+    ? [filtered[0], { id: "__planet__", isPlanet: true }, ...filtered.slice(1)]
+    : filtered;
+  const galleryRows = buildGallery(galleryItems);
 
   // Card width follows the uploaded cover image's aspect ratio (height is fixed per row);
   // falls back to the curated fr proportions until the image loads or when there's no upload.
@@ -1753,7 +1786,9 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
           <div className="pgallery">
             {galleryRows.map((row, ri) => (
               <div key={ri} className={`pgallery-row ${row.cls}`} style={{ "--row-cols": rowGridColumns(row) }}>
-                {row.items.map((p, pi) => (
+                {row.items.map((p, pi) => p.isPlanet ? (
+                  <PlanetCard key={p.id}/>
+                ) : (
                   <div key={p.id} className={`pcard ${row.sizes[pi] || "pcard-h-md"}`}
                     onClick={() => { onProject(p.id); if (onTrack) onTrack("event", { type:"project_click", project:p.id }); }}>
                     <div className="pcard-img" style={{ height:"100%" }}>
