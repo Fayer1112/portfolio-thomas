@@ -251,7 +251,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .pcard-lock{position:absolute;top:10px;left:10px;background:rgba(7,8,15,.72);backdrop-filter:blur(8px);border:1px solid var(--bdr);border-radius:4px;padding:3px 10px;font-size:10px;color:var(--tx2);font-weight:500}
 .pno{text-align:center;padding:60px;color:var(--tx3);font-size:14px}
 /* tuile décorative planète */
-.planet-cell{position:relative;background:radial-gradient(ellipse at 50% 115%,rgba(124,58,237,.18),transparent 62%),var(--bg2);border:1px solid rgba(124,58,237,.14);border-radius:20px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.planet-cell{position:relative;display:flex;align-items:center;justify-content:center;overflow:visible}
 .planet-wrap{position:relative;width:56%;max-width:220px;aspect-ratio:1;animation:floatY 9s ease-in-out infinite}
 .planet-orb{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 32% 28%,#C9B2FF 0%,#8B5CF6 30%,#5B21B6 56%,#1E0B4E 80%,#0D0524 100%);box-shadow:0 0 90px rgba(124,58,237,.4),0 0 28px rgba(124,58,237,.3),inset -18px -14px 50px rgba(0,0,0,.55),inset 10px 10px 40px rgba(255,255,255,.1)}
 .planet-ring{position:absolute;inset:-15%;border-radius:50%;border:2px solid rgba(167,139,250,.32);transform:rotateX(72deg);pointer-events:none}
@@ -1546,10 +1546,10 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
     }
     return rows;
   };
-  // Tuile planète décorative insérée en 2e position, uniquement en vue non filtrée
-  const showPlanet = filter === "Tous" && !tagFilter && filtered.length > 1;
+  // Planète décorative au centre de la grille (milieu de la rangée de 3), vue non filtrée uniquement
+  const showPlanet = filter === "Tous" && !tagFilter && filtered.length > 3;
   const galleryItems = showPlanet
-    ? [filtered[0], { id: "__planet__", isPlanet: true }, ...filtered.slice(1)]
+    ? [...filtered.slice(0, 3), { id: "__planet__", isPlanet: true }, ...filtered.slice(3)]
     : filtered;
   const galleryRows = buildGallery(galleryItems);
 
