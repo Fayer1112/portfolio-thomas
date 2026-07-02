@@ -60,6 +60,18 @@ button{cursor:pointer;font-family:var(--fb)}
 @keyframes projectEnter{from{opacity:0;transform:translateY(32px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes sunTravel{0%{transform:translate(-60vmin,8vh) scale(.85);opacity:0}6%{opacity:1}45%{transform:translate(48vw,-3vh) scale(1.06)}86%{transform:translate(104vw,9vh) scale(.88);opacity:1}93%{opacity:0}100%{transform:translate(125vw,12vh) scale(.85);opacity:0}}
 @keyframes bhxFall{0%{transform:translate(170px,-50%) rotate(0deg) scale(1);opacity:0}8%{opacity:.95}68%{transform:translate(58px,-50%) rotate(240deg) scale(.55);opacity:.9}100%{transform:translate(6px,-50%) rotate(520deg) scale(.04);opacity:0}}
+@keyframes cstDrift{0%,100%{transform:translate(0,0)}50%{transform:translate(.4px,-.8px)}}
+/* transition trou noir au scroll */
+.bht-wrap{height:230vh;position:relative;z-index:60;pointer-events:none;margin:-40px 0}
+.bht-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.bht-hole{position:relative;width:230px;aspect-ratio:1;will-change:transform}
+.bht-disk{position:absolute;inset:-10%;border-radius:50%;transform:rotateX(65deg);background:conic-gradient(from 0deg,transparent 0deg,rgba(183,156,255,.6) 70deg,rgba(255,255,255,.85) 150deg,rgba(124,58,237,.55) 235deg,transparent 335deg);filter:blur(4px);animation:spinSlow 8s linear infinite}
+.bht-core{position:absolute;inset:24%;border-radius:50%;background:#000;box-shadow:0 0 80px 30px rgba(0,0,0,.95)}
+.bht-ring{position:absolute;inset:22%;border-radius:50%;border:1.5px solid rgba(224,206,255,.55);box-shadow:0 0 20px rgba(167,139,250,.55)}
+.bht-black{position:absolute;inset:0;background:#050308;opacity:0}
+.sun-layer{transition:opacity .5s ease}
+body.bht-active .sun-layer{opacity:0}
+@media(max-width:768px){.bht-wrap{height:180vh}}
 .page-curtain{position:fixed;inset:0;z-index:9998;pointer-events:none;background:linear-gradient(170deg,#060812 0%,#0c0d1e 45%,#130f35 75%,#1a0847 100%);transform:translateY(105%);will-change:transform}
 .page-curtain.cin{animation:curtainIn .42s cubic-bezier(.77,0,.175,1) forwards}
 .page-curtain.cout{animation:curtainOut .42s cubic-bezier(.77,0,.175,1) forwards}
@@ -134,14 +146,14 @@ button{cursor:pointer;font-family:var(--fb)}
 .hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#06D6A0;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 6px #06D6A0}
 .hero-h1{font-size:clamp(48px,7.2vw,118px);font-weight:800;line-height:.9;letter-spacing:-3px;position:relative;z-index:2}
 /* hero centré — sandwich 3D titre/astronaute + planète d'arrière-plan */
-.hero-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:150px;padding-bottom:50px;text-align:center}
+.hero-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:220px;padding-bottom:50px;text-align:center}
 .hero-cwrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%}
 .hero-cstage{position:relative;display:flex;flex-direction:column;align-items:center;margin-top:4px}
 .hero-h1c{margin:0;font-weight:800;line-height:.85;letter-spacing:-.045em;font-size:clamp(64px,11.5vw,190px)}
 .hero-line1,.hero-line2{display:block;position:relative}
 .hero-line1{z-index:1}
 .hero-line2{z-index:3;filter:drop-shadow(0 5px 22px rgba(7,8,15,.95)) drop-shadow(0 1px 5px rgba(7,8,15,.7))}
-.hero-castro{position:absolute;left:50%;top:44%;transform:translate(-50%,-58%);width:min(19vw,330px);z-index:2;pointer-events:none;filter:drop-shadow(0 30px 70px rgba(75,127,250,.3))}
+.hero-castro{position:absolute;left:50%;top:47%;transform:translate(-50%,-54%);width:min(16vw,280px);z-index:2;pointer-events:none;filter:drop-shadow(0 30px 70px rgba(75,127,250,.3))}
 .hero-castro svg{width:100%;height:auto;display:block}
 .hero-planet-bg{position:absolute;top:max(-52vw,-680px);right:max(-26vw,-360px);width:min(88vw,1250px);aspect-ratio:1;border-radius:50%;z-index:0;pointer-events:none;background:radial-gradient(circle at 30% 32%,#3D2184 0%,#241056 45%,#0D0526 75%);box-shadow:0 0 180px 50px rgba(124,58,237,.28),inset -90px -130px 240px rgba(0,0,0,.85),inset 70px 70px 180px rgba(183,156,255,.14);-webkit-mask-image:linear-gradient(200deg,#000 42%,transparent 74%);mask-image:linear-gradient(200deg,#000 42%,transparent 74%)}
 .hero-c .hero-spec{justify-content:center;position:relative;z-index:4}
@@ -796,29 +808,35 @@ function ProjectSubNav({ sections }) {
 }
 
 // ── STARS + CONSTELLATION BACKGROUND ─────────────────────────────────────────
-// Constellations inspirées des outils design : Pen, Component, Type, Frame, Auto-layout, Align, Grid
+// Constellations outils design — v2 : positions dégagées du hero, formes Cursor & Layers ajoutées
 const CONSTELLATIONS = [
-  { x:76, y:7, scale:2.2, label:"Pen",
+  { x:13, y:11, scale:2.2, label:"Pen",
     pts:[[0,3],[1.2,-0.5],[3.2,-0.5],[4.4,2.2]],
     conns:[[0,1],[2,3],[0,3]], handles:[1,2] },
-  { x:9, y:24, scale:2.1, label:"Component",
+  { x:86, y:50, scale:2.1, label:"Component",
     pts:[[2,0],[4,2],[2,4],[0,2]],
     conns:[[0,1],[1,2],[2,3],[3,0]] },
-  { x:5, y:10, scale:2, label:"Type",
+  { x:5, y:40, scale:2, label:"Type",
     pts:[[0,0],[4,0],[2,0],[2,4.5]],
     conns:[[0,1],[2,3]] },
-  { x:5, y:58, scale:1.7, label:"Frame",
+  { x:7, y:64, scale:1.7, label:"Frame",
     pts:[[0,0],[1.6,0],[0,1.6],[4.2,0],[5.8,0],[5.8,1.6],[0,4.4],[0,6],[1.6,6],[4.2,6],[5.8,6],[5.8,4.4]],
     conns:[[0,1],[0,2],[3,4],[4,5],[6,7],[7,8],[9,10],[10,11]] },
-  { x:83, y:36, scale:1.9, label:"AutoLayout",
+  { x:88, y:76, scale:1.9, label:"AutoLayout",
     pts:[[0,0],[4.5,0],[4.5,2.8],[0,2.8],[2.25,0],[2.25,2.8],[0,1.4],[4.5,1.4]],
     conns:[[0,1],[1,2],[2,3],[3,0],[4,5],[6,7]] },
-  { x:44, y:22, scale:1.9, label:"Align",
+  { x:46, y:14, scale:1.9, label:"Align",
     pts:[[0,2],[4,2],[2,0],[2,4],[0,0],[4,0],[0,4],[4,4]],
     conns:[[0,1],[2,3],[4,5],[6,7]] },
-  { x:73, y:64, scale:1.7, label:"Grid",
+  { x:70, y:88, scale:1.7, label:"Grid",
     pts:[[0,0],[2,0],[4,0],[0,2],[2,2],[4,2],[0,4],[2,4],[4,4]],
     conns:[[0,2],[6,8],[0,6],[2,8],[3,5],[1,7]] },
+  { x:30, y:80, scale:2, label:"Cursor",
+    pts:[[0,0],[0,4.6],[1.3,3.4],[2.2,5.2],[3,4.8],[2.1,3],[3.6,2.9]],
+    conns:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0]] },
+  { x:57, y:5, scale:1.9, label:"Layers",
+    pts:[[2,0],[4,1],[2,2],[0,1],[4,2.4],[2,3.4],[0,2.4],[4,3.8],[2,4.8],[0,3.8]],
+    conns:[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[7,8],[8,9]] },
 ];
 
 const STATIC_STARS = Object.freeze([]);
@@ -830,18 +848,17 @@ const hexRgb = (hex) => {
 };
 // trailHue = teinte HSL des étoiles filantes ; scrollHue = dérive de teinte au scroll ; holes = trous noirs décoratifs
 const BG_VARIANTS = {
-  home:   { accent:"#7C3AED", hueMin:240, hueMax:305, trailHue:263, scrollHue:65, subset:[0,1,2,3,4,5,6], shift:{x:0,y:0},  flip:false, holes:[{x:92,y:11,s:130},{x:7,y:76,s:105}] },
-  cabin:  { accent:"#4B7FFA", hueMin:210, hueMax:250, trailHue:222, scrollHue:30, subset:[0,2,4,6],       shift:{x:3,y:5},  flip:true,  holes:[{x:11,y:32,s:130}] },
-  skylib: { accent:"#06D6A0", hueMin:150, hueMax:195, trailHue:162, scrollHue:30, subset:[1,3,5,6],       shift:{x:6,y:8},  flip:false, holes:[{x:87,y:62,s:140}] },
-  ds:     { accent:"#5B8AF5", hueMin:215, hueMax:255, trailHue:224, scrollHue:30, subset:[1,2,3,5],       shift:{x:-4,y:10},flip:true,  holes:[{x:88,y:22,s:120}] },
-  sncf:   { accent:"#F97316", hueMin:18,  hueMax:45,  trailHue:25,  scrollHue:22, subset:[0,3,4,6],       shift:{x:8,y:-3}, flip:false, holes:[{x:9,y:58,s:130}] },
-  kara:   { accent:"#A78BFA", hueMin:255, hueMax:290, trailHue:262, scrollHue:40, subset:[0,1,4,5],       shift:{x:-6,y:6}, flip:true,  holes:[{x:86,y:72,s:150}] },
+  home:   { accent:"#7C3AED", hueMin:240, hueMax:305, trailHue:263, scrollHue:65, subset:[0,1,2,3,4,5,6,7,8], shift:{x:0,y:0},  flip:false },
+  cabin:  { accent:"#4B7FFA", hueMin:210, hueMax:250, trailHue:222, scrollHue:30, subset:[0,2,4,8],           shift:{x:3,y:5},  flip:true  },
+  skylib: { accent:"#06D6A0", hueMin:150, hueMax:195, trailHue:162, scrollHue:30, subset:[1,3,5,7],           shift:{x:6,y:8},  flip:false },
+  ds:     { accent:"#5B8AF5", hueMin:215, hueMax:255, trailHue:224, scrollHue:30, subset:[1,2,5,8],           shift:{x:-4,y:10},flip:true  },
+  sncf:   { accent:"#F97316", hueMin:18,  hueMax:45,  trailHue:25,  scrollHue:22, subset:[0,3,6,7],           shift:{x:8,y:-3}, flip:false },
+  kara:   { accent:"#A78BFA", hueMin:255, hueMax:290, trailHue:262, scrollHue:40, subset:[0,1,4,7],           shift:{x:-6,y:6}, flip:true  },
 };
 
 function BgCanvas({ variant = "home" }) {
   const canvasRef = useRef(null);
   const svgRef = useRef(null);
-  const holesRef = useRef(null);
   const cfg = BG_VARIANTS[variant] || BG_VARIANTS.home;
   const acc = cfg.accent;
   const accRgb = hexRgb(acc);
@@ -860,7 +877,6 @@ function BgCanvas({ variant = "home" }) {
       const progress = max > 0 ? window.scrollY / max : 0;
       hueShift = progress * cfg.scrollHue;
       if (svgRef.current) svgRef.current.style.filter = `hue-rotate(${hueShift}deg)`;
-      if (holesRef.current) holesRef.current.style.filter = `hue-rotate(${hueShift}deg)`;
     };
 
     const init = () => {
@@ -964,16 +980,6 @@ function BgCanvas({ variant = "home" }) {
   return (
     <div className="bg-canvas" aria-hidden="true">
       <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%'}}/>
-      <div ref={holesRef} style={{position:'absolute',inset:0}}>
-        {(cfg.holes || []).map((h, i) => (
-          <div key={i} className="blackhole" style={{ left:`${h.x}%`, top:`${h.y}%`, width:h.s }}>
-            <div className="bh-halo"/>
-            <div className="bh-disk"/>
-            <div className="bh-core"/>
-            <div className="bh-ring"/>
-          </div>
-        ))}
-      </div>
       <svg ref={svgRef} width="100%" height="100%" style={{position:'absolute',inset:0}} viewBox="0 0 100 100" preserveAspectRatio="none">
         <defs>
           <filter id="cst-glow" x="-50%" y="-50%" width="200%" height="200%">
@@ -990,33 +996,36 @@ function BgCanvas({ variant = "home" }) {
           const py = i => ay + cst.pts[i][1] * sc;
           const conns = cst.conns || cst.pts.slice(0,-1).map((_,i)=>[i,i+1]);
           return (
-            <g key={cstIdx} opacity=".55" filter="url(#cst-glow)">
+            <g key={cstIdx} opacity=".6" filter="url(#cst-glow)" style={{animation:`cstDrift ${11 + ci * 2.3}s ${ci * 0.8}s ease-in-out infinite`}}>
               {conns.map(([a,b], li) => {
                 const isHandle = cst.handles && (cst.handles.includes(a) || cst.handles.includes(b));
                 return (
                   <line key={li}
                     x1={px(a)} y1={py(a)} x2={px(b)} y2={py(b)}
-                    stroke={isHandle ? `rgba(${accRgb},.45)` : `rgba(${accRgb},.6)`}
-                    strokeWidth={isHandle ? '.08' : '.11'}
+                    stroke={isHandle ? `rgba(${accRgb},.32)` : `rgba(${accRgb},.42)`}
+                    strokeWidth={isHandle ? '.07' : '.09'}
                     strokeDasharray={isHandle ? '.3 .5' : 'none'}
                     style={{animation:`constellationDraw ${2.8 + li * 0.35}s ${ci * 0.5 + li * 0.18}s ease both`}}
                   />
                 );
               })}
+              {/* halo sur l'étoile-clé (premier nœud) */}
+              <circle cx={px(0)} cy={py(0)} r=".85" fill={`rgba(${accRgb},.1)`}/>
               {cst.pts.map((_, pi) => {
                 const isHandle = cst.handles?.includes(pi);
+                const rr = isHandle ? .15 : pi === 0 ? .34 : .18 + ((pi * 29) % 3) * .05;
                 return (
                   <circle key={pi}
                     cx={px(pi)} cy={py(pi)}
-                    r={isHandle ? '.16' : '.26'}
-                    fill={isHandle ? 'none' : `rgba(${accRgb},.9)`}
+                    r={rr}
+                    fill={isHandle ? 'none' : pi === 0 ? '#fff' : `rgba(${accRgb},.9)`}
                     stroke={`rgba(${accRgb},${isHandle ? '.5' : '.35'})`}
                     strokeWidth='.07'
                     style={{animation:`starBlink ${2.5 + pi * 0.6}s ${ci * 0.35 + pi * 0.25}s ease-in-out infinite`}}
                   />
                 );
               })}
-              {cst.label && <text x={ax} y={ay - 0.9} fontSize=".85" fill={`rgba(${accRgb},.18)`} fontFamily="Syne,sans-serif" letterSpacing=".08">{cst.label}</text>}
+              {cst.label && <text x={ax} y={ay - 1.1} fontSize=".68" fill={`rgba(${accRgb},.24)`} fontFamily="Syne,sans-serif" letterSpacing=".18">{cst.label}</text>}
             </g>
           );
         })}
@@ -1342,6 +1351,42 @@ function PlanetCard() {
         <div className="planet-orb"/>
         <div className="planet-ring"/>
         <div className="planet-sat"/>
+      </div>
+    </div>
+  );
+}
+
+// Transition d'aspiration au scroll : le trou noir grossit, avale l'écran (noir total),
+// puis nous recrache sur la section suivante. Pilote aussi le masquage du soleil (body.bht-active).
+function BlackHoleTransition() {
+  const wrapRef = useRef(null);
+  const holeRef = useRef(null);
+  const blackRef = useRef(null);
+  useEffect(() => {
+    const onScroll = () => {
+      const el = wrapRef.current; if (!el) return;
+      const r = el.getBoundingClientRect();
+      const total = r.height - window.innerHeight;
+      const p = Math.min(1, Math.max(0, -r.top / (total || 1)));
+      const t = p < 0.5 ? p * 2 : (1 - p) * 2; // 0 → 1 (englouti) → 0
+      const scale = 0.3 + Math.pow(t, 1.6) * 16;
+      if (holeRef.current) holeRef.current.style.transform = `scale(${scale}) rotate(${p * 200}deg)`;
+      if (blackRef.current) blackRef.current.style.opacity = Math.min(1, Math.max(0, (t - 0.6) / 0.2));
+      document.body.classList.toggle("bht-active", p > 0.03 && p < 0.97);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => { window.removeEventListener("scroll", onScroll); document.body.classList.remove("bht-active"); };
+  }, []);
+  return (
+    <div ref={wrapRef} className="bht-wrap" aria-hidden="true">
+      <div className="bht-sticky">
+        <div ref={holeRef} className="bht-hole">
+          <div className="bht-disk"/>
+          <div className="bht-core"/>
+          <div className="bht-ring"/>
+        </div>
+        <div ref={blackRef} className="bht-black"/>
       </div>
     </div>
   );
@@ -1734,7 +1779,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
             <div className="hero-cstage afu d1">
               <div className="hero-castro" aria-hidden="true">
                 <div style={{ transform:`perspective(900px) translate3d(${px.x*18}px, ${px.y*12}px, 0) rotateY(${-px.x*4}deg) rotateX(${px.y*2.5}deg)`, transition:"transform .18s ease-out" }}>
-                  <AstronautSVG size={420}/>
+                  <img src="/astro-tablet.png" alt="" style={{ width:"100%", height:"auto", display:"block" }}/>
                 </div>
               </div>
               <h1 className="hero-h1c">
@@ -1836,8 +1881,14 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
           </div>
         </div>
 
-        {/* Double casquette */}
-        <div style={{ marginTop:60 }}>
+      </section>
+
+      {/* ── TRANSITION TROU NOIR — aspiration au scroll ── */}
+      <BlackHoleTransition/>
+
+      {/* ── DESIGN × ENGINEERING ── */}
+      <section className="sec" id="expertise" style={{ paddingTop:40 }}>
+        <div>
           <div style={{ display:"flex", alignItems:"center", gap:32, marginBottom:0 }}>
             <div style={{ flex:1 }}>
               <div className="seye rv">Double expertise</div>
