@@ -134,7 +134,8 @@ button{cursor:pointer;font-family:var(--fb)}
 .hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#06D6A0;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 6px #06D6A0}
 .hero-h1{font-size:clamp(48px,7.2vw,118px);font-weight:800;line-height:.9;letter-spacing:-3px;position:relative;z-index:2}
 .hero-title-stage{position:relative;width:max-content;max-width:100%}
-.hero-title-astro{position:absolute;top:max(-11vw,-200px);left:calc(100% - 11vw);width:30vw;max-width:540px;z-index:1;pointer-events:none}
+.hero-title-astro{position:absolute;top:max(-9vw,-170px);left:calc(100% - 15vw);width:26vw;max-width:470px;z-index:1;pointer-events:none}
+.hero-spec{position:relative;z-index:2}
 .hero-title-astro img{width:100%;height:auto;display:block;filter:drop-shadow(0 32px 80px rgba(75,127,250,.25))}
 .hero-title-astro.front{z-index:3}
 .hero-title-astro.front img{clip-path:polygon(0 36%,33% 36%,33% 73%,0 73%)}
