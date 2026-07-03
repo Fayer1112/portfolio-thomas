@@ -65,6 +65,14 @@ button{cursor:pointer;font-family:var(--fb)}
 .bht-wrap{height:230vh;position:relative;z-index:60;pointer-events:none;margin:-40px 0}
 .bht-sticky{position:absolute;top:0;left:0;right:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .bht-hole{position:relative;width:110vmin;aspect-ratio:1;will-change:transform}
+.bht-glitch{position:absolute;inset:0}
+.bht-glitch.on{animation:bhtTwerk .38s steps(2,end) infinite;filter:drop-shadow(4px 0 rgba(255,60,130,.4)) drop-shadow(-4px 0 rgba(80,200,255,.4))}
+.bht-glitch.on::before,.bht-glitch.on::after{content:"";position:absolute;left:-8%;right:-8%;height:3%;background:rgba(203,172,255,.4);mix-blend-mode:screen;pointer-events:none}
+.bht-glitch.on::before{animation:bhtSlice1 .5s steps(1,end) infinite}
+.bht-glitch.on::after{animation:bhtSlice2 .64s steps(1,end) infinite}
+@keyframes bhtTwerk{0%{transform:translate(0,0) skewX(0)}25%{transform:translate(-1.4%,.7%) skewX(2.5deg)}50%{transform:translate(1.1%,-.5%) skewX(-2deg)}75%{transform:translate(-.7%,-.9%) skewX(1.4deg)}100%{transform:translate(0,0) skewX(0)}}
+@keyframes bhtSlice1{0%{top:18%;opacity:0}12%{opacity:1}30%{top:64%}50%{top:38%;opacity:0}70%{top:74%;opacity:1}100%{top:22%;opacity:0}}
+@keyframes bhtSlice2{0%{top:52%;opacity:1}25%{top:12%;opacity:0}45%{top:80%;opacity:1}75%{top:30%}100%{top:58%;opacity:0}}
 .bht-lensring{position:absolute;inset:-14%;border-radius:50%;pointer-events:none;-webkit-mask-image:radial-gradient(circle,transparent 44%,#000 55%,#000 72%,transparent 84%);mask-image:radial-gradient(circle,transparent 44%,#000 55%,#000 72%,transparent 84%)}
 .bht-arch{position:absolute;inset:15%;border-radius:50%;background:radial-gradient(circle,transparent 54%,rgba(196,161,255,.9) 62%,rgba(124,58,237,.55) 69%,transparent 78%);filter:blur(7px);-webkit-mask-image:linear-gradient(180deg,#000 46%,transparent 58%);mask-image:linear-gradient(180deg,#000 46%,transparent 58%)}
 .bht-core{position:absolute;inset:26%;border-radius:50%;background:radial-gradient(circle at 50% 42%,#0A0512 0%,#000 55%);box-shadow:0 0 240px 90px rgba(0,0,0,.95)}
@@ -124,7 +132,7 @@ body.bht-active .sun-layer{opacity:0}
 .nlogo-txt{font-family:var(--fd);font-size:15px;font-weight:800;letter-spacing:-.3px;color:var(--tx)}
 .nlinks{display:flex;gap:26px;list-style:none;font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
 .nlinks button{position:relative;color:var(--tx2);background:none;border:none;font:inherit;letter-spacing:inherit;text-transform:inherit;transition:color .2s;padding:6px 2px}
-.nlinks button::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2.5px;border-radius:3px;background:linear-gradient(90deg,#7C3AED,#A78BFA);box-shadow:0 0 10px rgba(124,58,237,.7);transform:scaleX(0);transform-origin:center;transition:transform .28s var(--ease)}
+.nlinks button::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:3px;border-radius:3px;background:linear-gradient(90deg,#7C3AED,#A78BFA);box-shadow:0 0 12px rgba(124,58,237,.8);transform:scaleX(0);transform-origin:center;transition:transform .28s var(--ease)}
 .nlinks button:hover{color:var(--tx)}
 .nlinks button.on{color:#C4B5FD}
 .nlinks button.on::after{transform:scaleX(1)}
@@ -137,6 +145,7 @@ body.bht-active .sun-layer{opacity:0}
 .nmob.open{display:flex;animation:menuSlideIn .32s cubic-bezier(.4,0,.2,1) both}
 .nmob.closing{display:flex;animation:menuSlideOut .25s cubic-bezier(.4,0,.2,1) forwards}
 .nmob-nav-link{font-family:var(--fd);font-size:26px;font-weight:800;color:var(--tx);background:none;border:none;letter-spacing:-1px;padding:10px 0;cursor:pointer;transition:color .2s;width:100%;text-align:center;animation:linkFadeUp .4s var(--ease) both}
+.nmob-nav-link.on{color:#C4B5FD;text-decoration:underline;text-decoration-color:#7C3AED;text-decoration-thickness:3px;text-underline-offset:8px}
 .nmob-nav-link:hover{color:var(--acc)}
 .nmob-close{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:var(--bg3);border:1px solid var(--bdr);color:var(--tx2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1}
 .nmob-close:hover{border-color:var(--acc);color:var(--acc);background:var(--accd)}
@@ -779,7 +788,7 @@ function Lightbox({ images, startIndex = 0, onClose }) {
   }, [idx, onClose, images.length]);
   return (
     <div className="lb-overlay" onClick={onClose}>
-      <button className="lb-close" onClick={onClose}>✕</button>
+      <button className="lb-close" onClick={onClose}><i className="bx bx-x"/></button>
       {idx > 0 && <button className="lb-arrow lb-prev" onClick={(e)=>{e.stopPropagation();setIdx(i=>i-1);}}>‹</button>}
       <img className="lb-img" src={images[idx]} alt={`Photo ${idx+1}`} onClick={(e)=>e.stopPropagation()}/>
       {idx < images.length-1 && <button className="lb-arrow lb-next" onClick={(e)=>{e.stopPropagation();setIdx(i=>i+1);}}>›</button>}
@@ -1378,6 +1387,7 @@ function BlackHoleTransition() {
   const holeRef = useRef(null);
   const blackRef = useRef(null);
   const lensRef = useRef(null);
+  const glitchRef = useRef(null);
   useEffect(() => {
     const onScroll = () => {
       const el = wrapRef.current; if (!el) return;
@@ -1394,10 +1404,11 @@ function BlackHoleTransition() {
       const t = p < 0.5 ? p * 2 : (1 - p) * 2; // 0 → 1 (englouti) → 0
       // Trou nativement grand (110vmin) → scale max faible pour garder le conic-gradient net
       const scale = 0.07 + Math.pow(t, 1.5) * 2.75;
-      // Déformation d'aspiration : ne monte que près du trou (t>.55), se réduit en s'éloignant
+      if (holeRef.current) holeRef.current.style.transform = `scale(${scale})`;
+      // Glitch "twerk" (ref codemyui) quand on est presque dedans / qu'on commence à ressortir,
+      // se coupe en s'éloignant du trou
       const d = Math.max(0, (t - 0.55) / 0.45);
-      if (holeRef.current) holeRef.current.style.transform = `scale(${scale}) scaleY(${1 + d * 0.22}) scaleX(${1 - d * 0.12})`;
-      if (s) s.style.filter = d > 0.01 ? `blur(${(d * 2.4).toFixed(2)}px) contrast(${(1 + d * 0.14).toFixed(2)})` : "";
+      if (glitchRef.current) glitchRef.current.classList.toggle("on", d > 0.12);
       // Distorsion gravitationnelle : la lentille se renforce à mesure qu'on approche du trou
       if (lensRef.current) {
         const dist = `blur(${(1 + t * 8).toFixed(1)}px) saturate(${(1 + t * 0.6).toFixed(2)}) contrast(${(1 + t * 0.2).toFixed(2)})`;
@@ -1416,17 +1427,19 @@ function BlackHoleTransition() {
       <div ref={stickyRef} className="bht-sticky">
         <div ref={holeRef} className="bht-hole">
           <div ref={lensRef} className="bht-lensring"/>
-          <div className="bht-arch"/>
-          <div className="bht-core"/>
-          <div className="bht-ring"/>
-          <div className="bht-diskflat"><div className="bht-diskflat-spin"/></div>
-          {[0, 1, 2].map(i => (
-            <div key={i} className="bht-orbit" style={{ animationDelay:`${i*3}s` }}>
-              <div style={{ animation:`bhtFall 9s ease-in ${i*3}s infinite`, position:"absolute", width:"6.5vmin" }}>
-                <FigmaMark/>
+          <div ref={glitchRef} className="bht-glitch">
+            <div className="bht-arch"/>
+            <div className="bht-core"/>
+            <div className="bht-ring"/>
+            <div className="bht-diskflat"><div className="bht-diskflat-spin"/></div>
+            {[0, 1, 2].map(i => (
+              <div key={i} className="bht-orbit" style={{ animationDelay:`${i*3}s` }}>
+                <div style={{ animation:`bhtFall 9s ease-in ${i*3}s infinite`, position:"absolute", width:"6.5vmin" }}>
+                  <FigmaMark/>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
         <div ref={blackRef} className="bht-black"/>
       </div>
@@ -1654,8 +1667,10 @@ function Nav({ scrolled, onBack, onTrack, onNavigate, hidden, cvUrl }) {
       for (const id of ids) {
         const el = document.getElementById(id);
         if (!el) continue;
-        if (el.getBoundingClientRect().top <= window.innerHeight * 0.4) cur = id;
+        if (el.getBoundingClientRect().top <= window.innerHeight * 0.45) cur = id;
       }
+      // tout en bas de page, la dernière section est forcément l'active
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8) cur = ids[ids.length - 1];
       setActive(cur);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -1676,20 +1691,20 @@ function Nav({ scrolled, onBack, onTrack, onNavigate, hidden, cvUrl }) {
         <a className="ncv" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener">Mon CV ↗</a>
         <a className="ncv-mobile" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener">CV ↗</a>
         {!mobOpen && (
-          <button className="nhb" onClick={openMenu} aria-label="Ouvrir le menu">☰</button>
+          <button className="nhb" onClick={openMenu} aria-label="Ouvrir le menu"><i className="bx bx-menu"/></button>
         )}
       </nav>
 
       {mobOpen && (
         <div className={`nmob${closing ? " closing" : " open"}`}>
-          <button className="nmob-close" onClick={closeMenu} aria-label="Fermer le menu">✕</button>
+          <button className="nmob-close" onClick={closeMenu} aria-label="Fermer le menu"><i className="bx bx-x"/></button>
           <div className="nlogo" style={{ marginBottom:8, animation:"linkFadeUp .35s .05s var(--ease) both" }}>
             <div dangerouslySetInnerHTML={{ __html: LOGO_SVG }}/>
             <span className="nlogo-txt">Thomas Leloup</span>
           </div>
           <div className="nmob-divider" style={{ animation:"linkFadeUp .35s .1s var(--ease) both" }}/>
           {links.map(([id,lbl], i) => (
-            <button key={id} className="nmob-nav-link" onClick={() => go(id)}
+            <button key={id} className={`nmob-nav-link${active === id ? " on" : ""}`} onClick={() => go(id)}
               style={{ animationDelay: `${0.12 + i * 0.07}s` }}>
               {lbl}
             </button>
@@ -2124,7 +2139,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               </div>
             </a>
             <div className="contact-card" style={{ cursor:"default", pointerEvents:"none" }}>
-              <div className="contact-card-icon" style={{ background:"rgba(6,214,160,.1)" }}>📍</div>
+              <div className="contact-card-icon" style={{ background:"rgba(6,214,160,.1)" }}><i className="bx bx-map" style={{ color:"#06D6A0" }}/></div>
               <div>
                 <div className="contact-card-label">Localisation</div>
                 <div className="contact-card-val">Paris, France · Remote OK</div>
@@ -2158,7 +2173,9 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
           document.getElementById(id)?.scrollIntoView({ behavior:"smooth" });
           if (onTrack) onTrack("event", { type:"mob_cta_click", mode:mobCtaMode });
         }}>
-        {mobCtaMode==="contact" ? "✉ Contactez-moi" : "→ Voir mes projets"}
+        {mobCtaMode==="contact"
+          ? <><i className="bx bx-envelope" style={{ verticalAlign:"-2px", marginRight:7 }}/>Contactez-moi</>
+          : <><i className="bx bx-right-arrow-alt" style={{ verticalAlign:"-2px", marginRight:7 }}/>Voir mes projets</>}
       </button>
     </div>
   );
@@ -2385,7 +2402,7 @@ function ContactForm({ onTrack }) {
     return (
       <div className="cform-wrap">
         <div className="cform-success" style={{ background:"rgba(239,68,68,.08)", border:"1px solid rgba(239,68,68,.2)" }}>
-          <div className="cform-success-ico">🛸</div>
+          <div className="cform-success-ico"><i className="bx bx-planet" style={{ color:"#A78BFA" }}/></div>
           <div className="cform-success-title" style={{ color:"#f87171" }}>Problème de transmission !</div>
           <div className="cform-success-txt">
             Une anomalie a perturbé le signal. Pas de panique —<br/>
@@ -2407,7 +2424,7 @@ function ContactForm({ onTrack }) {
     return (
       <div className="cform-wrap">
         <div className="cform-success">
-          <div className="cform-success-ico">🚀</div>
+          <div className="cform-success-ico"><i className="bx bxs-rocket" style={{ color:"#A78BFA" }}/></div>
           <div className="cform-success-title">Message envoyé avec succès !</div>
           <div className="cform-success-txt">
             Je vous répondrai sous 24h à<br/>
@@ -2467,7 +2484,7 @@ function ContactForm({ onTrack }) {
           </div>
         </div>
         <button className="cform-submit" onClick={send} disabled={status === "sending"}>
-          {status === "sending" ? "🚀 Envoi en cours…" : "Envoyer le message →"}
+          {status === "sending" ? <><i className="bx bxs-rocket" style={{ verticalAlign:"-2px", marginRight:6 }}/>Envoi en cours…</> : "Envoyer le message →"}
         </button>
         <p style={{ fontSize:11, color:"var(--tx3)", textAlign:"center", lineHeight:1.6 }}>
           Votre message m'arrive directement par e-mail — je réponds sous 24h.<br/>
@@ -2489,15 +2506,15 @@ function NotFoundPage({ onHome }) {
         <div className="err-astronaut">
           <AstronautSVG size={200}/>
         </div>
-        <div className="err-badge">🛸 Erreur 404</div>
+        <div className="err-badge"><i className="bx bx-error" style={{ verticalAlign:"-2px", marginRight:5 }}/>Erreur 404</div>
         <h1 className="err-title">Vous vous êtes perdu dans l'espace !</h1>
         <p className="err-sub">
           Houston, on a un problème. La page que vous cherchez a dérivé dans une orbite inconnue.<br/>
           Pas de panique — <em>revenez sur Terre</em> et on repart ensemble.
         </p>
         <div className="err-actions">
-          <button className="btn-pri" onClick={onHome}>🌍 Retour sur Terre</button>
-          <a className="btn-sec" href="mailto:leloupthomas.pro@gmail.com">📡 Contacter la base</a>
+          <button className="btn-pri" onClick={onHome}><i className="bx bx-planet" style={{ verticalAlign:"-2px", marginRight:6 }}/>Retour sur Terre</button>
+          <a className="btn-sec" href="mailto:leloupthomas.pro@gmail.com"><i className="bx bx-broadcast" style={{ verticalAlign:"-2px", marginRight:6 }}/>Contacter la base</a>
         </div>
       </div>
     </div>
@@ -2513,7 +2530,7 @@ function ErrorPage({ onHome, message }) {
         <div className="err-astronaut">
           <AstronautSVG size={200}/>
         </div>
-        <div className="err-badge">⚡ Erreur système</div>
+        <div className="err-badge"><i className="bx bxs-zap" style={{ verticalAlign:"-2px", marginRight:5 }}/>Erreur système</div>
         <h1 className="err-title">Micro-météorite dans les serveurs !</h1>
         <p className="err-sub">
           Une anomalie cosmique a perturbé la navigation. L'équipe de mission est sur le coup.<br/>
@@ -2521,8 +2538,8 @@ function ErrorPage({ onHome, message }) {
           En attendant, <em>regagnez la capsule principale</em>.
         </p>
         <div className="err-actions">
-          <button className="btn-pri" onClick={onHome}>🚀 Retour à la capsule</button>
-          <button className="btn-sec" onClick={() => window.location.reload()}>🔄 Relancer les moteurs</button>
+          <button className="btn-pri" onClick={onHome}><i className="bx bxs-rocket" style={{ verticalAlign:"-2px", marginRight:6 }}/>Retour à la capsule</button>
+          <button className="btn-sec" onClick={() => window.location.reload()}><i className="bx bx-refresh" style={{ verticalAlign:"-2px", marginRight:6 }}/>Relancer les moteurs</button>
         </div>
       </div>
     </div>
@@ -2572,17 +2589,17 @@ const TOOL_ICONS = {
   "notion":{"slug":"notion","bg":"#fff","dark":true},
   "google analytics":{"slug":"googleanalytics","bg":"#E37400"},
   "framer":{"slug":"framer","bg":"#0055FF"},
-  "principle":{"emoji":"✦","bg":"#7C3AED"},
-  "entretiens":{"emoji":"🎙","bg":"#4B7FFA"},
-  "tests utilisateurs":{"emoji":"🧪","bg":"#06D6A0"},
-  "personas":{"emoji":"👤","bg":"#F59E0B"},
-  "user journey":{"emoji":"🗺","bg":"#EC4899"},
-  "prototype":{"emoji":"⚡","bg":"#7C3AED"},
-  "prototype hf":{"emoji":"⚡","bg":"#7C3AED"},
-  "workshop":{"emoji":"🤝","bg":"#F97316"},
-  "benchmark":{"emoji":"📊","bg":"#38BDF8"},
-  "co-conception":{"emoji":"✏️","bg":"#8B5CF6"},
-  "pitch":{"emoji":"🎯","bg":"#F59E0B"},
+  "principle":{"bx":"bxs-star","bg":"#7C3AED"},
+  "entretiens":{"bx":"bxs-microphone","bg":"#4B7FFA"},
+  "tests utilisateurs":{"bx":"bx-test-tube","bg":"#06D6A0"},
+  "personas":{"bx":"bx-user","bg":"#F59E0B"},
+  "user journey":{"bx":"bx-map-alt","bg":"#EC4899"},
+  "prototype":{"bx":"bxs-zap","bg":"#7C3AED"},
+  "prototype hf":{"bx":"bxs-zap","bg":"#7C3AED"},
+  "workshop":{"bx":"bx-group","bg":"#F97316"},
+  "benchmark":{"bx":"bx-bar-chart-alt-2","bg":"#38BDF8"},
+  "co-conception":{"bx":"bx-pencil","bg":"#8B5CF6"},
+  "pitch":{"bx":"bx-target-lock","bg":"#F59E0B"},
 };
 
 function ToolLogo({ name }) {
@@ -2592,7 +2609,7 @@ function ToolLogo({ name }) {
     const initials = name.split(/[\s/]+/).map(w=>w[0]).join("").toUpperCase().slice(0,2);
     return <div className="pd-tool-logo" style={{ background:"var(--accd)", color:"var(--acc)", fontSize:10 }}>{initials}</div>;
   }
-  if (cfg.emoji) return <div className="pd-tool-logo" style={{ background:cfg.bg, fontSize:13 }}>{cfg.emoji}</div>;
+  if (cfg.bx) return <div className="pd-tool-logo" style={{ background:cfg.bg, display:"flex", alignItems:"center", justifyContent:"center" }}><i className={`bx ${cfg.bx}`} style={{ color:"#fff", fontSize:13 }}/></div>;
   return <img className="pd-tool-logo" src={`https://cdn.simpleicons.org/${cfg.slug}/ffffff`} alt={name} onError={e=>{ e.target.style.display="none"; }} style={{ background:cfg.bg, padding:2, borderRadius:4 }}/>;
 }
 
