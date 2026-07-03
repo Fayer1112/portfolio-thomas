@@ -167,7 +167,7 @@ body.bht-active .sun-layer{opacity:0}
 .hero-spec{display:flex;gap:9px;flex-wrap:wrap;margin:28px 0 0}
 .hero-spec-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:100px;font-size:12px;font-weight:700;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.28);color:#C4B5FD;letter-spacing:.3px;white-space:nowrap;backdrop-filter:blur(8px)}
 .hero-divider{width:48px;height:1px;background:linear-gradient(90deg,var(--acc),transparent);margin:28px 0;opacity:.7}
-.hero-desc{font-size:15.5px;color:rgba(255,255,255,.72);line-height:1.82;max-width:700px;font-weight:400;text-shadow:0 1px 14px rgba(7,8,15,.85)}
+.hero-desc{font-size:15.5px;color:rgba(255,255,255,.72);line-height:1.82;max-width:900px;font-weight:400;text-shadow:0 1px 14px rgba(7,8,15,.85);margin-top:30px}
 .hero-scrim{position:absolute;left:50%;bottom:-50px;transform:translateX(-50%);width:min(980px,94vw);height:400px;background:radial-gradient(ellipse at 50% 48%,rgba(7,8,15,.68) 0%,rgba(7,8,15,.42) 52%,transparent 74%);filter:blur(8px);z-index:-1;pointer-events:none}
 .hero-desc strong{color:rgba(255,255,255,.85);font-weight:600}
 .hero-desc em{color:#C4B5FD;font-style:normal;font-weight:600}
