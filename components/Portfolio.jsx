@@ -65,6 +65,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .bht-wrap{height:230vh;position:relative;z-index:60;pointer-events:none;margin:-40px 0}
 .bht-sticky{position:absolute;top:0;left:0;right:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .bht-hole{position:relative;width:110vmin;aspect-ratio:1;will-change:transform}
+.bht-lensring{position:absolute;inset:-14%;border-radius:50%;pointer-events:none;-webkit-mask-image:radial-gradient(circle,transparent 44%,#000 55%,#000 72%,transparent 84%);mask-image:radial-gradient(circle,transparent 44%,#000 55%,#000 72%,transparent 84%)}
 .bht-arch{position:absolute;inset:15%;border-radius:50%;background:radial-gradient(circle,transparent 54%,rgba(196,161,255,.9) 62%,rgba(124,58,237,.55) 69%,transparent 78%);filter:blur(7px);-webkit-mask-image:linear-gradient(180deg,#000 46%,transparent 58%);mask-image:linear-gradient(180deg,#000 46%,transparent 58%)}
 .bht-core{position:absolute;inset:26%;border-radius:50%;background:radial-gradient(circle at 50% 42%,#0A0512 0%,#000 55%);box-shadow:0 0 240px 90px rgba(0,0,0,.95)}
 .bht-ring{position:absolute;inset:24.5%;border-radius:50%;border:3px solid rgba(224,206,255,.8);box-shadow:0 0 34px rgba(167,139,250,.75),inset 0 0 22px rgba(167,139,250,.5)}
@@ -158,7 +159,7 @@ body.bht-active .sun-layer{opacity:0}
 .hero-castro{position:absolute;left:50%;top:47%;transform:translate(-50%,-54%);width:min(16vw,280px);z-index:2;pointer-events:none;filter:drop-shadow(0 30px 70px rgba(75,127,250,.3))}
 .hero-castro svg{width:100%;height:auto;display:block}
 .hero-planet2{position:absolute;left:50%;bottom:0;width:min(66vw,1220px);aspect-ratio:1;border-radius:50%;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(circle at 50% 12%,#4A2B92 0%,#2E1960 30%,#170C3C 58%,#0A0522 82%);box-shadow:0 -28px 150px rgba(124,58,237,.42),inset 0 36px 80px rgba(196,181,253,.38),inset 0 -120px 220px rgba(0,0,0,.9);-webkit-mask-image:linear-gradient(180deg,#000 14%,rgba(0,0,0,.72) 24%,transparent 42%);mask-image:linear-gradient(180deg,#000 14%,rgba(0,0,0,.72) 24%,transparent 42%)}
-.hero-planet2-tex{position:absolute;inset:-16%;border-radius:50%;filter:blur(3px);animation:spinSlow 110s linear infinite;background:radial-gradient(ellipse 24% 13% at 28% 32%,rgba(155,116,255,.36) 0 55%,transparent 64%),radial-gradient(ellipse 13% 8% at 39% 24%,rgba(155,116,255,.3) 0 52%,transparent 63%),radial-gradient(ellipse 9% 14% at 23% 41%,rgba(139,92,246,.3) 0 50%,transparent 62%),radial-gradient(ellipse 21% 10% at 67% 38%,rgba(167,139,250,.3) 0 52%,transparent 62%),radial-gradient(ellipse 11% 15% at 74% 49%,rgba(129,90,240,.34) 0 52%,transparent 63%),radial-gradient(ellipse 15% 7% at 60% 30%,rgba(196,181,253,.2) 0 48%,transparent 60%),radial-gradient(ellipse 26% 12% at 48% 68%,rgba(104,66,214,.42) 0 55%,transparent 65%),radial-gradient(ellipse 10% 6% at 18% 60%,rgba(196,181,253,.22) 0 45%,transparent 58%),radial-gradient(ellipse 17% 9% at 58% 15%,rgba(88,50,190,.42) 0 50%,transparent 61%),radial-gradient(ellipse 12% 7% at 83% 27%,rgba(139,92,246,.26) 0 48%,transparent 60%),radial-gradient(ellipse 30% 17% at 44% 47%,rgba(52,27,116,.5) 0 60%,transparent 71%),radial-gradient(ellipse 14% 8% at 33% 78%,rgba(139,92,246,.28) 0 50%,transparent 62%)}
+.hero-planet2-tex{position:absolute;inset:-16%;border-radius:50%;filter:blur(1.2px);animation:spinSlow 110s linear infinite;background:radial-gradient(ellipse 24% 13% at 28% 32%,rgba(155,116,255,.36) 0 55%,transparent 64%),radial-gradient(ellipse 13% 8% at 39% 24%,rgba(155,116,255,.3) 0 52%,transparent 63%),radial-gradient(ellipse 9% 14% at 23% 41%,rgba(139,92,246,.3) 0 50%,transparent 62%),radial-gradient(ellipse 21% 10% at 67% 38%,rgba(167,139,250,.3) 0 52%,transparent 62%),radial-gradient(ellipse 11% 15% at 74% 49%,rgba(129,90,240,.34) 0 52%,transparent 63%),radial-gradient(ellipse 15% 7% at 60% 30%,rgba(196,181,253,.2) 0 48%,transparent 60%),radial-gradient(ellipse 26% 12% at 48% 68%,rgba(104,66,214,.42) 0 55%,transparent 65%),radial-gradient(ellipse 10% 6% at 18% 60%,rgba(196,181,253,.22) 0 45%,transparent 58%),radial-gradient(ellipse 17% 9% at 58% 15%,rgba(88,50,190,.42) 0 50%,transparent 61%),radial-gradient(ellipse 12% 7% at 83% 27%,rgba(139,92,246,.26) 0 48%,transparent 60%),radial-gradient(ellipse 30% 17% at 44% 47%,rgba(52,27,116,.5) 0 60%,transparent 71%),radial-gradient(ellipse 14% 8% at 33% 78%,rgba(139,92,246,.28) 0 50%,transparent 62%),radial-gradient(ellipse 7% 4% at 52% 36%,rgba(196,181,253,.26) 0 50%,transparent 60%),radial-gradient(ellipse 6% 9% at 70% 61%,rgba(150,111,255,.3) 0 48%,transparent 59%),radial-gradient(ellipse 5% 3% at 45% 22%,rgba(196,181,253,.22) 0 46%,transparent 58%)}
 .hero-planet2::before{content:"";position:absolute;inset:0;border-radius:50%;z-index:1;background:radial-gradient(ellipse 70% 22% at 50% 4%,rgba(216,203,255,.42) 0%,rgba(139,92,246,.14) 45%,transparent 75%)}
 .hero-planet2::after{content:"";position:absolute;inset:0;border-radius:50%;z-index:1;background:radial-gradient(circle at 50% 130%,rgba(0,0,0,.95) 45%,rgba(0,0,0,.35) 68%,transparent 82%)}
 .hero-c .hero-spec{justify-content:center;position:relative;z-index:4}
@@ -254,18 +255,20 @@ body.bht-active .sun-layer{opacity:0}
 .tl-ico{position:absolute;top:16px;right:16px;font-size:24px;opacity:.18}
 
 /* ─ PROJECT GALLERY ─ */
-.pf-bar{display:flex;gap:7px;flex-wrap:wrap;margin:30px 0 24px}
-.pf-btn{padding:7px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid var(--bdr);background:transparent;color:var(--tx2)}
-.pf-btn:hover{border-color:var(--bdr2);color:var(--tx)}
-.pf-btn.on{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 4px 16px rgba(124,58,237,.28)}
+.pf-bar{display:flex;gap:10px;flex-wrap:wrap;margin:34px 0 30px;justify-content:center}
+.pf-btn{padding:10px 22px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;border:1px solid rgba(124,58,237,.35);background:rgba(124,58,237,.08);color:#C4B5FD;backdrop-filter:blur(8px)}
+.pf-btn:hover{border-color:rgba(167,139,250,.6);color:#E9E4FF;background:rgba(124,58,237,.16)}
+.pf-btn.on{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 6px 22px rgba(124,58,237,.4)}
 .pf-sep{width:1px;background:var(--bdr);margin:0 4px;align-self:stretch}
-.pgallery{display:grid;gap:14px;margin-left:-40px;margin-right:-40px}
+.pgallery{display:grid;gap:16px;max-width:1180px;margin:0 auto}
+#projets::before{content:"";position:absolute;inset:-30px 0;background:radial-gradient(ellipse 88% 82% at 50% 50%,#04030A 58%,rgba(4,3,10,0) 100%);pointer-events:none;z-index:-1}
 .pgallery-row{display:grid;gap:14px}
 .pgallery-row.r1{grid-template-columns:var(--row-cols, 2fr 1fr)}
 .pgallery-row.r2{grid-template-columns:var(--row-cols, 1fr 2fr)}
 .pgallery-row.r3{grid-template-columns:var(--row-cols, 1fr 1fr 1fr)}
 .pgallery-row.rfull{grid-template-columns:var(--row-cols, 1fr)}
-.pcard{position:relative;overflow:hidden;cursor:pointer;background:var(--bg2);border-radius:20px;transition:transform .35s var(--ease)}
+.pcard{position:relative;overflow:hidden;cursor:pointer;background:var(--bg2);border-radius:20px;border:1px solid rgba(139,92,246,.24);box-shadow:0 0 0 1px rgba(255,255,255,.03),0 14px 44px rgba(0,0,0,.5);transition:transform .35s var(--ease),border-color .3s,box-shadow .3s}
+.pcard:hover{border-color:rgba(167,139,250,.55);box-shadow:0 0 0 1px rgba(167,139,250,.2),0 0 30px rgba(124,58,237,.28),0 14px 44px rgba(0,0,0,.5)}
 .pcard-h-sm{height:260px}
 .pcard-h-md{height:340px}
 .pcard-h-lg{height:420px}
@@ -298,12 +301,12 @@ body.bht-active .sun-layer{opacity:0}
 .sun-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden}
 .sun-behind{z-index:0}
 .sun-light{z-index:45;mix-blend-mode:screen}
-.sun-disc,.sun-wash{position:absolute;top:13vh;left:0;width:42vmin;height:42vmin;border-radius:50%;animation:sunTravel 150s ease-in-out infinite}
+.sun-disc,.sun-wash{position:absolute;top:13vh;left:0;width:33vmin;height:33vmin;border-radius:50%;animation:sunTravel 150s ease-in-out infinite}
 .sun-disc{background:radial-gradient(circle at 50% 50%,#FFF6DC 0%,#FFC868 14%,rgba(255,150,52,.85) 30%,rgba(255,116,26,.35) 52%,transparent 70%);filter:blur(1px)}
 .sun-disc::before{content:"";position:absolute;inset:-55%;border-radius:50%;background:radial-gradient(circle,rgba(255,160,70,.35) 0%,rgba(255,130,45,.12) 45%,transparent 70%)}
 .sun-wash{background:radial-gradient(circle,rgba(255,170,80,.32) 0%,rgba(255,130,45,.15) 38%,rgba(255,110,30,.05) 60%,transparent 74%)}
 .sun-wash::before{content:"";position:absolute;inset:-110%;border-radius:50%;background:radial-gradient(circle,rgba(255,150,60,.15) 0%,rgba(255,120,40,.06) 45%,transparent 70%)}
-@media(max-width:768px){.sun-disc,.sun-wash{width:54vmin;height:54vmin;top:9vh}}
+@media(max-width:768px){.sun-disc,.sun-wash{width:44vmin;height:44vmin;top:9vh}}
 /* trou noir XL de section — disque double contre-rotatif, lentille, logos Figma aspirés */
 .bhx{position:absolute;width:340px;aspect-ratio:1;pointer-events:none;z-index:0}
 .bhx-lens{position:absolute;inset:-12%;border-radius:50%;background:radial-gradient(circle,transparent 42%,rgba(124,58,237,.13) 50%,rgba(183,156,255,.07) 56%,transparent 66%)}
@@ -606,7 +609,6 @@ body.bht-active .sun-layer{opacity:0}
 .hero{padding-left:80px;padding-right:80px}
 .sec{padding:180px 80px}
 .foot{padding:20px 80px}
-.pgallery{margin-left:-56px;margin-right:-56px}
 }
 @media(max-width:1024px){
   .hero{grid-template-columns:1fr;padding:110px 52px 80px;text-align:left;gap:40px;max-width:100%}
@@ -650,7 +652,6 @@ body.bht-active .sun-layer{opacity:0}
   .testi-more{display:block}
   .contact-layout{grid-template-columns:1fr}.cwrap{padding:44px 22px}
   .foot{padding:16px 24px 96px;flex-wrap:wrap;gap:10px}
-  .pgallery{margin-left:-8px;margin-right:-8px}
   .pgallery-row.r1,.pgallery-row.r2,.pgallery-row.r3{grid-template-columns:1fr}
   .planet-cell{display:none}
   .dash-kpi-grid{grid-template-columns:1fr 1fr}
@@ -1373,6 +1374,7 @@ function BlackHoleTransition() {
   const stickyRef = useRef(null);
   const holeRef = useRef(null);
   const blackRef = useRef(null);
+  const lensRef = useRef(null);
   useEffect(() => {
     const onScroll = () => {
       const el = wrapRef.current; if (!el) return;
@@ -1390,6 +1392,12 @@ function BlackHoleTransition() {
       // Trou nativement grand (110vmin) → scale max faible pour garder le conic-gradient net
       const scale = 0.07 + Math.pow(t, 1.5) * 2.75;
       if (holeRef.current) holeRef.current.style.transform = `scale(${scale})`;
+      // Distorsion gravitationnelle : la lentille se renforce à mesure qu'on approche du trou
+      if (lensRef.current) {
+        const dist = `blur(${(1 + t * 8).toFixed(1)}px) saturate(${(1 + t * 0.6).toFixed(2)}) contrast(${(1 + t * 0.2).toFixed(2)})`;
+        lensRef.current.style.backdropFilter = dist;
+        lensRef.current.style.webkitBackdropFilter = dist;
+      }
       if (blackRef.current) blackRef.current.style.opacity = Math.min(1, Math.max(0, (t - 0.6) / 0.2));
       document.body.classList.toggle("bht-active", p > 0.03 && p < 0.97);
     };
@@ -1401,6 +1409,7 @@ function BlackHoleTransition() {
     <div ref={wrapRef} className="bht-wrap" aria-hidden="true">
       <div ref={stickyRef} className="bht-sticky">
         <div ref={holeRef} className="bht-hole">
+          <div ref={lensRef} className="bht-lensring"/>
           <div className="bht-arch"/>
           <div className="bht-core"/>
           <div className="bht-ring"/>
@@ -1818,14 +1827,14 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
             {/* Spécialisations */}
             <div className="hero-spec afu d2">
               {[
-                { label:"UX Research",   icon:"🔍" },
-                { label:"Design System", icon:"⚡" },
-                { label:"Design Ops",    icon:"⚙️" },
-                { label:"Dev Handoff",   icon:"🔗" },
-                { label:"Figma",         icon:"🎨" },
-                { label:"Prototypage",   icon:"🧪" },
+                { label:"UX Research",   icon:"bx-search" },
+                { label:"Design System", icon:"bxs-zap" },
+                { label:"Design Ops",    icon:"bx-cog" },
+                { label:"Dev Handoff",   icon:"bx-link" },
+                { label:"Figma",         icon:"bxl-figma" },
+                { label:"Prototypage",   icon:"bx-test-tube" },
               ].map(({ label, icon }) => (
-                <span className="hero-spec-chip" key={label}><span style={{ fontSize:13 }}>{icon}</span>{label}</span>
+                <span className="hero-spec-chip" key={label}><i className={`bx ${icon}`} style={{ fontSize:15, color:"#A78BFA" }}/>{label}</span>
               ))}
             </div>
 
@@ -1931,17 +1940,17 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
             <DoubleHatTree visible={dhVisible}/>
             <div className="dh-info">
               <div className="dh-card rv">
-                <div className="dh-card-ico">🎨</div>
+                <div className="dh-card-ico"><i className="bx bxs-palette" style={{ color:"#A78BFA" }}/></div>
                 <div className="dh-card-title">Product Design &amp; Design Ops</div>
                 <div className="dh-card-desc">UX Research, wireframing, prototypage haute fidélité, design systems, tests utilisateurs. Je structure les processus design pour qu'ils soient scalables et partagés.</div>
               </div>
               <div className="dh-card rv">
-                <div className="dh-card-ico">⚙️</div>
+                <div className="dh-card-ico"><i className="bx bx-code-alt" style={{ color:"#4B7FFA" }}/></div>
                 <div className="dh-card-title">Expérience Dev Full Stack</div>
                 <div className="dh-card-desc">Background React, HTML/CSS, JavaScript, APIs. Je ne code plus mais je lis, comprends et anticipe les contraintes techniques dès la conception — résultat : moins d'allers-retours, des livrables dev-ready.</div>
               </div>
               <div className="dh-card rv" style={{ background:"var(--accd)", borderColor:"rgba(124,58,237,.3)" }}>
-                <div className="dh-card-ico">🔗</div>
+                <div className="dh-card-ico"><i className="bx bx-link" style={{ color:"#C4B5FD" }}/></div>
                 <div className="dh-card-title">Le pont entre design et tech</div>
                 <div className="dh-card-desc">Je suis le designer que les développeurs apprécient : specs précises, composants bien nommés, edge cases anticipés dès la conception — sans jamais perdre de vue l'expérience utilisateur finale.</div>
               </div>
@@ -1957,13 +1966,13 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
         <h2 className="stit rv">Mon parcours</h2>
         <div className="tl-grid">
           {[
-            { year:"2016 — 2019", title:"Bac STI2D", school:"Lycée Jean Monnet · Développeur Arduino et électronique", ico:"📐" },
-            { year:"2019 — 2021", title:"BTS SIO", school:"Lycée St-Vincent Senlis · Développeur Full Stack React/Node.js", ico:"💻" },
-            { year:"2021 — 2022", title:"Bachelor Designer UX/UI", school:"Digital Campus Paris", ico:"🎓" },
-            { year:"2022 — 2024", title:"Mastère Lead Designer UX/UI", school:"Digital Campus Paris — Spécialisation Design Ops", ico:"🚀" },
+            { year:"2016 — 2019", title:"Bac STI2D", school:"Lycée Jean Monnet · Développeur Arduino et électronique", ico:"bx-ruler" },
+            { year:"2019 — 2021", title:"BTS SIO", school:"Lycée St-Vincent Senlis · Développeur Full Stack React/Node.js", ico:"bx-code-alt" },
+            { year:"2021 — 2022", title:"Bachelor Designer UX/UI", school:"Digital Campus Paris", ico:"bxs-graduation" },
+            { year:"2022 — 2024", title:"Mastère Lead Designer UX/UI", school:"Digital Campus Paris — Spécialisation Design Ops", ico:"bxs-rocket" },
           ].map((item) => (
             <div className="tl-card rv" key={item.year}>
-              <div className="tl-ico">{item.ico}</div>
+              <div className="tl-ico"><i className={`bx ${item.ico}`} style={{ color:"#A78BFA" }}/></div>
               <div className="tl-year">{item.year}</div>
               <div className="tl-title">{item.title}</div>
               <div className="tl-school">{item.school}</div>
@@ -2006,7 +2015,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
                       )}
                     </div>
                     <div className="pcard-ov"/>
-                    {p.confidential && <div className="pcard-lock">🔒 Confidentiel</div>}
+                    {p.confidential && <div className="pcard-lock"><i className="bx bx-lock-alt" style={{ verticalAlign:"-2px" }}/> Confidentiel</div>}
                     <div className="pcard-arr">→</div>
                     <div className="pcard-body">
                       <div className="pcard-cat">{p.category}</div>
@@ -2076,7 +2085,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
             </p>
             <a className="contact-card" href="mailto:leloupthomas.pro@gmail.com"
               onClick={()=>{ if(onTrack) onTrack("event",{type:"contact_click",label:"email"}); }}>
-              <div className="contact-card-icon" style={{ background:"rgba(124,58,237,.12)" }}>📧</div>
+              <div className="contact-card-icon" style={{ background:"rgba(124,58,237,.12)" }}><i className="bx bx-envelope" style={{ color:"#A78BFA" }}/></div>
               <div>
                 <div className="contact-card-label">Email</div>
                 <div className="contact-card-val">leloupthomas.pro@gmail.com</div>
@@ -2084,7 +2093,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
             </a>
             <a className="contact-card" href="https://www.linkedin.com/in/thomas--leloup/" target="_blank" rel="noopener"
               onClick={()=>{ if(onTrack) onTrack("event",{type:"contact_click",label:"linkedin"}); }}>
-              <div className="contact-card-icon" style={{ background:"rgba(75,127,250,.12)" }}>💼</div>
+              <div className="contact-card-icon" style={{ background:"rgba(75,127,250,.12)" }}><i className="bx bxl-linkedin" style={{ color:"#4B7FFA" }}/></div>
               <div>
                 <div className="contact-card-label">LinkedIn</div>
                 <div className="contact-card-val">linkedin.com/in/thomas--leloup</div>
@@ -2199,7 +2208,7 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
             <p className="pd-subtitle afu d2">{p.subtitle}</p>
             <div className="pd-taglist afu d3">
               {p.tags?.map((tid) => { const t=getTag(tid); return t?<span key={tid} className="pd-tag" style={{ background:t.color+"1A", color:t.color, border:`1px solid ${t.color}30` }}>{t.name}</span>:null; })}
-              {p.confidential && <span className="pd-tag pd-conf">🔒 Confidentiel</span>}
+              {p.confidential && <span className="pd-tag pd-conf"><i className="bx bx-lock-alt" style={{ verticalAlign:"-2px" }}/> Confidentiel</span>}
             </div>
           </div>
           <div className="pd-year-badge afu d2">{p.year}</div>
