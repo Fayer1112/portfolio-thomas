@@ -123,10 +123,13 @@ body.bht-active .sun-layer{opacity:0}
 .nlogo-mark{display:flex;align-items:center}
 .nlogo-txt{font-family:var(--fd);font-size:15px;font-weight:800;letter-spacing:-.3px;color:var(--tx)}
 .nlinks{display:flex;gap:26px;list-style:none;font-size:13px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
-.nlinks button{color:var(--tx2);background:none;border:none;font:inherit;letter-spacing:inherit;text-transform:inherit;transition:color .2s;padding:0}
+.nlinks button{position:relative;color:var(--tx2);background:none;border:none;font:inherit;letter-spacing:inherit;text-transform:inherit;transition:color .2s;padding:6px 2px}
+.nlinks button::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2.5px;border-radius:3px;background:linear-gradient(90deg,#7C3AED,#A78BFA);box-shadow:0 0 10px rgba(124,58,237,.7);transform:scaleX(0);transform-origin:center;transition:transform .28s var(--ease)}
 .nlinks button:hover{color:var(--tx)}
-.ncv{border:1px solid var(--bdr2);color:var(--tx2);padding:8px 18px;border-radius:6px;font-size:11.5px;font-weight:700;background:transparent;transition:all .25s}
-.ncv:hover{border-color:var(--acc);color:var(--acc);background:var(--accd)}
+.nlinks button.on{color:#C4B5FD}
+.nlinks button.on::after{transform:scaleX(1)}
+.ncv{border:none;color:#fff;padding:10px 22px;border-radius:10px;font-size:12px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#6025C0);box-shadow:0 6px 20px rgba(124,58,237,.4);transition:all .25s}
+.ncv:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(124,58,237,.55);filter:brightness(1.1)}
 .nhb{display:none;background:none;border:1px solid var(--bdr);border-radius:7px;color:var(--tx2);font-size:20px;cursor:pointer;padding:6px 10px;line-height:1;transition:all .2s;z-index:101;position:relative;animation:burgerIn .3s cubic-bezier(.4,0,.2,1) both;flex-shrink:0}
 .nhb:hover{border-color:var(--acc);color:var(--acc)}
 .ncv-mobile{display:none}
@@ -1391,7 +1394,10 @@ function BlackHoleTransition() {
       const t = p < 0.5 ? p * 2 : (1 - p) * 2; // 0 → 1 (englouti) → 0
       // Trou nativement grand (110vmin) → scale max faible pour garder le conic-gradient net
       const scale = 0.07 + Math.pow(t, 1.5) * 2.75;
-      if (holeRef.current) holeRef.current.style.transform = `scale(${scale})`;
+      // Déformation d'aspiration : ne monte que près du trou (t>.55), se réduit en s'éloignant
+      const d = Math.max(0, (t - 0.55) / 0.45);
+      if (holeRef.current) holeRef.current.style.transform = `scale(${scale}) scaleY(${1 + d * 0.22}) scaleX(${1 - d * 0.12})`;
+      if (s) s.style.filter = d > 0.01 ? `blur(${(d * 2.4).toFixed(2)}px) contrast(${(1 + d * 0.14).toFixed(2)})` : "";
       // Distorsion gravitationnelle : la lentille se renforce à mesure qu'on approche du trou
       if (lensRef.current) {
         const dist = `blur(${(1 + t * 8).toFixed(1)}px) saturate(${(1 + t * 0.6).toFixed(2)}) contrast(${(1 + t * 0.2).toFixed(2)})`;
@@ -1639,6 +1645,24 @@ function Nav({ scrolled, onBack, onTrack, onNavigate, hidden, cvUrl }) {
 
   const links = [["presentation","Présentation"],["parcours","Parcours"],["projets","Projets"],["testimonials","Témoignages"],["contact","Contact"]];
 
+  // Scrollspy : l'item reste actif tant qu'on est dans sa section (couleur + barre dessous)
+  const [active, setActive] = useState(null);
+  useEffect(() => {
+    const ids = links.map(([id]) => id);
+    const onScroll = () => {
+      let cur = null;
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        if (el.getBoundingClientRect().top <= window.innerHeight * 0.4) cur = id;
+      }
+      setActive(cur);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <>
       <nav className={`nav${scrolled ? " sc" : ""}`} style={{ zIndex: mobOpen ? 50 : 100, transform: hidden ? "translateY(-100%)" : "translateY(0)", transition:"transform .35s ease", pointerEvents: hidden ? "none" : "auto" }}>
@@ -1647,7 +1671,7 @@ function Nav({ scrolled, onBack, onTrack, onNavigate, hidden, cvUrl }) {
           <span className="nlogo-txt">Thomas Leloup</span>
         </div>
         <ul className="nlinks">
-          {links.map(([id,lbl]) => <li key={id}><button onClick={() => go(id)}>{lbl}</button></li>)}
+          {links.map(([id,lbl]) => <li key={id}><button className={active === id ? "on" : ""} onClick={() => go(id)}>{lbl}</button></li>)}
         </ul>
         <a className="ncv" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener">Mon CV ↗</a>
         <a className="ncv-mobile" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener">CV ↗</a>
