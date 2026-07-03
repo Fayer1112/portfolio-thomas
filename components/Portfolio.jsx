@@ -58,16 +58,18 @@ button{cursor:pointer;font-family:var(--fb)}
 @keyframes curtainIn{from{transform:translateY(105%)}to{transform:translateY(0%)}}
 @keyframes curtainOut{from{transform:translateY(0%)}to{transform:translateY(-105%)}}
 @keyframes projectEnter{from{opacity:0;transform:translateY(32px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes sunTravel{0%{transform:translate(-60vmin,8vh) scale(.85);opacity:0}6%{opacity:1}45%{transform:translate(48vw,-3vh) scale(1.06)}86%{transform:translate(104vw,9vh) scale(.88);opacity:1}93%{opacity:0}100%{transform:translate(125vw,12vh) scale(.85);opacity:0}}
+@keyframes sunTravel{0%{transform:translate(-60vmin,8vh) scale(.85);opacity:0}3%{opacity:1}20%{transform:translate(48vw,-3vh) scale(1.06)}38%{transform:translate(104vw,9vh) scale(.88);opacity:1}42%{transform:translate(125vw,12vh) scale(.85);opacity:0}100%{transform:translate(125vw,12vh) scale(.85);opacity:0}}
 @keyframes bhxFall{0%{transform:translate(170px,-50%) rotate(0deg) scale(1);opacity:0}8%{opacity:.95}68%{transform:translate(58px,-50%) rotate(240deg) scale(.55);opacity:.9}100%{transform:translate(6px,-50%) rotate(520deg) scale(.04);opacity:0}}
 @keyframes cstDrift{0%,100%{transform:translate(0,0)}50%{transform:translate(.4px,-.8px)}}
 /* transition trou noir au scroll */
 .bht-wrap{height:230vh;position:relative;z-index:60;pointer-events:none;margin:-40px 0}
 .bht-sticky{position:absolute;top:0;left:0;right:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.bht-hole{position:relative;width:230px;aspect-ratio:1;will-change:transform}
-.bht-disk{position:absolute;inset:-10%;border-radius:50%;transform:rotateX(65deg);background:conic-gradient(from 0deg,transparent 0deg,rgba(183,156,255,.6) 70deg,rgba(255,255,255,.85) 150deg,rgba(124,58,237,.55) 235deg,transparent 335deg);filter:blur(4px);animation:spinSlow 8s linear infinite}
-.bht-core{position:absolute;inset:24%;border-radius:50%;background:#000;box-shadow:0 0 80px 30px rgba(0,0,0,.95)}
-.bht-ring{position:absolute;inset:22%;border-radius:50%;border:1.5px solid rgba(224,206,255,.55);box-shadow:0 0 20px rgba(167,139,250,.55)}
+.bht-hole{position:relative;width:110vmin;aspect-ratio:1;will-change:transform}
+.bht-disk{position:absolute;inset:-10%;border-radius:50%;transform:rotateX(65deg);background:conic-gradient(from 0deg,transparent 0deg,rgba(183,156,255,.6) 70deg,rgba(255,255,255,.85) 150deg,rgba(124,58,237,.55) 235deg,transparent 335deg);filter:blur(10px);animation:spinSlow 8s linear infinite}
+.bht-core{position:absolute;inset:24%;border-radius:50%;background:#000;box-shadow:0 0 240px 90px rgba(0,0,0,.95)}
+.bht-ring{position:absolute;inset:22%;border-radius:50%;border:4px solid rgba(224,206,255,.55);box-shadow:0 0 60px rgba(167,139,250,.55)}
+.bht-orbit{position:absolute;top:50%;left:50%;width:0;height:0;animation:spinSlow 9s linear infinite}
+@keyframes bhtFall{0%{transform:translate(50vmin,-50%) rotate(0deg) scale(1);opacity:0}8%{opacity:.95}68%{transform:translate(17vmin,-50%) rotate(240deg) scale(.55);opacity:.9}100%{transform:translate(2vmin,-50%) rotate(520deg) scale(.04);opacity:0}}
 .bht-black{position:absolute;inset:0;background:#050308;opacity:0}
 .sun-layer{transition:opacity .5s ease}
 body.bht-active .sun-layer{opacity:0}
@@ -146,7 +148,7 @@ body.bht-active .sun-layer{opacity:0}
 .hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#06D6A0;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 6px #06D6A0}
 .hero-h1{font-size:clamp(48px,7.2vw,118px);font-weight:800;line-height:.9;letter-spacing:-3px;position:relative;z-index:2}
 /* hero centré — sandwich 3D titre/astronaute + planète d'arrière-plan */
-.hero-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:220px;padding-bottom:50px;text-align:center}
+.hero-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:264px;padding-bottom:70px;text-align:center}
 .hero-cwrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%}
 .hero-cstage{position:relative;display:flex;flex-direction:column;align-items:center;margin-top:4px}
 .hero-h1c{margin:0;font-weight:800;line-height:.85;letter-spacing:-.045em;font-size:clamp(64px,11.5vw,190px)}
@@ -160,11 +162,11 @@ body.bht-active .sun-layer{opacity:0}
 .hero-c .hero-desc{margin-left:auto;margin-right:auto}
 .hero-c .hero-acts{justify-content:center}
 .hero-name-grad{background:linear-gradient(135deg,#FFFFFF 0%,#EDE9FE 35%,#C4B5FD 65%,#9B6DFF 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;padding-right:8px}
-.hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:rgba(255,255,255,.35);font-size:clamp(18px,.52em,48px);letter-spacing:0px;display:block;margin-top:14px;-webkit-text-fill-color:rgba(255,255,255,.35)}
+.hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:#DAD2F5;font-size:clamp(20px,.58em,52px);letter-spacing:.5px;display:block;margin-top:14px;-webkit-text-fill-color:#DAD2F5;text-shadow:0 0 26px rgba(139,92,246,.5),0 2px 14px rgba(7,8,15,.9)}
 .hero-spec{display:flex;gap:9px;flex-wrap:wrap;margin:28px 0 0}
 .hero-spec-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:100px;font-size:12px;font-weight:700;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.28);color:#C4B5FD;letter-spacing:.3px;white-space:nowrap;backdrop-filter:blur(8px)}
 .hero-divider{width:48px;height:1px;background:linear-gradient(90deg,var(--acc),transparent);margin:28px 0;opacity:.7}
-.hero-desc{font-size:15.5px;color:rgba(255,255,255,.55);line-height:1.82;max-width:560px;font-weight:400}
+.hero-desc{font-size:15.5px;color:rgba(255,255,255,.55);line-height:1.82;max-width:700px;font-weight:400}
 .hero-desc strong{color:rgba(255,255,255,.85);font-weight:600}
 .hero-desc em{color:#C4B5FD;font-style:normal;font-weight:600}
 .hero-acts{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap}
@@ -291,7 +293,7 @@ body.bht-active .sun-layer{opacity:0}
 .sun-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden}
 .sun-behind{z-index:0}
 .sun-light{z-index:45;mix-blend-mode:screen}
-.sun-disc,.sun-wash{position:absolute;top:13vh;left:0;width:42vmin;height:42vmin;border-radius:50%;animation:sunTravel 38s ease-in-out infinite}
+.sun-disc,.sun-wash{position:absolute;top:13vh;left:0;width:42vmin;height:42vmin;border-radius:50%;animation:sunTravel 85s ease-in-out infinite}
 .sun-disc{background:radial-gradient(circle at 50% 50%,#FFF6DC 0%,#FFC868 14%,rgba(255,150,52,.85) 30%,rgba(255,116,26,.35) 52%,transparent 70%);filter:blur(1px)}
 .sun-disc::before{content:"";position:absolute;inset:-55%;border-radius:50%;background:radial-gradient(circle,rgba(255,160,70,.35) 0%,rgba(255,130,45,.12) 45%,transparent 70%)}
 .sun-wash{background:radial-gradient(circle,rgba(255,170,80,.32) 0%,rgba(255,130,45,.15) 38%,rgba(255,110,30,.05) 60%,transparent 74%)}
@@ -628,7 +630,7 @@ body.bht-active .sun-layer{opacity:0}
   .nhb{display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--tx);font-size:18px}
   .ncv-mobile{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;font-size:12.5px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#6025C0);color:#fff;border:none;text-decoration:none;flex-shrink:0;box-shadow:0 4px 14px rgba(124,58,237,.35);white-space:nowrap}
   .hero{padding:80px 20px 48px;gap:32px;grid-template-columns:1fr}.hero-left{padding:24px 0;max-width:100%}.hero-h1{letter-spacing:-2px;font-size:clamp(44px,12vw,80px)}
-  .hero-h1c{font-size:clamp(48px,13vw,96px)}.hero-castro{width:34vw;top:50%}.hero-c{padding-top:110px}.hero-desc{font-size:15px;line-height:1.75}.hero-badge{font-size:10px;padding:5px 14px;margin-bottom:20px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
+  .hero-h1c{font-size:clamp(48px,13vw,96px)}.hero-castro{width:34vw;top:50%}.hero-c{padding-top:132px}.hero-desc{font-size:15px;line-height:1.75}.hero-badge{font-size:10px;padding:5px 14px;margin-bottom:20px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
   .stats{flex-direction:column}.stat{padding:24px 20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
   .pd-subnav{padding:0 16px}.pd-subnav-btn{padding:12px 14px;font-size:12px}
   .pd-gallery{grid-template-columns:1fr 1fr}
@@ -1377,7 +1379,8 @@ function BlackHoleTransition() {
         else { s.style.position = "fixed"; s.style.top = "0"; s.style.bottom = "auto"; }
       }
       const t = p < 0.5 ? p * 2 : (1 - p) * 2; // 0 → 1 (englouti) → 0
-      const scale = 0.3 + Math.pow(t, 1.6) * 16;
+      // Trou nativement grand (110vmin) → scale max faible pour garder le conic-gradient net
+      const scale = 0.07 + Math.pow(t, 1.5) * 2.75;
       if (holeRef.current) holeRef.current.style.transform = `scale(${scale}) rotate(${p * 200}deg)`;
       if (blackRef.current) blackRef.current.style.opacity = Math.min(1, Math.max(0, (t - 0.6) / 0.2));
       document.body.classList.toggle("bht-active", p > 0.03 && p < 0.97);
@@ -1393,6 +1396,13 @@ function BlackHoleTransition() {
           <div className="bht-disk"/>
           <div className="bht-core"/>
           <div className="bht-ring"/>
+          {[0, 1, 2].map(i => (
+            <div key={i} className="bht-orbit" style={{ animationDelay:`${i*3}s` }}>
+              <div style={{ animation:`bhtFall 9s ease-in ${i*3}s infinite`, position:"absolute", width:"6.5vmin" }}>
+                <FigmaMark/>
+              </div>
+            </div>
+          ))}
         </div>
         <div ref={blackRef} className="bht-black"/>
       </div>
@@ -1840,7 +1850,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               <div className="fc-val">Design × Dev</div>
             </div>
           </div>
-          <div className="hero-float-card afu d2" style={{ top:120, right:64, transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
+          <div className="hero-float-card afu d2" style={{ top:200, right:64, transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
             <div className="fc-label">Expérience</div>
             <div className="fc-val">4+ ans</div>
           </div>
