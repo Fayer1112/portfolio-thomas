@@ -394,10 +394,10 @@ body.bht-active .sun-layer{opacity:0}
 .cform-submit:hover{background:#8B47FF;transform:translateY(-1px);box-shadow:0 8px 24px rgba(124,58,237,.3)}
 .cform-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
 /* Hover "retro futuristic" (ref codepen GgKmrNg) adapté à la DA : glow violet 700ms + bandes skew -15° balayées */
-.btn-rf{position:relative;overflow:hidden;isolation:isolate;transition:box-shadow .7s,transform .25s,filter .25s}
+.btn-rf{position:relative;overflow:hidden;isolation:isolate;transition:box-shadow .7s,transform .25s,filter .25s;text-shadow:0 1px 5px rgba(7,8,15,.55)}
 .btn-rf::before,.btn-rf::after{content:"";position:absolute;top:-4px;bottom:-4px;left:-14%;right:-14%;transform:translateX(-115%) skew(-15deg);z-index:-1;pointer-events:none}
-.btn-rf::before{background:repeating-linear-gradient(180deg,rgba(139,92,246,.95) 0 5px,rgba(124,58,237,.5) 5px 10px);mix-blend-mode:screen}
-.btn-rf::after{background:repeating-linear-gradient(180deg,rgba(196,181,253,.9) 0 4px,transparent 4px 9px);mix-blend-mode:screen}
+.btn-rf::before{background:repeating-linear-gradient(180deg,rgba(139,92,246,.9) 0 5px,rgba(124,58,237,.45) 5px 10px);mix-blend-mode:screen}
+.btn-rf::after{background:repeating-linear-gradient(180deg,rgba(5,234,250,.75) 0 4px,transparent 4px 9px);mix-blend-mode:screen}
 .btn-rf:hover{box-shadow:0 0 25px 2px rgba(139,92,246,.75)}
 .btn-rf:hover::before{animation:rfSweep .75s cubic-bezier(.35,.75,.3,1) both}
 .btn-rf:hover::after{animation:rfSweep .75s cubic-bezier(.35,.75,.3,1) .13s both}
