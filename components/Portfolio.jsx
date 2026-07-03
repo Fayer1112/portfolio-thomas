@@ -393,6 +393,15 @@ body.bht-active .sun-layer{opacity:0}
 .cform-submit{background:var(--acc);color:#fff;padding:14px 28px;border-radius:9px;font-size:14px;font-weight:700;border:none;transition:all .25s;display:inline-flex;align-items:center;justify-content:center;gap:9px;width:100%;margin-top:4px}
 .cform-submit:hover{background:#8B47FF;transform:translateY(-1px);box-shadow:0 8px 24px rgba(124,58,237,.3)}
 .cform-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+/* Hover "retro futuristic" (ref codepen GgKmrNg) adapté à la DA : glow violet 700ms + bandes skew -15° balayées */
+.btn-rf{position:relative;overflow:hidden;isolation:isolate;transition:box-shadow .7s,transform .25s,filter .25s}
+.btn-rf::before,.btn-rf::after{content:"";position:absolute;top:-4px;bottom:-4px;left:-14%;right:-14%;transform:translateX(-115%) skew(-15deg);z-index:-1;pointer-events:none}
+.btn-rf::before{background:repeating-linear-gradient(180deg,rgba(139,92,246,.95) 0 5px,rgba(124,58,237,.5) 5px 10px);mix-blend-mode:screen}
+.btn-rf::after{background:repeating-linear-gradient(180deg,rgba(196,181,253,.9) 0 4px,transparent 4px 9px);mix-blend-mode:screen}
+.btn-rf:hover{box-shadow:0 0 25px 2px rgba(139,92,246,.75)}
+.btn-rf:hover::before{animation:rfSweep .75s cubic-bezier(.35,.75,.3,1) both}
+.btn-rf:hover::after{animation:rfSweep .75s cubic-bezier(.35,.75,.3,1) .13s both}
+@keyframes rfSweep{0%{transform:translateX(-115%) skew(-15deg)}48%{transform:translateX(0) skew(-15deg)}58%{transform:translateX(0) skew(-15deg)}100%{transform:translateX(115%) skew(-15deg)}}
 .cform-success{background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.25);border-radius:12px;padding:20px 22px;text-align:center}
 .cform-success-ico{font-size:32px;margin-bottom:10px}
 .cform-success-title{font-family:var(--fd);font-size:16px;font-weight:800;color:#06D6A0;margin-bottom:6px}
@@ -1704,7 +1713,7 @@ function Nav({ scrolled, onBack, onTrack, onNavigate, hidden, cvUrl }) {
         <ul className="nlinks">
           {links.map(([id,lbl]) => <li key={id}><button className={active === id ? "on" : ""} onClick={() => go(id)}>{lbl}</button></li>)}
         </ul>
-        <a className="ncv" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener">Mon CV ↗</a>
+        <a className="ncv btn-rf" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener">Mon CV ↗</a>
         <a className="ncv-mobile" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener">CV ↗</a>
         {!mobOpen && (
           <button className="nhb" onClick={openMenu} aria-label="Ouvrir le menu"><i className="bx bx-menu"/></button>
@@ -1900,10 +1909,10 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               et je pense aux <em>contraintes techniques pendant que je design</em>.
             </p>
             <div className="hero-acts afu d4">
-              <button className="btn-pri" onClick={() => { document.getElementById("projets")?.scrollIntoView({ behavior:"smooth" }); if (onTrack) onTrack("event", { type:"cta_click", label:"hero_projects" }); }}>
+              <button className="btn-pri btn-rf" onClick={() => { document.getElementById("projets")?.scrollIntoView({ behavior:"smooth" }); if (onTrack) onTrack("event", { type:"cta_click", label:"hero_projects" }); }}>
                 Voir mes projets →
               </button>
-              <a className="btn-sec" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("event", { type:"cta_click", label:"hero_cv" }); }}>
+              <a className="btn-sec btn-rf" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("event", { type:"cta_click", label:"hero_cv" }); }}>
                 Mon CV
               </a>
             </div>
@@ -2499,7 +2508,7 @@ function ContactForm({ onTrack }) {
             <span style={{ fontSize:11, color:"var(--tx3)" }}>{form.message.length} / {MAX_MESSAGE}</span>
           </div>
         </div>
-        <button className="cform-submit" onClick={send} disabled={status === "sending"}>
+        <button className="cform-submit btn-rf" onClick={send} disabled={status === "sending"}>
           {status === "sending" ? <><i className="bx bxs-rocket" style={{ verticalAlign:"-2px", marginRight:6 }}/>Envoi en cours…</> : "Envoyer le message →"}
         </button>
         <p style={{ fontSize:11, color:"var(--tx3)", textAlign:"center", lineHeight:1.6 }}>
