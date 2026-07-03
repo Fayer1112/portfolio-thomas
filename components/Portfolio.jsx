@@ -148,7 +148,7 @@ body.bht-active .sun-layer{opacity:0}
 .hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#06D6A0;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 6px #06D6A0}
 .hero-h1{font-size:clamp(48px,7.2vw,118px);font-weight:800;line-height:.9;letter-spacing:-3px;position:relative;z-index:2}
 /* hero centré — sandwich 3D titre/astronaute + planète d'arrière-plan */
-.hero-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:264px;padding-bottom:70px;text-align:center}
+.hero-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:210px;padding-bottom:70px;text-align:center}
 .hero-cwrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%}
 .hero-cstage{position:relative;display:flex;flex-direction:column;align-items:center;margin-top:4px}
 .hero-h1c{margin:0;font-weight:800;line-height:.85;letter-spacing:-.045em;font-size:clamp(64px,11.5vw,190px)}
@@ -157,7 +157,10 @@ body.bht-active .sun-layer{opacity:0}
 .hero-line2{z-index:3;filter:drop-shadow(0 5px 22px rgba(7,8,15,.95)) drop-shadow(0 1px 5px rgba(7,8,15,.7))}
 .hero-castro{position:absolute;left:50%;top:47%;transform:translate(-50%,-54%);width:min(16vw,280px);z-index:2;pointer-events:none;filter:drop-shadow(0 30px 70px rgba(75,127,250,.3))}
 .hero-castro svg{width:100%;height:auto;display:block}
-.hero-planet-bg{position:absolute;top:max(-52vw,-680px);right:max(-26vw,-360px);width:min(88vw,1250px);aspect-ratio:1;border-radius:50%;z-index:0;pointer-events:none;background:radial-gradient(circle at 30% 32%,#3D2184 0%,#241056 45%,#0D0526 75%);box-shadow:0 0 180px 50px rgba(124,58,237,.28),inset -90px -130px 240px rgba(0,0,0,.85),inset 70px 70px 180px rgba(183,156,255,.14);-webkit-mask-image:linear-gradient(200deg,#000 42%,transparent 74%);mask-image:linear-gradient(200deg,#000 42%,transparent 74%)}
+.hero-planet2{position:absolute;left:50%;bottom:0;width:min(66vw,1220px);aspect-ratio:1;border-radius:50%;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(circle at 50% 12%,#40257E 0%,#2A1655 30%,#160B38 58%,#0A0522 82%);box-shadow:0 -24px 130px rgba(124,58,237,.32),inset 0 30px 70px rgba(196,181,253,.3),inset 0 -120px 220px rgba(0,0,0,.9);-webkit-mask-image:linear-gradient(180deg,#000 8%,rgba(0,0,0,.55) 19%,transparent 30%);mask-image:linear-gradient(180deg,#000 8%,rgba(0,0,0,.55) 19%,transparent 30%)}
+.hero-planet2-tex{position:absolute;inset:-16%;border-radius:50%;filter:blur(7px);animation:spinSlow 110s linear infinite;background:radial-gradient(circle at 30% 30%,rgba(139,92,246,.30) 0 5%,transparent 11%),radial-gradient(circle at 64% 20%,rgba(167,139,250,.22) 0 7%,transparent 14%),radial-gradient(circle at 76% 56%,rgba(91,33,182,.5) 0 9%,transparent 17%),radial-gradient(circle at 44% 66%,rgba(76,42,158,.42) 0 6%,transparent 12%),radial-gradient(circle at 16% 58%,rgba(196,181,253,.15) 0 4%,transparent 9%),radial-gradient(circle at 55% 44%,rgba(50,25,110,.6) 0 12%,transparent 22%),radial-gradient(circle at 86% 34%,rgba(139,92,246,.2) 0 5%,transparent 10%),radial-gradient(circle at 25% 82%,rgba(139,92,246,.24) 0 8%,transparent 15%)}
+.hero-planet2::before{content:"";position:absolute;inset:0;border-radius:50%;z-index:1;background:radial-gradient(ellipse 70% 22% at 50% 4%,rgba(216,203,255,.42) 0%,rgba(139,92,246,.14) 45%,transparent 75%)}
+.hero-planet2::after{content:"";position:absolute;inset:0;border-radius:50%;z-index:1;background:radial-gradient(circle at 50% 130%,rgba(0,0,0,.95) 45%,rgba(0,0,0,.35) 68%,transparent 82%)}
 .hero-c .hero-spec{justify-content:center;position:relative;z-index:4}
 .hero-c .hero-desc{margin-left:auto;margin-right:auto}
 .hero-c .hero-acts{justify-content:center}
@@ -166,7 +169,7 @@ body.bht-active .sun-layer{opacity:0}
 .hero-spec{display:flex;gap:9px;flex-wrap:wrap;margin:28px 0 0}
 .hero-spec-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:100px;font-size:12px;font-weight:700;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.28);color:#C4B5FD;letter-spacing:.3px;white-space:nowrap;backdrop-filter:blur(8px)}
 .hero-divider{width:48px;height:1px;background:linear-gradient(90deg,var(--acc),transparent);margin:28px 0;opacity:.7}
-.hero-desc{font-size:15.5px;color:rgba(255,255,255,.55);line-height:1.82;max-width:700px;font-weight:400}
+.hero-desc{font-size:15.5px;color:rgba(255,255,255,.62);line-height:1.82;max-width:700px;font-weight:400;text-shadow:0 1px 14px rgba(7,8,15,.85)}
 .hero-desc strong{color:rgba(255,255,255,.85);font-weight:600}
 .hero-desc em{color:#C4B5FD;font-style:normal;font-weight:600}
 .hero-acts{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap}
@@ -610,7 +613,7 @@ body.bht-active .sun-layer{opacity:0}
   .hero-c{text-align:center;padding-left:28px;padding-right:28px}
   .hero-c .hero-float-card{display:none}
   .hero-castro{width:34vw}
-  .hero-planet-bg{opacity:.6}
+  .hero-planet2{width:150vw;opacity:.85}
   .about-grid{grid-template-columns:1fr}
   .dh-wrap{grid-template-columns:1fr}
   .dh-tree-wrap{display:none}
@@ -1785,7 +1788,9 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
 
         <section className="hero hero-c" id="hero">
           {/* Planète géante qui se fond dans le noir — arrière-plan du hero */}
-          <div className="hero-planet-bg" style={{ transform:`translate(${px.x*9}px, ${px.y*6}px)` }} aria-hidden="true"/>
+          <div className="hero-planet2" aria-hidden="true" style={{ transform:`translate(calc(-50% + ${px.x*7}px), calc(72% + ${px.y*5}px))` }}>
+            <div className="hero-planet2-tex"/>
+          </div>
           <div className="hero-cwrap">
             <div className="hero-badge afu">
               <div className="hero-badge-dot"/>
@@ -1821,7 +1826,6 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               ))}
             </div>
 
-            <div className="hero-divider afu d3"/>
             <p className="hero-desc afu d3">
               Je conçois des expériences avec la <strong>précision d'un ingénieur</strong> et l'intention d'un designer.
               Issu d'un background <strong>Full Stack</strong> — je parle le même langage que les équipes tech
@@ -1850,13 +1854,15 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               <div className="fc-val">Design × Dev</div>
             </div>
           </div>
-          <div className="hero-float-card afu d2" style={{ top:200, right:64, transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
-            <div className="fc-label">Expérience</div>
-            <div className="fc-val">4+ ans</div>
-          </div>
-          <div className="hero-float-card afu d4" style={{ bottom:80, left:64, transform:`translate(${px.x*-6}px, ${px.y*-4}px)` }}>
-            <div className="fc-label">Projets</div>
-            <div className="fc-val" style={{ fontSize:16 }}>5 livrés</div>
+          <div style={{ position:"absolute", bottom:80, left:64, display:"flex", gap:14, zIndex:4 }}>
+            <div className="hero-float-card afu d4" style={{ position:"relative", transform:`translate(${px.x*-6}px, ${px.y*-4}px)` }}>
+              <div className="fc-label">Projets</div>
+              <div className="fc-val" style={{ fontSize:16 }}>5 livrés</div>
+            </div>
+            <div className="hero-float-card afu d2" style={{ position:"relative", transform:`translate(${px.x*-9}px, ${px.y*-6}px)` }}>
+              <div className="fc-label">Expérience</div>
+              <div className="fc-val">4+ ans</div>
+            </div>
           </div>
         </section>
       </div>
