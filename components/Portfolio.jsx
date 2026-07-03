@@ -67,16 +67,17 @@ button{cursor:pointer;font-family:var(--fb)}
 .bht-hole{position:relative;width:110vmin;aspect-ratio:1;will-change:transform}
 .bht-glitch{position:absolute;inset:0}
 .bht-glitch.on{animation:bhtTwerk .42s steps(2,end) infinite;filter:drop-shadow(3px 0 rgba(5,234,250,.38)) drop-shadow(-3px 0 rgba(255,107,211,.38))}
-.bht-slice{position:absolute;left:-8%;right:-8%;height:2.6%;opacity:0;pointer-events:none;mix-blend-mode:screen}
+.bht-slices{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.bht-slice{position:absolute;left:0;right:0;height:2.6%;opacity:0;pointer-events:none;mix-blend-mode:screen}
 .bht-slice.c{background:#05EAFA}
 .bht-slice.p{background:#FF6BD3}
-.bht-glitch.on .bht-slice{animation-iteration-count:infinite;animation-timing-function:steps(1,end)}
-.bht-glitch.on .s1{animation-name:bhtSlice1;animation-duration:.5s}
-.bht-glitch.on .s2{animation-name:bhtSlice2;animation-duration:.64s;height:1.6%}
-.bht-glitch.on .s3{animation-name:bhtSlice3;animation-duration:.44s;left:6%;right:-10%}
-.bht-glitch.on .s4{animation-name:bhtSlice4;animation-duration:.72s;height:3.4%}
-.bht-glitch.on .s5{animation-name:bhtSlice1;animation-duration:.58s;animation-delay:.12s;left:-12%;right:22%}
-.bht-glitch.on .s6{animation-name:bhtSlice3;animation-duration:.52s;animation-delay:.2s;height:1.4%}
+.bht-slices.on .bht-slice{animation-iteration-count:infinite;animation-timing-function:steps(1,end)}
+.bht-slices.on .s1{animation-name:bhtSlice1;animation-duration:.5s}
+.bht-slices.on .s2{animation-name:bhtSlice2;animation-duration:.64s;height:1.6%}
+.bht-slices.on .s3{animation-name:bhtSlice3;animation-duration:.44s;left:14%;right:-2%}
+.bht-slices.on .s4{animation-name:bhtSlice4;animation-duration:.72s;height:3.4%}
+.bht-slices.on .s5{animation-name:bhtSlice1;animation-duration:.58s;animation-delay:.12s;left:-2%;right:30%}
+.bht-slices.on .s6{animation-name:bhtSlice3;animation-duration:.52s;animation-delay:.2s;height:1.4%}
 @keyframes bhtTwerk{0%{transform:translate(0,0) skewX(0)}25%{transform:translate(-.5%,.25%) skewX(.8deg)}50%{transform:translate(.4%,-.2%) skewX(-.7deg)}75%{transform:translate(-.25%,-.3%) skewX(.5deg)}100%{transform:translate(0,0) skewX(0)}}
 @keyframes bhtSlice1{0%{top:18%;opacity:0}12%{opacity:1}30%{top:64%}50%{top:38%;opacity:0}70%{top:74%;opacity:1}100%{top:22%;opacity:0}}
 @keyframes bhtSlice2{0%{top:52%;opacity:1}25%{top:12%;opacity:0}45%{top:80%;opacity:1}75%{top:30%}100%{top:58%;opacity:0}}
@@ -1397,6 +1398,7 @@ function BlackHoleTransition() {
   const blackRef = useRef(null);
   const lensRef = useRef(null);
   const glitchRef = useRef(null);
+  const slicesRef = useRef(null);
   useEffect(() => {
     const onScroll = () => {
       const el = wrapRef.current; if (!el) return;
@@ -1417,6 +1419,7 @@ function BlackHoleTransition() {
       // Glitch : jitter léger + split chromatique + barres cyan/roses, actif près du trou,
       // se coupe en s'éloignant (et avant le voile noir opaque)
       if (glitchRef.current) glitchRef.current.classList.toggle("on", t > 0.41);
+      if (slicesRef.current) slicesRef.current.classList.toggle("on", t > 0.41);
       // Distorsion gravitationnelle : la lentille se renforce à mesure qu'on approche du trou
       if (lensRef.current) {
         const dist = `blur(${(1 + t * 8).toFixed(1)}px) saturate(${(1 + t * 0.6).toFixed(2)}) contrast(${(1 + t * 0.2).toFixed(2)})`;
@@ -1447,10 +1450,12 @@ function BlackHoleTransition() {
                 </div>
               </div>
             ))}
-            {["c","p","c","p","p","c"].map((col, i) => (
-              <div key={i} className={`bht-slice ${col} s${i + 1}`}/>
-            ))}
           </div>
+        </div>
+        <div ref={slicesRef} className="bht-slices">
+          {["c","p","c","p","p","c"].map((col, i) => (
+            <div key={i} className={`bht-slice ${col} s${i + 1}`}/>
+          ))}
         </div>
         <div ref={blackRef} className="bht-black"/>
       </div>
