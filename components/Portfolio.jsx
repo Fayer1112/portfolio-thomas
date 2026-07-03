@@ -63,7 +63,7 @@ button{cursor:pointer;font-family:var(--fb)}
 @keyframes cstDrift{0%,100%{transform:translate(0,0)}50%{transform:translate(.4px,-.8px)}}
 /* transition trou noir au scroll */
 .bht-wrap{height:230vh;position:relative;z-index:60;pointer-events:none;margin:-40px 0}
-.bht-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.bht-sticky{position:absolute;top:0;left:0;right:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .bht-hole{position:relative;width:230px;aspect-ratio:1;will-change:transform}
 .bht-disk{position:absolute;inset:-10%;border-radius:50%;transform:rotateX(65deg);background:conic-gradient(from 0deg,transparent 0deg,rgba(183,156,255,.6) 70deg,rgba(255,255,255,.85) 150deg,rgba(124,58,237,.55) 235deg,transparent 335deg);filter:blur(4px);animation:spinSlow 8s linear infinite}
 .bht-core{position:absolute;inset:24%;border-radius:50%;background:#000;box-shadow:0 0 80px 30px rgba(0,0,0,.95)}
@@ -1360,6 +1360,7 @@ function PlanetCard() {
 // puis nous recrache sur la section suivante. Pilote aussi le masquage du soleil (body.bht-active).
 function BlackHoleTransition() {
   const wrapRef = useRef(null);
+  const stickyRef = useRef(null);
   const holeRef = useRef(null);
   const blackRef = useRef(null);
   useEffect(() => {
@@ -1368,6 +1369,13 @@ function BlackHoleTransition() {
       const r = el.getBoundingClientRect();
       const total = r.height - window.innerHeight;
       const p = Math.min(1, Math.max(0, -r.top / (total || 1)));
+      // position:sticky est cassé par l'overflow-x:hidden global → fixed piloté à la main
+      const s = stickyRef.current;
+      if (s) {
+        if (p <= 0) { s.style.position = "absolute"; s.style.top = "0"; s.style.bottom = "auto"; }
+        else if (p >= 1) { s.style.position = "absolute"; s.style.top = "auto"; s.style.bottom = "0"; }
+        else { s.style.position = "fixed"; s.style.top = "0"; s.style.bottom = "auto"; }
+      }
       const t = p < 0.5 ? p * 2 : (1 - p) * 2; // 0 → 1 (englouti) → 0
       const scale = 0.3 + Math.pow(t, 1.6) * 16;
       if (holeRef.current) holeRef.current.style.transform = `scale(${scale}) rotate(${p * 200}deg)`;
@@ -1380,7 +1388,7 @@ function BlackHoleTransition() {
   }, []);
   return (
     <div ref={wrapRef} className="bht-wrap" aria-hidden="true">
-      <div className="bht-sticky">
+      <div ref={stickyRef} className="bht-sticky">
         <div ref={holeRef} className="bht-hole">
           <div className="bht-disk"/>
           <div className="bht-core"/>
