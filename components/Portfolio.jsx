@@ -184,7 +184,7 @@ body.bht-active .sun-layer{opacity:0}
 .hero-line1,.hero-line2{display:block;position:relative}
 .hero-line1{z-index:1}
 .hero-line2{z-index:3;filter:drop-shadow(0 5px 22px rgba(7,8,15,.95)) drop-shadow(0 1px 5px rgba(7,8,15,.7))}
-.hero-castro{position:absolute;left:50%;top:47%;transform:translate(-50%,-54%);width:min(16vw,280px);z-index:2;pointer-events:none;filter:drop-shadow(0 30px 70px rgba(75,127,250,.3))}
+.hero-castro{position:absolute;left:50%;top:46%;transform:translate(-50%,-52%);width:min(29vw,520px);z-index:2;pointer-events:none;filter:drop-shadow(0 30px 70px rgba(75,127,250,.3))}
 .hero-castro svg{width:100%;height:auto;display:block}
 .hero-planet2{position:absolute;left:50%;bottom:0;width:min(66vw,1220px);aspect-ratio:1;border-radius:50%;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(circle at 50% 12%,#4A2B92 0%,#2E1960 30%,#170C3C 58%,#0A0522 82%);box-shadow:0 -28px 150px rgba(124,58,237,.42),inset 0 36px 80px rgba(196,181,253,.38),inset 0 -120px 220px rgba(0,0,0,.9);-webkit-mask-image:linear-gradient(180deg,#000 14%,rgba(0,0,0,.72) 24%,transparent 42%);mask-image:linear-gradient(180deg,#000 14%,rgba(0,0,0,.72) 24%,transparent 42%)}
 .hero-planet2-tex{position:absolute;inset:-16%;border-radius:50%;filter:blur(1.2px);animation:spinSlow 110s linear infinite;background:radial-gradient(ellipse 24% 13% at 28% 32%,rgba(155,116,255,.36) 0 55%,transparent 64%),radial-gradient(ellipse 13% 8% at 39% 24%,rgba(155,116,255,.3) 0 52%,transparent 63%),radial-gradient(ellipse 9% 14% at 23% 41%,rgba(139,92,246,.3) 0 50%,transparent 62%),radial-gradient(ellipse 21% 10% at 67% 38%,rgba(167,139,250,.3) 0 52%,transparent 62%),radial-gradient(ellipse 11% 15% at 74% 49%,rgba(129,90,240,.34) 0 52%,transparent 63%),radial-gradient(ellipse 15% 7% at 60% 30%,rgba(196,181,253,.2) 0 48%,transparent 60%),radial-gradient(ellipse 26% 12% at 48% 68%,rgba(104,66,214,.42) 0 55%,transparent 65%),radial-gradient(ellipse 10% 6% at 18% 60%,rgba(196,181,253,.22) 0 45%,transparent 58%),radial-gradient(ellipse 17% 9% at 58% 15%,rgba(88,50,190,.42) 0 50%,transparent 61%),radial-gradient(ellipse 12% 7% at 83% 27%,rgba(139,92,246,.26) 0 48%,transparent 60%),radial-gradient(ellipse 30% 17% at 44% 47%,rgba(52,27,116,.5) 0 60%,transparent 71%),radial-gradient(ellipse 14% 8% at 33% 78%,rgba(139,92,246,.28) 0 50%,transparent 62%),radial-gradient(ellipse 7% 4% at 52% 36%,rgba(196,181,253,.26) 0 50%,transparent 60%),radial-gradient(ellipse 6% 9% at 70% 61%,rgba(150,111,255,.3) 0 48%,transparent 59%),radial-gradient(ellipse 5% 3% at 45% 22%,rgba(196,181,253,.22) 0 46%,transparent 58%)}
@@ -653,7 +653,7 @@ body.bht-active .sun-layer{opacity:0}
   .hero-right{display:none}
   .hero-c{text-align:center;padding-left:28px;padding-right:28px}
   .hero-c .hero-float-card{display:none!important}
-  .hero-castro{width:34vw}
+  .hero-castro{width:52vw}
   .hero-planet2{width:150vw;opacity:.85}
   .about-grid{grid-template-columns:1fr}
   .dh-wrap{grid-template-columns:1fr}
@@ -674,7 +674,7 @@ body.bht-active .sun-layer{opacity:0}
   .nhb{display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--tx);font-size:18px}
   .ncv-mobile{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;font-size:12.5px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#6025C0);color:#fff;border:none;text-decoration:none;flex-shrink:0;box-shadow:0 4px 14px rgba(124,58,237,.35);white-space:nowrap}
   .hero{padding:80px 20px 48px;gap:32px;grid-template-columns:1fr}.hero-left{padding:24px 0;max-width:100%}.hero-h1{letter-spacing:-2px;font-size:clamp(44px,12vw,80px)}
-  .hero-h1c{font-size:clamp(48px,13vw,96px)}.hero-castro{width:34vw;top:50%}.hero-c{padding-top:132px}.hero-desc{font-size:15px;line-height:1.75}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
+  .hero-h1c{font-size:clamp(48px,13vw,96px)}.hero-castro{width:58vw;top:49%}.hero-c{padding-top:132px}.hero-desc{font-size:15px;line-height:1.75}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
   .stats{flex-direction:column}.stat{padding:24px 20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
   .pd-subnav{padding:0 16px}.pd-subnav-btn{padding:12px 14px;font-size:12px}
   .pd-gallery{grid-template-columns:1fr 1fr}
@@ -1884,7 +1884,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
             <div className="hero-cstage afu d1">
               <div className="hero-castro" aria-hidden="true">
                 <div style={{ transform:`perspective(900px) translate3d(${px.x*18}px, ${px.y*12}px, 0) rotateY(${-px.x*4}deg) rotateX(${px.y*2.5}deg)`, transition:"transform .18s ease-out" }}>
-                  <img src="/astro-tablet.png" alt="" style={{ width:"100%", height:"auto", display:"block" }}/>
+                  <img src="/astro-fly.png" alt="" style={{ width:"100%", height:"auto", display:"block" }}/>
                 </div>
               </div>
               <h1 className="hero-h1c">
