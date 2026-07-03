@@ -58,16 +58,18 @@ button{cursor:pointer;font-family:var(--fb)}
 @keyframes curtainIn{from{transform:translateY(105%)}to{transform:translateY(0%)}}
 @keyframes curtainOut{from{transform:translateY(0%)}to{transform:translateY(-105%)}}
 @keyframes projectEnter{from{opacity:0;transform:translateY(32px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes sunTravel{0%{transform:translate(-60vmin,8vh) scale(.85);opacity:0}3%{opacity:1}20%{transform:translate(48vw,-3vh) scale(1.06)}38%{transform:translate(104vw,9vh) scale(.88);opacity:1}42%{transform:translate(125vw,12vh) scale(.85);opacity:0}100%{transform:translate(125vw,12vh) scale(.85);opacity:0}}
+@keyframes sunTravel{0%{transform:translate(-60vmin,8vh) scale(.85);opacity:0}2%{opacity:1}11%{transform:translate(48vw,-3vh) scale(1.06)}22%{transform:translate(104vw,9vh) scale(.88);opacity:1}24%{transform:translate(125vw,12vh) scale(.85);opacity:0}100%{transform:translate(125vw,12vh) scale(.85);opacity:0}}
 @keyframes bhxFall{0%{transform:translate(170px,-50%) rotate(0deg) scale(1);opacity:0}8%{opacity:.95}68%{transform:translate(58px,-50%) rotate(240deg) scale(.55);opacity:.9}100%{transform:translate(6px,-50%) rotate(520deg) scale(.04);opacity:0}}
 @keyframes cstDrift{0%,100%{transform:translate(0,0)}50%{transform:translate(.4px,-.8px)}}
 /* transition trou noir au scroll */
 .bht-wrap{height:230vh;position:relative;z-index:60;pointer-events:none;margin:-40px 0}
 .bht-sticky{position:absolute;top:0;left:0;right:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .bht-hole{position:relative;width:110vmin;aspect-ratio:1;will-change:transform}
-.bht-disk{position:absolute;inset:-10%;border-radius:50%;transform:rotateX(65deg);background:conic-gradient(from 0deg,transparent 0deg,rgba(183,156,255,.6) 70deg,rgba(255,255,255,.85) 150deg,rgba(124,58,237,.55) 235deg,transparent 335deg);filter:blur(10px);animation:spinSlow 8s linear infinite}
-.bht-core{position:absolute;inset:24%;border-radius:50%;background:#000;box-shadow:0 0 240px 90px rgba(0,0,0,.95)}
-.bht-ring{position:absolute;inset:22%;border-radius:50%;border:4px solid rgba(224,206,255,.55);box-shadow:0 0 60px rgba(167,139,250,.55)}
+.bht-arch{position:absolute;inset:15%;border-radius:50%;background:radial-gradient(circle,transparent 54%,rgba(196,161,255,.9) 62%,rgba(124,58,237,.55) 69%,transparent 78%);filter:blur(7px);-webkit-mask-image:linear-gradient(180deg,#000 46%,transparent 58%);mask-image:linear-gradient(180deg,#000 46%,transparent 58%)}
+.bht-core{position:absolute;inset:26%;border-radius:50%;background:radial-gradient(circle at 50% 42%,#0A0512 0%,#000 55%);box-shadow:0 0 240px 90px rgba(0,0,0,.95)}
+.bht-ring{position:absolute;inset:24.5%;border-radius:50%;border:3px solid rgba(224,206,255,.8);box-shadow:0 0 34px rgba(167,139,250,.75),inset 0 0 22px rgba(167,139,250,.5)}
+.bht-diskflat{position:absolute;inset:-52%;transform:rotateX(80deg);pointer-events:none}
+.bht-diskflat-spin{position:absolute;inset:0;border-radius:50%;animation:spinSlow 7s linear infinite;filter:blur(5px);background:conic-gradient(from 10deg,rgba(124,58,237,.78) 0deg,rgba(203,172,255,.95) 75deg,rgba(91,33,182,.6) 150deg,rgba(170,128,255,.9) 230deg,rgba(110,48,220,.7) 305deg,rgba(124,58,237,.78) 360deg);-webkit-mask-image:radial-gradient(circle closest-side,transparent 21%,#000 25%,#000 38%,rgba(0,0,0,.22) 41%,rgba(0,0,0,.22) 45%,#000 48%,#000 58%,transparent 66%);mask-image:radial-gradient(circle closest-side,transparent 21%,#000 25%,#000 38%,rgba(0,0,0,.22) 41%,rgba(0,0,0,.22) 45%,#000 48%,#000 58%,transparent 66%)}
 .bht-orbit{position:absolute;top:50%;left:50%;width:0;height:0;animation:spinSlow 9s linear infinite}
 @keyframes bhtFall{0%{transform:translate(50vmin,-50%) rotate(0deg) scale(1);opacity:0}8%{opacity:.95}68%{transform:translate(17vmin,-50%) rotate(240deg) scale(.55);opacity:.9}100%{transform:translate(2vmin,-50%) rotate(520deg) scale(.04);opacity:0}}
 .bht-black{position:absolute;inset:0;background:#050308;opacity:0}
@@ -156,7 +158,7 @@ body.bht-active .sun-layer{opacity:0}
 .hero-castro{position:absolute;left:50%;top:47%;transform:translate(-50%,-54%);width:min(16vw,280px);z-index:2;pointer-events:none;filter:drop-shadow(0 30px 70px rgba(75,127,250,.3))}
 .hero-castro svg{width:100%;height:auto;display:block}
 .hero-planet2{position:absolute;left:50%;bottom:0;width:min(66vw,1220px);aspect-ratio:1;border-radius:50%;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(circle at 50% 12%,#4A2B92 0%,#2E1960 30%,#170C3C 58%,#0A0522 82%);box-shadow:0 -28px 150px rgba(124,58,237,.42),inset 0 36px 80px rgba(196,181,253,.38),inset 0 -120px 220px rgba(0,0,0,.9);-webkit-mask-image:linear-gradient(180deg,#000 14%,rgba(0,0,0,.72) 24%,transparent 42%);mask-image:linear-gradient(180deg,#000 14%,rgba(0,0,0,.72) 24%,transparent 42%)}
-.hero-planet2-tex{position:absolute;inset:-16%;border-radius:50%;filter:blur(7px);animation:spinSlow 110s linear infinite;background:radial-gradient(circle at 30% 30%,rgba(139,92,246,.30) 0 5%,transparent 11%),radial-gradient(circle at 64% 20%,rgba(167,139,250,.22) 0 7%,transparent 14%),radial-gradient(circle at 76% 56%,rgba(91,33,182,.5) 0 9%,transparent 17%),radial-gradient(circle at 44% 66%,rgba(76,42,158,.42) 0 6%,transparent 12%),radial-gradient(circle at 16% 58%,rgba(196,181,253,.15) 0 4%,transparent 9%),radial-gradient(circle at 55% 44%,rgba(50,25,110,.6) 0 12%,transparent 22%),radial-gradient(circle at 86% 34%,rgba(139,92,246,.2) 0 5%,transparent 10%),radial-gradient(circle at 25% 82%,rgba(139,92,246,.24) 0 8%,transparent 15%)}
+.hero-planet2-tex{position:absolute;inset:-16%;border-radius:50%;filter:blur(3px);animation:spinSlow 110s linear infinite;background:radial-gradient(ellipse 24% 13% at 28% 32%,rgba(155,116,255,.36) 0 55%,transparent 64%),radial-gradient(ellipse 13% 8% at 39% 24%,rgba(155,116,255,.3) 0 52%,transparent 63%),radial-gradient(ellipse 9% 14% at 23% 41%,rgba(139,92,246,.3) 0 50%,transparent 62%),radial-gradient(ellipse 21% 10% at 67% 38%,rgba(167,139,250,.3) 0 52%,transparent 62%),radial-gradient(ellipse 11% 15% at 74% 49%,rgba(129,90,240,.34) 0 52%,transparent 63%),radial-gradient(ellipse 15% 7% at 60% 30%,rgba(196,181,253,.2) 0 48%,transparent 60%),radial-gradient(ellipse 26% 12% at 48% 68%,rgba(104,66,214,.42) 0 55%,transparent 65%),radial-gradient(ellipse 10% 6% at 18% 60%,rgba(196,181,253,.22) 0 45%,transparent 58%),radial-gradient(ellipse 17% 9% at 58% 15%,rgba(88,50,190,.42) 0 50%,transparent 61%),radial-gradient(ellipse 12% 7% at 83% 27%,rgba(139,92,246,.26) 0 48%,transparent 60%),radial-gradient(ellipse 30% 17% at 44% 47%,rgba(52,27,116,.5) 0 60%,transparent 71%),radial-gradient(ellipse 14% 8% at 33% 78%,rgba(139,92,246,.28) 0 50%,transparent 62%)}
 .hero-planet2::before{content:"";position:absolute;inset:0;border-radius:50%;z-index:1;background:radial-gradient(ellipse 70% 22% at 50% 4%,rgba(216,203,255,.42) 0%,rgba(139,92,246,.14) 45%,transparent 75%)}
 .hero-planet2::after{content:"";position:absolute;inset:0;border-radius:50%;z-index:1;background:radial-gradient(circle at 50% 130%,rgba(0,0,0,.95) 45%,rgba(0,0,0,.35) 68%,transparent 82%)}
 .hero-c .hero-spec{justify-content:center;position:relative;z-index:4}
@@ -169,6 +171,7 @@ body.bht-active .sun-layer{opacity:0}
 .hero-divider{width:48px;height:1px;background:linear-gradient(90deg,var(--acc),transparent);margin:28px 0;opacity:.7}
 .hero-desc{font-size:15.5px;color:rgba(255,255,255,.72);line-height:1.82;max-width:900px;font-weight:400;text-shadow:0 1px 14px rgba(7,8,15,.85);margin-top:30px}
 .hero-scrim{position:absolute;left:50%;bottom:-50px;transform:translateX(-50%);width:min(980px,94vw);height:400px;background:radial-gradient(ellipse at 50% 48%,rgba(7,8,15,.68) 0%,rgba(7,8,15,.42) 52%,transparent 74%);filter:blur(8px);z-index:-1;pointer-events:none}
+.testi-more{display:none;margin:26px auto 0;padding:13px 30px;border-radius:100px;border:1px solid rgba(124,58,237,.45);background:rgba(124,58,237,.14);color:#C4B5FD;font-weight:700;font-size:13.5px;cursor:pointer;backdrop-filter:blur(10px);position:relative;z-index:2}
 .hero-desc strong{color:rgba(255,255,255,.85);font-weight:600}
 .hero-desc em{color:#C4B5FD;font-style:normal;font-weight:600}
 .hero-acts{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
@@ -295,12 +298,12 @@ body.bht-active .sun-layer{opacity:0}
 .sun-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden}
 .sun-behind{z-index:0}
 .sun-light{z-index:45;mix-blend-mode:screen}
-.sun-disc,.sun-wash{position:absolute;top:13vh;left:0;width:42vmin;height:42vmin;border-radius:50%;animation:sunTravel 85s ease-in-out infinite}
+.sun-disc,.sun-wash{position:absolute;top:13vh;left:0;width:42vmin;height:42vmin;border-radius:50%;animation:sunTravel 150s ease-in-out infinite}
 .sun-disc{background:radial-gradient(circle at 50% 50%,#FFF6DC 0%,#FFC868 14%,rgba(255,150,52,.85) 30%,rgba(255,116,26,.35) 52%,transparent 70%);filter:blur(1px)}
 .sun-disc::before{content:"";position:absolute;inset:-55%;border-radius:50%;background:radial-gradient(circle,rgba(255,160,70,.35) 0%,rgba(255,130,45,.12) 45%,transparent 70%)}
 .sun-wash{background:radial-gradient(circle,rgba(255,170,80,.32) 0%,rgba(255,130,45,.15) 38%,rgba(255,110,30,.05) 60%,transparent 74%)}
 .sun-wash::before{content:"";position:absolute;inset:-110%;border-radius:50%;background:radial-gradient(circle,rgba(255,150,60,.15) 0%,rgba(255,120,40,.06) 45%,transparent 70%)}
-@media(max-width:768px){.sun-layer{display:none}}
+@media(max-width:768px){.sun-disc,.sun-wash{width:54vmin;height:54vmin;top:9vh}}
 /* trou noir XL de section — disque double contre-rotatif, lentille, logos Figma aspirés */
 .bhx{position:absolute;width:340px;aspect-ratio:1;pointer-events:none;z-index:0}
 .bhx-lens{position:absolute;inset:-12%;border-radius:50%;background:radial-gradient(circle,transparent 42%,rgba(124,58,237,.13) 50%,rgba(183,156,255,.07) 56%,transparent 66%)}
@@ -642,6 +645,9 @@ body.bht-active .sun-layer{opacity:0}
   .tl-grid{grid-template-columns:1fr}
   .tgrid{grid-template-columns:1fr}
   .testi-grid{grid-template-columns:1fr}
+  .testi-collapsed{max-height:940px;overflow:hidden;position:relative}
+  .testi-collapsed::after{content:"";position:absolute;left:0;right:0;bottom:0;height:240px;background:linear-gradient(180deg,transparent,#07080F 90%);pointer-events:none}
+  .testi-more{display:block}
   .contact-layout{grid-template-columns:1fr}.cwrap{padding:44px 22px}
   .foot{padding:16px 24px 96px;flex-wrap:wrap;gap:10px}
   .pgallery{margin-left:-8px;margin-right:-8px}
@@ -1383,7 +1389,7 @@ function BlackHoleTransition() {
       const t = p < 0.5 ? p * 2 : (1 - p) * 2; // 0 → 1 (englouti) → 0
       // Trou nativement grand (110vmin) → scale max faible pour garder le conic-gradient net
       const scale = 0.07 + Math.pow(t, 1.5) * 2.75;
-      if (holeRef.current) holeRef.current.style.transform = `scale(${scale}) rotate(${p * 200}deg)`;
+      if (holeRef.current) holeRef.current.style.transform = `scale(${scale})`;
       if (blackRef.current) blackRef.current.style.opacity = Math.min(1, Math.max(0, (t - 0.6) / 0.2));
       document.body.classList.toggle("bht-active", p > 0.03 && p < 0.97);
     };
@@ -1395,9 +1401,10 @@ function BlackHoleTransition() {
     <div ref={wrapRef} className="bht-wrap" aria-hidden="true">
       <div ref={stickyRef} className="bht-sticky">
         <div ref={holeRef} className="bht-hole">
-          <div className="bht-disk"/>
+          <div className="bht-arch"/>
           <div className="bht-core"/>
           <div className="bht-ring"/>
+          <div className="bht-diskflat"><div className="bht-diskflat-spin"/></div>
           {[0, 1, 2].map(i => (
             <div key={i} className="bht-orbit" style={{ animationDelay:`${i*3}s` }}>
               <div style={{ animation:`bhtFall 9s ease-in ${i*3}s infinite`, position:"absolute", width:"6.5vmin" }}>
@@ -1678,6 +1685,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
   const [px, setPx] = useState({ x:0, y:0 });
   const [mobCtaMode, setMobCtaMode] = useState("projects"); // "projects" | "contact"
   const [mobCtaVisible, setMobCtaVisible] = useState(false);
+  const [showAllTsti, setShowAllTsti] = useState(false); // mobile : avis repliés derrière un fondu + bouton Voir plus
   const [coverRatios, setCoverRatios] = useState({}); // project id -> natural width/height of uploaded cover image
   const heroRef = useRef(null);
   const dhRef = useRef(null);
@@ -2021,7 +2029,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
         <BlackHoleXL style={{ left:"-90px", bottom:"-20px", width:280 }}/>
         <div className="seye rv">Recommandations</div>
         <h2 className="stit rv">Ce qu'on dit de moi</h2>
-        <div className="testi-wrap">
+        <div className={`testi-wrap${showAllTsti ? "" : " testi-collapsed"}`}>
           {[...testimonials].sort((a,b)=>(a.order||99)-(b.order||99)).map((t, i) => (
             <div className={`tcard rv`} key={t.id}>
               <div className="tcard-header">
@@ -2047,6 +2055,9 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
           ))}
           {testimonials.length === 0 && <div className="aempty">Aucun témoignage pour le moment.</div>}
         </div>
+        {!showAllTsti && testimonials.length > 2 && (
+          <button className="testi-more" onClick={() => setShowAllTsti(true)}>Voir plus d'avis ↓</button>
+        )}
       </section>
 
       {/* ── CONTACT ── */}
