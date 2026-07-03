@@ -66,13 +66,10 @@ button{cursor:pointer;font-family:var(--fb)}
 .bht-sticky{position:absolute;top:0;left:0;right:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .bht-hole{position:relative;width:110vmin;aspect-ratio:1;will-change:transform}
 .bht-glitch{position:absolute;inset:0}
-.bht-glitch.on{animation:bhtTwerk .38s steps(2,end) infinite;filter:drop-shadow(4px 0 rgba(255,60,130,.4)) drop-shadow(-4px 0 rgba(80,200,255,.4))}
-.bht-glitch.on::before,.bht-glitch.on::after{content:"";position:absolute;left:-8%;right:-8%;height:3%;background:rgba(203,172,255,.4);mix-blend-mode:screen;pointer-events:none}
-.bht-glitch.on::before{animation:bhtSlice1 .5s steps(1,end) infinite}
-.bht-glitch.on::after{animation:bhtSlice2 .64s steps(1,end) infinite}
-@keyframes bhtTwerk{0%{transform:translate(0,0) skewX(0)}25%{transform:translate(-1.4%,.7%) skewX(2.5deg)}50%{transform:translate(1.1%,-.5%) skewX(-2deg)}75%{transform:translate(-.7%,-.9%) skewX(1.4deg)}100%{transform:translate(0,0) skewX(0)}}
-@keyframes bhtSlice1{0%{top:18%;opacity:0}12%{opacity:1}30%{top:64%}50%{top:38%;opacity:0}70%{top:74%;opacity:1}100%{top:22%;opacity:0}}
-@keyframes bhtSlice2{0%{top:52%;opacity:1}25%{top:12%;opacity:0}45%{top:80%;opacity:1}75%{top:30%}100%{top:58%;opacity:0}}
+.bht-grects{position:absolute;inset:-2%;border-radius:50%;overflow:hidden;pointer-events:none}
+.bht-gr{position:absolute;left:-2%;width:104%;transform:translateX(-108%);will-change:transform}
+.bht-gr.b{background:#05EAFA;mix-blend-mode:screen}
+.bht-gr.p{background:#FF6BD3;mix-blend-mode:screen}
 .bht-lensring{position:absolute;inset:-14%;border-radius:50%;pointer-events:none;-webkit-mask-image:radial-gradient(circle,transparent 44%,#000 55%,#000 72%,transparent 84%);mask-image:radial-gradient(circle,transparent 44%,#000 55%,#000 72%,transparent 84%)}
 .bht-arch{position:absolute;inset:15%;border-radius:50%;background:radial-gradient(circle,transparent 54%,rgba(196,161,255,.9) 62%,rgba(124,58,237,.55) 69%,transparent 78%);filter:blur(7px);-webkit-mask-image:linear-gradient(180deg,#000 46%,transparent 58%);mask-image:linear-gradient(180deg,#000 46%,transparent 58%)}
 .bht-core{position:absolute;inset:26%;border-radius:50%;background:radial-gradient(circle at 50% 42%,#0A0512 0%,#000 55%);box-shadow:0 0 240px 90px rgba(0,0,0,.95)}
@@ -1387,8 +1384,29 @@ function BlackHoleTransition() {
   const holeRef = useRef(null);
   const blackRef = useRef(null);
   const lensRef = useRef(null);
-  const glitchRef = useRef(null);
+  const grectsRef = useRef(null);
+  const prevGOn = useRef(false);
   useEffect(() => {
+    // Adaptation du glitch "Retro Futuristic Radio Buttons" (GSAP) : bandes balayées
+    // en easing élastique elastic.out(1,.3), stagger 10ms ordre mélangé, bleu décalé de 130ms
+    const elasticOut = (x, per = 0.3) =>
+      x === 0 ? 0 : x === 1 ? 1 : Math.pow(2, -10 * x) * Math.sin(((x - per / 4) * (2 * Math.PI)) / per) + 1;
+    const frames = (from, to) => Array.from({ length: 48 }, (_, i) => {
+      const k = i / 47;
+      return { transform: `translateX(${(from + (to - from) * elasticOut(k)).toFixed(2)}%)`, offset: k };
+    });
+    const sweepGlitch = (dir) => {
+      const c = grectsRef.current; if (!c || !c.children[0]?.animate) return;
+      const strips = [...c.children];
+      for (let i = strips.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [strips[i], strips[j]] = [strips[j], strips[i]];
+      }
+      const kf = dir > 0 ? frames(-108, 108) : frames(108, -108);
+      strips.forEach((el, i) => {
+        el.animate(kf, { duration: 1600, delay: i * 10 + (el.classList.contains("b") ? 130 : 0), fill: "forwards", easing: "linear" });
+      });
+    };
     const onScroll = () => {
       const el = wrapRef.current; if (!el) return;
       const r = el.getBoundingClientRect();
@@ -1405,10 +1423,11 @@ function BlackHoleTransition() {
       // Trou nativement grand (110vmin) → scale max faible pour garder le conic-gradient net
       const scale = 0.07 + Math.pow(t, 1.5) * 2.75;
       if (holeRef.current) holeRef.current.style.transform = `scale(${scale})`;
-      // Glitch "twerk" (ref codemyui) quand on est presque dedans / qu'on commence à ressortir,
-      // se coupe en s'éloignant du trou
-      const d = Math.max(0, (t - 0.38) / 0.62);
-      if (glitchRef.current) glitchRef.current.classList.toggle("on", d > 0.05);
+      // Glitch "radio buttons GSAP" adapté : bandes cyan/roses balayées avec easing élastique,
+      // stagger 10ms en ordre mélangé, couche bleue décalée de 130ms. Aller quand on entre
+      // dans le trou, retour quand on en ressort.
+      const gOn = t > 0.41;
+      if (gOn !== prevGOn.current) { prevGOn.current = gOn; sweepGlitch(gOn ? 1 : -1); }
       // Distorsion gravitationnelle : la lentille se renforce à mesure qu'on approche du trou
       if (lensRef.current) {
         const dist = `blur(${(1 + t * 8).toFixed(1)}px) saturate(${(1 + t * 0.6).toFixed(2)}) contrast(${(1 + t * 0.2).toFixed(2)})`;
@@ -1427,7 +1446,7 @@ function BlackHoleTransition() {
       <div ref={stickyRef} className="bht-sticky">
         <div ref={holeRef} className="bht-hole">
           <div ref={lensRef} className="bht-lensring"/>
-          <div ref={glitchRef} className="bht-glitch">
+          <div className="bht-glitch">
             <div className="bht-arch"/>
             <div className="bht-core"/>
             <div className="bht-ring"/>
@@ -1439,6 +1458,13 @@ function BlackHoleTransition() {
                 </div>
               </div>
             ))}
+          </div>
+          <div ref={grectsRef} className="bht-grects">
+            {Array.from({ length: 40 }).map((_, i) => {
+              const layer = i < 20 ? "b" : "p";
+              const idx = i % 20;
+              return <div key={i} className={`bht-gr ${layer}`} style={{ top:`${idx * 5 + (layer === "p" ? 2.5 : 0)}%`, height:"5%" }}/>;
+            })}
           </div>
         </div>
         <div ref={blackRef} className="bht-black"/>
