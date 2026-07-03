@@ -172,8 +172,8 @@ body.bht-active .sun-layer{opacity:0}
 .hero-desc{font-size:15.5px;color:rgba(255,255,255,.62);line-height:1.82;max-width:700px;font-weight:400;text-shadow:0 1px 14px rgba(7,8,15,.85)}
 .hero-desc strong{color:rgba(255,255,255,.85);font-weight:600}
 .hero-desc em{color:#C4B5FD;font-style:normal;font-weight:600}
-.hero-acts{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap}
-.hero-scroll-hint{margin-top:44px;display:flex;align-items:center;gap:10px;font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.25);font-weight:600}
+.hero-acts{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
+.hero-scroll-hint{margin-top:30px;display:flex;align-items:center;gap:10px;font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.25);font-weight:600}
 .hero-scroll-hint::before{content:'';width:1px;height:28px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.2))}
 .hero-mascots{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 .hero-mascot-main{position:relative;display:flex;align-items:center;justify-content:center}
@@ -611,7 +611,7 @@ body.bht-active .sun-layer{opacity:0}
   .hero-outer{padding-top:0}
   .hero-right{display:none}
   .hero-c{text-align:center;padding-left:28px;padding-right:28px}
-  .hero-c .hero-float-card{display:none}
+  .hero-c .hero-float-card{display:none!important}
   .hero-castro{width:34vw}
   .hero-planet2{width:150vw;opacity:.85}
   .about-grid{grid-template-columns:1fr}
