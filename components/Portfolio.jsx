@@ -115,7 +115,7 @@ body.bht-active .sun-layer{opacity:0}
 
 /* ─ NAV ─ */
 .nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 64px;transition:all .35s}
-.nav.sc{background:rgba(7,8,15,.92);border-bottom:1px solid var(--bdr);backdrop-filter:blur(24px)}
+.nav.sc{background:rgba(7,8,15,.98);border-bottom:1px solid var(--bdr);backdrop-filter:blur(24px)}
 .nlogo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
 .nlogo-mark{display:flex;align-items:center}
 .nlogo-txt{font-family:var(--fd);font-size:15px;font-weight:800;letter-spacing:-.3px;color:var(--tx)}
@@ -144,11 +144,9 @@ body.bht-active .sun-layer{opacity:0}
 .hero-blob{position:absolute;right:-120px;top:50%;width:600px;height:600px;background:conic-gradient(from 180deg at 50% 50%,rgba(124,58,237,.12) 0deg,rgba(75,127,250,.07) 120deg,rgba(139,92,246,.1) 240deg,rgba(124,58,237,.12) 360deg);border-radius:40% 60% 55% 45%/45% 55% 60% 40%;filter:blur(70px);pointer-events:none;z-index:0;animation:blobDrift 18s ease-in-out infinite}
 .hero-left{padding:140px 0 80px;max-width:780px;position:relative;z-index:2}
 .hero-right{position:absolute;right:0;top:0;height:100%;width:46%;display:flex;align-items:center;justify-content:center;z-index:1;pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:9px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.35);border-radius:100px;padding:8px 18px;font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:#C4B5FD;margin-bottom:32px;backdrop-filter:blur(8px)}
-.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#06D6A0;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 6px #06D6A0}
 .hero-h1{font-size:clamp(48px,7.2vw,118px);font-weight:800;line-height:.9;letter-spacing:-3px;position:relative;z-index:2}
 /* hero centré — sandwich 3D titre/astronaute + planète d'arrière-plan */
-.hero-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:210px;padding-bottom:70px;text-align:center}
+.hero-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:max(264px,26vh);padding-bottom:70px;text-align:center}
 .hero-cwrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%}
 .hero-cstage{position:relative;display:flex;flex-direction:column;align-items:center;margin-top:4px}
 .hero-h1c{margin:0;font-weight:800;line-height:.85;letter-spacing:-.045em;font-size:clamp(64px,11.5vw,190px)}
@@ -633,7 +631,7 @@ body.bht-active .sun-layer{opacity:0}
   .nhb{display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--tx);font-size:18px}
   .ncv-mobile{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;font-size:12.5px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#6025C0);color:#fff;border:none;text-decoration:none;flex-shrink:0;box-shadow:0 4px 14px rgba(124,58,237,.35);white-space:nowrap}
   .hero{padding:80px 20px 48px;gap:32px;grid-template-columns:1fr}.hero-left{padding:24px 0;max-width:100%}.hero-h1{letter-spacing:-2px;font-size:clamp(44px,12vw,80px)}
-  .hero-h1c{font-size:clamp(48px,13vw,96px)}.hero-castro{width:34vw;top:50%}.hero-c{padding-top:132px}.hero-desc{font-size:15px;line-height:1.75}.hero-badge{font-size:10px;padding:5px 14px;margin-bottom:20px}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
+  .hero-h1c{font-size:clamp(48px,13vw,96px)}.hero-castro{width:34vw;top:50%}.hero-c{padding-top:132px}.hero-desc{font-size:15px;line-height:1.75}.hero-acts{margin-top:22px;gap:10px}.hero-scroll-hint{margin-top:28px}.hero-spec{gap:7px;margin-top:18px}.hero-spec-chip{font-size:11px;padding:5px 12px}.hero-blob{display:none}
   .stats{flex-direction:column}.stat{padding:24px 20px;border-right:none;border-bottom:1px solid var(--bdr)}.stat:first-child{padding-left:20px}
   .pd-subnav{padding:0 16px}.pd-subnav-btn{padding:12px 14px;font-size:12px}
   .pd-gallery{grid-template-columns:1fr 1fr}
@@ -1792,10 +1790,6 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
             <div className="hero-planet2-tex"/>
           </div>
           <div className="hero-cwrap">
-            <div className="hero-badge afu">
-              <div className="hero-badge-dot"/>
-              Product Designer · Design Ops · Paris
-            </div>
             {/* Sandwich 3D : « Thomas » derrière l'astronaute, « Leloup » devant.
                 L'animation d'entrée est portée par cstage (pas le h1) pour ne pas
                 créer de stacking context qui emprisonnerait les z-index des lignes. */}
