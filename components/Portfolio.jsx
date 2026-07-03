@@ -599,7 +599,7 @@ body.bht-active .sun-layer{opacity:0}
 
 /* ─ RESPONSIVE ─ */
 @media(min-width:1600px){
-.hero{padding:0 80px}
+.hero{padding-left:80px;padding-right:80px}
 .sec{padding:180px 80px}
 .foot{padding:20px 80px}
 .pgallery{margin-left:-56px;margin-right:-56px}
