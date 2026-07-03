@@ -68,16 +68,22 @@ button{cursor:pointer;font-family:var(--fb)}
 .bht-glitch{position:absolute;inset:0}
 .bht-glitch.on{animation:bhtTwerk .42s steps(2,end) infinite;filter:drop-shadow(3px 0 rgba(5,234,250,.38)) drop-shadow(-3px 0 rgba(255,107,211,.38))}
 .bht-slices{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.bht-slice{position:absolute;left:0;right:0;height:2.6%;opacity:0;pointer-events:none;mix-blend-mode:screen}
+.bht-slice{position:absolute;left:0;right:0;height:1%;opacity:0;pointer-events:none;mix-blend-mode:screen}
 .bht-slice.c{background:#05EAFA}
 .bht-slice.p{background:#FF6BD3}
 .bht-slices.on .bht-slice{animation-iteration-count:infinite;animation-timing-function:steps(1,end)}
 .bht-slices.on .s1{animation-name:bhtSlice1;animation-duration:.5s}
-.bht-slices.on .s2{animation-name:bhtSlice2;animation-duration:.64s;height:1.6%}
+.bht-slices.on .s2{animation-name:bhtSlice2;animation-duration:.64s;height:.6%}
 .bht-slices.on .s3{animation-name:bhtSlice3;animation-duration:.44s;left:14%;right:-2%}
-.bht-slices.on .s4{animation-name:bhtSlice4;animation-duration:.72s;height:3.4%}
+.bht-slices.on .s4{animation-name:bhtSlice4;animation-duration:.72s;height:1.3%}
 .bht-slices.on .s5{animation-name:bhtSlice1;animation-duration:.58s;animation-delay:.12s;left:-2%;right:30%}
-.bht-slices.on .s6{animation-name:bhtSlice3;animation-duration:.52s;animation-delay:.2s;height:1.4%}
+.bht-slices.on .s6{animation-name:bhtSlice3;animation-duration:.52s;animation-delay:.2s;height:.5%}
+.bht-slices.on .s7{animation-name:bhtSlice2;animation-duration:.48s;animation-delay:.06s;height:.7%}
+.bht-slices.on .s8{animation-name:bhtSlice4;animation-duration:.6s;animation-delay:.18s;height:.9%;left:22%;right:-2%}
+.bht-slices.on .s9{animation-name:bhtSlice1;animation-duration:.68s;animation-delay:.3s;height:.6%}
+.bht-slices.on .s10{animation-name:bhtSlice3;animation-duration:.56s;animation-delay:.09s;height:1.1%;left:-2%;right:40%}
+.bht-slices.on .s11{animation-name:bhtSlice2;animation-duration:.7s;animation-delay:.24s;height:.5%}
+.bht-slices.on .s12{animation-name:bhtSlice4;animation-duration:.46s;animation-delay:.15s;height:.8%}
 @keyframes bhtTwerk{0%{transform:translate(0,0) skewX(0)}25%{transform:translate(-.5%,.25%) skewX(.8deg)}50%{transform:translate(.4%,-.2%) skewX(-.7deg)}75%{transform:translate(-.25%,-.3%) skewX(.5deg)}100%{transform:translate(0,0) skewX(0)}}
 @keyframes bhtSlice1{0%{top:18%;opacity:0}12%{opacity:1}30%{top:64%}50%{top:38%;opacity:0}70%{top:74%;opacity:1}100%{top:22%;opacity:0}}
 @keyframes bhtSlice2{0%{top:52%;opacity:1}25%{top:12%;opacity:0}45%{top:80%;opacity:1}75%{top:30%}100%{top:58%;opacity:0}}
@@ -1462,7 +1468,7 @@ function BlackHoleTransition() {
           </div>
         </div>
         <div ref={slicesRef} className="bht-slices">
-          {["c","p","c","p","p","c"].map((col, i) => (
+          {["c","p","c","p","p","c","p","c","c","p","c","p"].map((col, i) => (
             <div key={i} className={`bht-slice ${col} s${i + 1}`}/>
           ))}
         </div>
