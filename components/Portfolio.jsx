@@ -163,7 +163,7 @@ body.bht-active .sun-layer{opacity:0}
 .hero-c .hero-desc{margin-left:auto;margin-right:auto}
 .hero-c .hero-acts{justify-content:center}
 .hero-name-grad{background:linear-gradient(135deg,#FFFFFF 0%,#EDE9FE 35%,#C4B5FD 65%,#9B6DFF 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;padding-right:8px}
-.hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:#DAD2F5;font-size:clamp(20px,.58em,52px);letter-spacing:.5px;display:block;margin-top:14px;-webkit-text-fill-color:#DAD2F5;text-shadow:0 0 26px rgba(139,92,246,.5),0 2px 14px rgba(7,8,15,.9)}
+.hero-h1-sub{font-family:var(--fb);font-weight:300;font-style:italic;color:#DAD2F5;font-size:clamp(26px,2.4vw,46px);letter-spacing:.5px;display:block;margin-top:16px;-webkit-text-fill-color:#DAD2F5;text-shadow:0 0 26px rgba(139,92,246,.5),0 2px 14px rgba(7,8,15,.9)}
 .hero-spec{display:flex;gap:9px;flex-wrap:wrap;margin:28px 0 0}
 .hero-spec-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:100px;font-size:12px;font-weight:700;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.28);color:#C4B5FD;letter-spacing:.3px;white-space:nowrap;backdrop-filter:blur(8px)}
 .hero-divider{width:48px;height:1px;background:linear-gradient(90deg,var(--acc),transparent);margin:28px 0;opacity:.7}
