@@ -1407,8 +1407,8 @@ function BlackHoleTransition() {
       if (holeRef.current) holeRef.current.style.transform = `scale(${scale})`;
       // Glitch "twerk" (ref codemyui) quand on est presque dedans / qu'on commence à ressortir,
       // se coupe en s'éloignant du trou
-      const d = Math.max(0, (t - 0.55) / 0.45);
-      if (glitchRef.current) glitchRef.current.classList.toggle("on", d > 0.12);
+      const d = Math.max(0, (t - 0.38) / 0.62);
+      if (glitchRef.current) glitchRef.current.classList.toggle("on", d > 0.05);
       // Distorsion gravitationnelle : la lentille se renforce à mesure qu'on approche du trou
       if (lensRef.current) {
         const dist = `blur(${(1 + t * 8).toFixed(1)}px) saturate(${(1 + t * 0.6).toFixed(2)}) contrast(${(1 + t * 0.2).toFixed(2)})`;
