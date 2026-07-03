@@ -146,7 +146,7 @@ body.bht-active .sun-layer{opacity:0}
 .hero-right{position:absolute;right:0;top:0;height:100%;width:46%;display:flex;align-items:center;justify-content:center;z-index:1;pointer-events:none}
 .hero-h1{font-size:clamp(48px,7.2vw,118px);font-weight:800;line-height:.9;letter-spacing:-3px;position:relative;z-index:2}
 /* hero centré — sandwich 3D titre/astronaute + planète d'arrière-plan */
-.hero-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:max(210px,21vh);padding-bottom:70px;text-align:center}
+.hero-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:max(186px,19vh);padding-bottom:70px;text-align:center}
 .hero-cwrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%}
 .hero-cstage{position:relative;display:flex;flex-direction:column;align-items:center;margin-top:4px}
 .hero-h1c{margin:0;font-weight:800;line-height:.85;letter-spacing:-.045em;font-size:clamp(64px,11.5vw,190px)}
