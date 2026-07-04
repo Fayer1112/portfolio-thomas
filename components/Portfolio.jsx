@@ -241,6 +241,9 @@ body.bht-active .sun-layer{opacity:0}
 /* ─ ABOUT ─ */
 .about-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:80px;align-items:center;margin-top:64px}
 .about-img-wrap{position:relative}
+.apl{position:relative;width:100%;aspect-ratio:.9}
+.apl-svg{position:absolute;left:50%;bottom:-4%;transform:translateX(-50%);width:112%;overflow:visible}
+.apl-me{position:absolute;top:0;left:16%;width:55%;filter:drop-shadow(0 18px 44px rgba(0,0,0,.5))}
 .about-corners .c{position:absolute;border-color:var(--acc);border-style:solid;border-width:0;opacity:.4;width:28px;height:28px}
 .about-corners .c.tl{top:-10px;left:-10px;border-top-width:2px;border-left-width:2px;border-radius:5px 0 0 0}
 .about-corners .c.br{bottom:-10px;right:-10px;border-bottom-width:2px;border-right-width:2px;border-radius:0 0 5px 0}
@@ -1404,6 +1407,53 @@ function PlanetCard() {
   );
 }
 
+// Scène "Qui suis-je" : Thomas + logo Figma (Config 2024, détourés) debout sur une
+// planète à anneau dans la DA violette — d'après le photo-montage fourni par Thomas
+function AboutPlanetScene() {
+  return (
+    <div className="apl" role="img" aria-label="Thomas Leloup à Config 2024 devant le logo Figma, posé sur une planète violette à anneau">
+      <span className="planet-star" style={{ top:"4%", left:"6%" }}>✦</span>
+      <span className="planet-star" style={{ top:"16%", right:"3%", animationDelay:"1.2s", fontSize:10 }}>✦</span>
+      <span className="planet-star" style={{ bottom:"16%", left:"2%", animationDelay:".6s", fontSize:11 }}>✦</span>
+      <span className="planet-star" style={{ bottom:"6%", right:"9%", animationDelay:"1.8s" }}>✦</span>
+      <svg className="apl-svg" viewBox="0 0 640 620" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <radialGradient id="aplP" cx="50%" cy="26%" r="80%">
+            <stop offset="0%" stopColor="#5A35AC"/><stop offset="42%" stopColor="#3A2178"/><stop offset="78%" stopColor="#1E1048"/><stop offset="100%" stopColor="#140A34"/>
+          </radialGradient>
+          <radialGradient id="aplShade" cx="50%" cy="130%" r="90%">
+            <stop offset="0%" stopColor="rgba(4,2,14,.9)"/><stop offset="55%" stopColor="rgba(4,2,14,.42)"/><stop offset="100%" stopColor="rgba(4,2,14,0)"/>
+          </radialGradient>
+          <linearGradient id="aplR" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#C4B5FD"/><stop offset="50%" stopColor="#8B5CF6"/><stop offset="100%" stopColor="#6025C0"/>
+          </linearGradient>
+          <filter id="aplGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7"/></filter>
+          <clipPath id="aplBack"><rect x="-80" y="-60" width="800" height="412"/></clipPath>
+          <clipPath id="aplFront"><rect x="-80" y="352" width="800" height="330"/></clipPath>
+        </defs>
+        <g transform="rotate(-13 320 352)" clipPath="url(#aplBack)">
+          <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="url(#aplR)" strokeWidth="26" opacity=".4" filter="url(#aplGlow)"/>
+          <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="url(#aplR)" strokeWidth="13" opacity=".85"/>
+        </g>
+        <circle cx="320" cy="330" r="212" fill="url(#aplP)"/>
+        <ellipse cx="238" cy="272" rx="34" ry="30" fill="rgba(10,5,30,.35)"/>
+        <ellipse cx="330" cy="356" rx="46" ry="40" fill="rgba(10,5,30,.28)"/>
+        <ellipse cx="428" cy="252" rx="18" ry="15" fill="rgba(10,5,30,.4)"/>
+        <ellipse cx="212" cy="392" rx="22" ry="18" fill="rgba(10,5,30,.3)"/>
+        <path d="M428 372 q64 -30 102 8 q12 46 -24 82 q-62 12 -98 -24 q-8 -42 20 -66Z" fill="rgba(75,127,250,.32)"/>
+        <circle cx="320" cy="330" r="212" fill="url(#aplShade)"/>
+        <circle cx="320" cy="330" r="212" fill="none" stroke="rgba(196,181,253,.32)" strokeWidth="2" filter="url(#aplGlow)"/>
+        <g transform="rotate(-13 320 352)" clipPath="url(#aplFront)">
+          <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="url(#aplR)" strokeWidth="30" opacity=".45" filter="url(#aplGlow)"/>
+          <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="url(#aplR)" strokeWidth="15"/>
+          <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2.5"/>
+        </g>
+      </svg>
+      <img className="apl-me" src="/about-figma-me.png" alt="" loading="lazy"/>
+    </div>
+  );
+}
+
 // Transition d'aspiration au scroll : le trou noir grossit, avale l'écran (noir total),
 // puis nous recrache sur la section suivante. Pilote aussi le masquage du soleil (body.bht-active).
 function BlackHoleTransition() {
@@ -1966,14 +2016,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
         <h2 className="stit rv">Qui suis-je ?</h2>
         <div className="about-grid">
           <div className="about-img-wrap rv">
-            <div className="about-corners"><div className="c tl"/><div className="c br"/></div>
-            <div className="about-photo" style={{ overflow:"hidden" }}>
-              <img
-                src={PHOTO_URL}
-                alt="Thomas Leloup à Config 2024 — Figma"
-                style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", display:"block" }}
-              />
-            </div>
+            <AboutPlanetScene/>
             <div className="about-badge"><div className="about-badge-n">4+</div><div className="about-badge-t">ans d'expérience</div></div>
           </div>
           <div className="about-txt">
