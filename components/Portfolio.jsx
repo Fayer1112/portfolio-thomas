@@ -1734,7 +1734,7 @@ function Nav({ scrolled, onBack, onTrack, onNavigate, hidden, cvUrl }) {
     const scrollTimer = setTimeout(() => {
       document.getElementById(id)?.scrollIntoView({ behavior:"smooth" });
     }, 260);
-    if (onTrack) onTrack("event", { type:"nav_click", section:id });
+    if (onTrack) onTrack("nav_click", { section:id });
   };
 
   const links = [["presentation","Présentation"],["parcours","Parcours"],["projets","Projets"],["testimonials","Témoignages"],["contact","Contact"]];
@@ -1769,8 +1769,8 @@ function Nav({ scrolled, onBack, onTrack, onNavigate, hidden, cvUrl }) {
         <ul className="nlinks">
           {links.map(([id,lbl]) => <li key={id}><button className={active === id ? "on" : ""} onClick={() => go(id)}>{lbl}</button></li>)}
         </ul>
-        <a className="ncv btn-rf" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener">Mon CV ↗</a>
-        <a className="ncv-mobile" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener">CV ↗</a>
+        <a className="ncv btn-rf" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("cta_click", { label:"nav_cv" }); }}>Mon CV ↗</a>
+        <a className="ncv-mobile" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("cta_click", { label:"mobile_cv" }); }}>CV ↗</a>
         {!mobOpen && (
           <button className="nhb" onClick={openMenu} aria-label="Ouvrir le menu"><i className="bx bx-menu"/></button>
         )}
@@ -1965,10 +1965,10 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               et je pense aux <em>contraintes techniques pendant que je design</em>.
             </p>
             <div className="hero-acts afu d4">
-              <button className="btn-pri btn-rf" onClick={() => { document.getElementById("projets")?.scrollIntoView({ behavior:"smooth" }); if (onTrack) onTrack("event", { type:"cta_click", label:"hero_projects" }); }}>
+              <button className="btn-pri btn-rf" onClick={() => { document.getElementById("projets")?.scrollIntoView({ behavior:"smooth" }); if (onTrack) onTrack("cta_click", { label:"hero_projects" }); }}>
                 Voir mes projets →
               </button>
-              <a className="btn-sec btn-rf" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("event", { type:"cta_click", label:"hero_cv" }); }}>
+              <a className="btn-sec btn-rf" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("cta_click", { label:"hero_cv" }); }}>
                 Mon CV
               </a>
             </div>
@@ -2118,7 +2118,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
                   <PlanetCard key={p.id}/>
                 ) : (
                   <div key={p.id} className={`pcard ${row.sizes[pi] || "pcard-h-md"}`}
-                    onClick={() => { onProject(p.id); if (onTrack) onTrack("event", { type:"project_click", project:p.id }); }}>
+                    onClick={() => { onProject(p.id); if (onTrack) onTrack("project_click", { project:p.id }); }}>
                     <div className="pcard-img" style={{ height:"100%" }}>
                       {p.coverImage ? (
                         <img src={p.coverImage} alt={p.title} onLoad={handleCoverLoad(p.id)}
@@ -2197,7 +2197,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               Basé à Paris, ouvert au remote.<br/>Je réponds sous 24h.
             </p>
             <a className="contact-card" href="mailto:leloupthomas.pro@gmail.com"
-              onClick={()=>{ if(onTrack) onTrack("event",{type:"contact_click",label:"email"}); }}>
+              onClick={()=>{ if(onTrack) onTrack("contact_click",{label:"email"}); }}>
               <div className="contact-card-icon" style={{ background:"rgba(124,58,237,.12)" }}><i className="bx bx-envelope" style={{ color:"#A78BFA" }}/></div>
               <div>
                 <div className="contact-card-label">Email</div>
@@ -2205,7 +2205,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               </div>
             </a>
             <a className="contact-card" href="https://www.linkedin.com/in/thomas--leloup/" target="_blank" rel="noopener"
-              onClick={()=>{ if(onTrack) onTrack("event",{type:"contact_click",label:"linkedin"}); }}>
+              onClick={()=>{ if(onTrack) onTrack("contact_click",{label:"linkedin"}); }}>
               <div className="contact-card-icon" style={{ background:"rgba(75,127,250,.12)" }}><i className="bx bxl-linkedin" style={{ color:"#4B7FFA" }}/></div>
               <div>
                 <div className="contact-card-label">LinkedIn</div>
@@ -2245,7 +2245,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
         onClick={() => {
           const id = mobCtaMode==="contact" ? "contact" : "projets";
           document.getElementById(id)?.scrollIntoView({ behavior:"smooth" });
-          if (onTrack) onTrack("event", { type:"mob_cta_click", mode:mobCtaMode });
+          if (onTrack) onTrack("cta_click", { label: mobCtaMode==="contact" ? "mobile_contact" : "mobile_projects" });
         }}>
         {mobCtaMode==="contact"
           ? <><i className="bx bx-envelope" style={{ verticalAlign:"-2px", marginRight:7 }}/>Contactez-moi</>
@@ -2276,7 +2276,7 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
       lastScrollY.current = y;
     };
     window.addEventListener("scroll", fn, { passive: true });
-    if (onTrack) onTrack("event", { type:"project_view", project:p.id });
+    if (onTrack) onTrack("project_view", { project:p.id });
     return () => window.removeEventListener("scroll", fn);
   }, [p]);
   const getTag = (id) => tags.find((t) => t.id === id);
@@ -2467,7 +2467,7 @@ function ContactForm({ onTrack }) {
         body: JSON.stringify({ name:form.name, email:form.email, subject:form.subject, message:form.message }),
       });
       if (!r.ok) { setStatus("error"); return; }
-      if (onTrack) onTrack("event", { type:"contact_form_send", subject:form.subject });
+      if (onTrack) onTrack("contact_form_send", { subject:form.subject });
       setStatus("success");
     } catch { setStatus("error"); }
   };
