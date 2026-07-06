@@ -270,7 +270,7 @@ body.bht-active .sun-layer{opacity:0}
 .about-img-wrap{position:relative}
 .apl{position:relative;width:100%;aspect-ratio:.9}
 .apl-svg{position:absolute;left:50%;bottom:-4%;transform:translateX(-50%);width:112%;overflow:visible}
-.apl-me{position:absolute;top:0;left:16%;width:55%;filter:drop-shadow(0 18px 44px rgba(0,0,0,.5))}
+.apl-me{position:absolute;top:0;left:16%;width:55%;height:auto;filter:drop-shadow(0 18px 44px rgba(0,0,0,.5))}
 .about-corners .c{position:absolute;border-color:var(--acc);border-style:solid;border-width:0;opacity:.4;width:28px;height:28px}
 .about-corners .c.tl{top:-10px;left:-10px;border-top-width:2px;border-left-width:2px;border-radius:5px 0 0 0}
 .about-corners .c.br{bottom:-10px;right:-10px;border-bottom-width:2px;border-right-width:2px;border-radius:0 0 5px 0}
@@ -362,8 +362,9 @@ body.bht-active .sun-layer{opacity:0}
 .sun-disc,.sun-wash{position:absolute;top:13vh;left:0;width:33vmin;height:33vmin;border-radius:50%;animation:sunTravel 150s ease-in-out infinite}
 .sun-disc{background:radial-gradient(circle at 50% 50%,#FFF6DC 0%,#FFC868 14%,rgba(255,150,52,.85) 30%,rgba(255,116,26,.35) 52%,transparent 70%);filter:blur(1px)}
 .sun-disc::before{content:"";position:absolute;inset:-55%;border-radius:50%;background:radial-gradient(circle,rgba(255,160,70,.35) 0%,rgba(255,130,45,.12) 45%,transparent 70%)}
-.sun-wash{background:radial-gradient(circle,rgba(255,170,80,.32) 0%,rgba(255,130,45,.15) 38%,rgba(255,110,30,.05) 60%,transparent 74%)}
-.sun-wash::before{content:"";position:absolute;inset:-110%;border-radius:50%;background:radial-gradient(circle,rgba(255,150,60,.15) 0%,rgba(255,120,40,.06) 45%,transparent 70%)}
+/* nappe au-dessus du contenu volontairement discrète : elle passait sur les textes et les rendait illisibles */
+.sun-wash{background:radial-gradient(circle,rgba(255,170,80,.15) 0%,rgba(255,130,45,.07) 38%,rgba(255,110,30,.02) 60%,transparent 74%)}
+.sun-wash::before{content:"";position:absolute;inset:-110%;border-radius:50%;background:radial-gradient(circle,rgba(255,150,60,.06) 0%,rgba(255,120,40,.025) 45%,transparent 70%)}
 @media(max-width:768px){.sun-disc,.sun-wash{width:44vmin;height:44vmin;top:9vh}}
 /* trou noir XL de section — disque double contre-rotatif, lentille, logos Figma aspirés */
 .bhx{position:absolute;width:340px;aspect-ratio:1;pointer-events:none;z-index:0}
