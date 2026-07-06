@@ -15,7 +15,7 @@ html,body{overflow-x:hidden;max-width:100vw}
 :root{
   --bg:#07080F;--bg2:#0C0D18;--bg3:#111220;--bg4:#171826;
   --bdr:#1C1D2E;--bdr2:#282940;
-  --tx:#F0EDFF;--tx2:#7E7EA8;--tx3:#3A3A58;
+  --tx:#F0EDFF;--tx2:#7E7EA8;--tx3:#7B79A6; /* tx3 relevé de #3A3A58 (1.8:1, illisible) à 4.5:1+ AA sur les 2 fonds */
   --acc:#7C3AED;--accd:rgba(124,58,237,.12);--accg:rgba(124,58,237,.05);
   --fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
   --ease:cubic-bezier(.4,0,.2,1);
@@ -271,7 +271,7 @@ body.adm-open .sun-layer{display:none}
 
 /* ─ SECTION ─ */
 .sec{padding:160px 64px;position:relative;z-index:1}
-.seye{font-size:10.5px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:var(--acc);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.seye{font-size:10.5px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:#A78BFA;margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .seye::before{content:'';width:20px;height:1px;background:var(--acc)}
 .stit{font-size:clamp(30px,4vw,52px);font-weight:800;letter-spacing:-2px;max-width:680px;line-height:1;margin-bottom:8px}
 
@@ -327,7 +327,7 @@ body.adm-open .sun-layer{display:none}
 .tl-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:56px}
 .tl-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:12px;padding:22px;transition:all .25s;position:relative;overflow:hidden}
 .tl-card::after{display:none}
-.tl-year{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--acc);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.tl-year{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#A78BFA;margin-bottom:8px;display:flex;align-items:center;gap:8px}
 .tl-year::before{content:'';width:14px;height:1px;background:var(--acc)}
 .tl-title{font-family:var(--fd);font-size:16px;font-weight:800;margin-bottom:3px;position:relative;z-index:1}
 .tl-school{font-size:12px;color:var(--tx2);font-weight:400;position:relative;z-index:1}
@@ -339,7 +339,7 @@ body.adm-open .sun-layer{display:none}
 .pf-btn:hover{border-color:rgba(167,139,250,.6);color:#E9E4FF;background:rgba(124,58,237,.16)}
 .pf-btn.on{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 6px 22px rgba(124,58,237,.4)}
 .pf-sep{width:1px;background:var(--bdr);margin:0 4px;align-self:stretch}
-.pgallery{display:grid;gap:16px;max-width:1180px;margin:0 auto}
+.pgallery{display:grid;gap:16px;max-width:min(1460px,calc(100vw - 96px));margin:0 auto}
 #projets::before{content:"";position:absolute;inset:-30px 0;background:radial-gradient(ellipse 88% 82% at 50% 50%,#04030A 58%,rgba(4,3,10,0) 100%);pointer-events:none;z-index:-1}
 .pgallery-row{display:grid;gap:14px}
 .pgallery-row.r1{grid-template-columns:var(--row-cols, 2fr 1fr)}
@@ -357,19 +357,21 @@ body.adm-open .sun-layer{display:none}
 .pcard:hover .pcard-body{transform:translateY(0);opacity:1}
 .pcard:hover .pcard-arr{opacity:1;transform:scale(1) rotate(0)}
 .pcard-img{width:100%;height:100%;transition:transform .65s var(--ease);display:block;object-fit:cover}
-.pcard-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,8,15,.97) 25%,rgba(7,8,15,.55) 55%,rgba(7,8,15,.22) 80%,rgba(7,8,15,.1) 100%);opacity:.45;transition:opacity .3s}
+/* hover : voile nettement plus dense — les covers claires (ex. DS Blue Bird) rendaient
+   les textes illisibles (contraste AA) */
+.pcard-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,8,15,.98) 30%,rgba(7,8,15,.86) 55%,rgba(7,8,15,.55) 80%,rgba(7,8,15,.35) 100%);opacity:.45;transition:opacity .3s}
 .pcard-body{position:absolute;bottom:0;left:0;right:0;padding:24px;transform:translateY(12px);opacity:0;transition:all .3s var(--ease)}
-.pcard-cat{font-size:9.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--acc);margin-bottom:5px}
-.pcard-title{font-family:var(--fd);font-size:20px;font-weight:800;margin-bottom:5px;letter-spacing:-.4px}
-.pcard-sub{font-size:12px;color:var(--tx2);line-height:1.5;margin-bottom:9px}
+.pcard-cat{font-size:9.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#B79CFF;margin-bottom:5px;text-shadow:0 1px 8px rgba(4,3,10,.9)}
+.pcard-title{font-family:var(--fd);font-size:20px;font-weight:800;margin-bottom:5px;letter-spacing:-.4px;text-shadow:0 1px 10px rgba(4,3,10,.85)}
+.pcard-sub{font-size:12px;color:#C9C4E4;line-height:1.5;margin-bottom:9px;text-shadow:0 1px 8px rgba(4,3,10,.9)}
 .pcard-tags{display:flex;gap:5px;flex-wrap:wrap}
 /* impact + rôle : le résultat chiffré visible dès le hover — argument recruteur */
 .pcard-impact{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px}
-.pcard-imp{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;background:rgba(5,234,250,.1);border:1px solid rgba(5,234,250,.3);color:#9BF3FA;font-size:11px;font-weight:600;line-height:1.4}
-.pcard-imp b{color:#05EAFA;font-weight:800;font-size:12.5px}
-.pcard-imp i{font-size:13px;color:#05EAFA}
-.pcard-role{font-size:10.5px;color:var(--tx2);font-weight:600;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.07)}
-.ptag{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(255,255,255,.06);color:var(--tx2)}
+.pcard-imp{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;background:rgba(3,16,20,.88);border:1px solid rgba(5,234,250,.35);color:#A8F5FC;font-size:11px;font-weight:600;line-height:1.4}
+.pcard-imp b{color:#25EFFD;font-weight:800;font-size:12.5px}
+.pcard-imp i{font-size:13px;color:#25EFFD}
+.pcard-role{font-size:10.5px;color:#D4CFEA;font-weight:600;padding:4px 10px;border-radius:6px;background:rgba(9,7,20,.88);border:1px solid rgba(255,255,255,.12)}
+.ptag{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(9,7,20,.85);border:1px solid rgba(255,255,255,.1);color:#CFCAE6}
 .pcard-arr{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.6) rotate(-45deg);transition:all .35s var(--ease);color:#fff;font-size:14px}
 .pcard-lock{position:absolute;top:10px;left:10px;background:rgba(7,8,15,.72);backdrop-filter:blur(8px);border:1px solid var(--bdr);border-radius:4px;padding:3px 10px;font-size:10px;color:var(--tx2);font-weight:500}
 .pno{text-align:center;padding:60px;color:var(--tx3);font-size:14px}
@@ -523,7 +525,7 @@ body.adm-open .sun-layer{display:none}
 .pdbk{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:8px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);color:#C4B5FD;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:32px;transition:all .22s;font-family:var(--fb);letter-spacing:.2px}
 .pdbk:hover{background:rgba(124,58,237,.2);border-color:rgba(124,58,237,.5);color:#DDD6FE;transform:translateX(-3px)}
 .pd-hero-inner{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:flex-end;padding-bottom:44px;border-bottom:1px solid var(--bdr)}
-.pd-cat{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.pd-cat{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#A78BFA;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .pd-cat::before{content:'';width:16px;height:1px;background:var(--acc)}
 .pd-h1{font-size:clamp(48px,6.5vw,88px);font-weight:800;letter-spacing:-3.5px;line-height:.92;margin-bottom:16px}
 .pd-subtitle{font-size:17px;color:var(--tx2);font-weight:300;max-width:560px;line-height:1.65}
@@ -946,6 +948,15 @@ const STATIC_STARS = Object.freeze([]);
 const hexRgb = (hex) => {
   const n = parseInt(hex.slice(1), 16);
   return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
+};
+// Texte de tag : la couleur (libre, choisie en DB) éclaircie de 55% vers le blanc —
+// garantit un contraste AA ≥4.5:1 sur fond sombre quelle que soit la teinte d'origine
+const tagTxt = (hex) => {
+  try {
+    const n = parseInt(hex.slice(1), 16);
+    const mix = (c) => Math.round(c + (255 - c) * 0.55);
+    return `rgb(${mix((n >> 16) & 255)},${mix((n >> 8) & 255)},${mix(n & 255)})`;
+  } catch { return "#E4E1F5"; }
 };
 // trailHue = teinte HSL des étoiles filantes ; scrollHue = dérive de teinte au scroll ; holes = trous noirs décoratifs
 const BG_VARIANTS = {
@@ -1884,8 +1895,9 @@ function ProjectCoverSVG({ type = "cabin", featured = false }) {
 // ── COMPETENCE DIAGRAM ───────────────────────────────────────────────────────
 function DoubleHatTree({ visible }) {
   const skills = [
-    { label:"UX Research",   pct:92, color:TOKENS.blue+"CC" },
-    { label:"UI / Figma",    pct:95, color:TOKENS.acc },
+    // txt = variante claire pour le % (la couleur de barre passait sous les 4.5:1 AA)
+    { label:"UX Research",   pct:92, color:TOKENS.blue+"CC", txt:"#8FB0FF" },
+    { label:"UI / Figma",    pct:95, color:TOKENS.acc, txt:"#A78BFA" },
     { label:"Design System", pct:88, color:"#06D6A0" },
     { label:"Design Ops",    pct:80, color:"#4B7FFA" },
     { label:"React / HTML",  pct:72, color:"#F59E0B" },
@@ -2016,7 +2028,7 @@ function DoubleHatTree({ visible }) {
           <div key={s.label} style={{ display:"flex", flexDirection:"column", gap:7 }}>
             <div style={{ display:"flex", justifyContent:"space-between", fontSize:13.5, fontWeight:600, color:"var(--tx2)" }}>
               <span>{s.label}</span>
-              <span style={{ color:s.color, fontFamily:"var(--fd)", fontWeight:700 }}>{s.pct}%</span>
+              <span style={{ color:s.txt || s.color, fontFamily:"var(--fd)", fontWeight:700 }}>{s.pct}%</span>
             </div>
             <div style={{ height:7, background:"var(--bdr)", borderRadius:4, overflow:"hidden" }}>
               <div style={{
@@ -2665,11 +2677,12 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
             <h1 className="pd-h1 afu d1">{p.title}</h1>
             <p className="pd-subtitle afu d2">{p.subtitle}</p>
             <div className="pd-taglist afu d3">
-              {p.tags?.map((tid) => { const t=getTag(tid); return t?<span key={tid} className="pd-tag" style={{ background:t.color+"1A", color:t.color, border:`1px solid ${t.color}30` }}>{t.name}</span>:null; })}
+              {p.tags?.map((tid) => { const t=getTag(tid); return t?<span key={tid} className="pd-tag" style={{ background:t.color+"1A", color:tagTxt(t.color), border:`1px solid ${t.color}30` }}>{t.name}</span>:null; })}
               {p.confidential && <span className="pd-tag pd-conf"><i className="bx bx-lock-alt" style={{ verticalAlign:"-2px" }}/> Confidentiel</span>}
             </div>
           </div>
-          <div className="pd-year-badge afu d2">{p.year}</div>
+          {/* watermark décoratif (l'année est lisible dans le brief) — exempt WCAG 1.4.3 */}
+          <div className="pd-year-badge afu d2" aria-hidden="true">{p.year}</div>
         </div>
       </div>
       <div className="pd-brief rv">
