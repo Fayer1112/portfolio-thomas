@@ -100,8 +100,18 @@ button{cursor:pointer;font-family:var(--fb)}
 .bht-orbit{position:absolute;top:50%;left:50%;width:0;height:0;animation:spinSlow 9s linear infinite}
 @keyframes bhtFall{0%{transform:translate(50vmin,-50%) rotate(0deg) scale(1);opacity:0}8%{opacity:.95}68%{transform:translate(17vmin,-50%) rotate(240deg) scale(.55);opacity:.9}100%{transform:translate(2vmin,-50%) rotate(520deg) scale(.04);opacity:0}}
 .bht-black{position:absolute;inset:0;background:#050308;opacity:0}
+/* SORTIE du tunnel : bascule chromatique violet→cyan + hint de scroll, pour que le
+   visiteur comprenne qu'il en sort (l'entrée et la sortie étaient identiques) */
+.bht-hole{transition:filter 1.4s ease}
+.bht-sticky.out .bht-hole{filter:hue-rotate(-105deg) saturate(1.15)}
+.bht-hint{position:absolute;left:50%;bottom:7vh;transform:translateX(-50%);z-index:6;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(5,234,250,.9);text-shadow:0 0 18px rgba(5,234,250,.5);opacity:0;transition:opacity .9s ease .35s;white-space:nowrap;text-align:center;pointer-events:none}
+.bht-sticky.out .bht-hint{opacity:1}
+.bht-hint i{display:block;font-size:18px;margin-top:5px;animation:hintBob 1.6s ease-in-out infinite}
+@keyframes hintBob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+@media(max-width:768px){.bht-hint{font-size:9.5px;letter-spacing:2px}}
 .sun-layer{transition:opacity .5s ease}
 body.bht-active .sun-layer{opacity:0}
+body.adm-open .sun-layer{display:none}
 @media(max-width:768px){.bht-wrap{height:180vh}}
 /* Firefox (Gecko) : filtres dynamiques beaucoup plus lents que Blink — on allège le tunnel
    sans toucher au rendu Chrome. @supports -moz-appearance ne matche que Firefox. */
@@ -284,7 +294,18 @@ body.bht-active .sun-layer{opacity:0}
 .about-badge-t{font-size:12px;color:var(--tx2);margin-top:3px;font-weight:500}
 .about-txt p{font-size:15px;color:var(--tx2);line-height:1.82;margin-bottom:14px;font-weight:400}
 .about-skills{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
-.askill{padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:500;border:1px solid var(--bdr);color:var(--tx2);background:var(--bg3)}
+.askill{padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:500;border:1px solid var(--bdr);color:var(--tx2);background:var(--bg3);transition:all .22s}
+.askill:hover{border-color:rgba(124,58,237,.55);color:#EDE8FF;box-shadow:0 0 14px rgba(124,58,237,.22);transform:translateY(-1px)}
+/* manifesto : la philosophie en exergue — barre gradient cyan→violet */
+.about-manifesto{position:relative;margin-bottom:24px;padding:6px 0 6px 22px;font-family:var(--fd);font-style:italic;font-size:16.5px;line-height:1.7;color:#D6CDF6;letter-spacing:-.2px}
+.about-manifesto::before{content:"";position:absolute;left:0;top:2px;bottom:2px;width:3px;border-radius:3px;background:linear-gradient(180deg,#05EAFA,#7C3AED)}
+.about-txt .hl{color:#C4B5FD;font-weight:600}
+/* tags groupés par famille — spectre lisible plutôt que nuage uniforme */
+.about-skill-groups{display:flex;flex-direction:column;gap:13px;margin-top:26px}
+.askill-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.askill-lab{display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:800;letter-spacing:2.4px;text-transform:uppercase;color:var(--tx3);min-width:104px;flex-shrink:0}
+.askill-lab i{color:var(--acc);font-size:14px}
+.askill-pills{display:flex;flex-wrap:wrap;gap:7px}
 
 /* ─ DOUBLE HAT SECTION ─ */
 .dh-wrap{margin-top:72px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
@@ -342,6 +363,12 @@ body.bht-active .sun-layer{opacity:0}
 .pcard-title{font-family:var(--fd);font-size:20px;font-weight:800;margin-bottom:5px;letter-spacing:-.4px}
 .pcard-sub{font-size:12px;color:var(--tx2);line-height:1.5;margin-bottom:9px}
 .pcard-tags{display:flex;gap:5px;flex-wrap:wrap}
+/* impact + rôle : le résultat chiffré visible dès le hover — argument recruteur */
+.pcard-impact{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px}
+.pcard-imp{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;background:rgba(5,234,250,.1);border:1px solid rgba(5,234,250,.3);color:#9BF3FA;font-size:11px;font-weight:600;line-height:1.4}
+.pcard-imp b{color:#05EAFA;font-weight:800;font-size:12.5px}
+.pcard-imp i{font-size:13px;color:#05EAFA}
+.pcard-role{font-size:10.5px;color:var(--tx2);font-weight:600;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.07)}
 .ptag{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(255,255,255,.06);color:var(--tx2)}
 .pcard-arr{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.6) rotate(-45deg);transition:all .35s var(--ease);color:#fff;font-size:14px}
 .pcard-lock{position:absolute;top:10px;left:10px;background:rgba(7,8,15,.72);backdrop-filter:blur(8px);border:1px solid var(--bdr);border-radius:4px;padding:3px 10px;font-size:10px;color:var(--tx2);font-weight:500}
@@ -545,6 +572,11 @@ body.bht-active .sun-layer{opacity:0}
 .pd-metric-val{font-family:var(--fd);font-size:38px;font-weight:800;color:var(--acc);letter-spacing:-2px;line-height:1}
 .pd-metric-lbl{font-size:12px;color:var(--tx2);margin-top:8px;line-height:1.55;font-weight:500}
 .pd-tools-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+/* CTA de conversion en fin d'étude de cas — le recruteur vient de voir le process complet */
+.pd-cta{margin:64px auto 40px;max-width:880px;width:calc(100% - 48px);padding:38px 28px;border-radius:18px;text-align:center;background:radial-gradient(circle at 50% 0%,rgba(124,58,237,.17),rgba(11,9,24,.55) 72%);border:1px solid rgba(139,92,246,.32);position:relative;z-index:1}
+.pd-cta-t{font-family:var(--fd);font-size:25px;font-weight:800;letter-spacing:-.5px;margin-bottom:9px}
+.pd-cta-s{font-size:13.5px;color:var(--tx2);max-width:540px;margin:0 auto 22px;line-height:1.7}
+.pd-cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .pd-tool{display:flex;align-items:center;gap:9px;padding:10px 18px;border-radius:9px;background:var(--bg3);border:1px solid var(--bdr)}
 .pd-tool-logo{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800;color:#fff;object-fit:contain}
 .pd-tool-name{font-size:13px;font-weight:600;color:var(--tx)}
@@ -1637,8 +1669,54 @@ function PlanetCard() {
 // Scène "Qui suis-je" : Thomas + logo Figma (Config 2024, détourés) debout sur une
 // planète à anneau dans la DA violette — d'après le photo-montage fourni par Thomas
 function AboutPlanetScene() {
+  const wrapRef = useRef(null);
+  const backRef = useRef(null);
+  const frontRef = useRef(null);
+  useEffect(() => {
+    const back = backRef.current, front = frontRef.current, wrap = wrapRef.current;
+    if (!back || !front || !wrap) return;
+    const cos13 = Math.cos(-13 * Math.PI / 180), sin13 = Math.sin(-13 * Math.PI / 180);
+    // position sur l'ellipse de l'anneau (mêmes paramètres : cx320 cy352 rx304 ry86 rot -13°)
+    const place = (th) => {
+      const ex = 304 * Math.cos(th), ey = 86 * Math.sin(th);
+      const x = 320 + ex * cos13 - ey * sin13;
+      const y = 352 + ex * sin13 + ey * cos13;
+      const k = Math.min(1, Math.max(0, (y - 266) / 172)); // 0 = fond, 1 = premier plan
+      const behind = Math.sin(th) < 0; // même frontière que le clip back/front de l'anneau (repère incliné)
+      const g = behind ? back : front, other = behind ? front : back;
+      g.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${(0.84 + k * 0.26).toFixed(3)})`);
+      g.setAttribute("opacity", (0.45 + k * 0.55).toFixed(2));
+      g.style.display = "";
+      other.style.display = "none";
+    };
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      place(Math.PI * 0.3); // pose statique au premier plan, à droite
+      return;
+    }
+    let raf = 0, running = false;
+    const t0 = performance.now() - 6000; // démarre au premier plan à droite
+    const tick = (now) => {
+      place(((now - t0) / 24000) * Math.PI * 2);
+      raf = requestAnimationFrame(tick);
+    };
+    // ne tourne que quand la scène est visible à l'écran
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !running) { running = true; raf = requestAnimationFrame(tick); }
+      else if (!e.isIntersecting && running) { running = false; cancelAnimationFrame(raf); }
+    }, { threshold: 0.05 });
+    io.observe(wrap);
+    return () => { io.disconnect(); cancelAnimationFrame(raf); };
+  }, []);
+  const badge = (
+    <>
+      <rect x="-77" y="-29" width="154" height="58" rx="14" fill="#100E22" stroke="#3D3070" strokeWidth="1.5"/>
+      <text x="-59" y="10" fontFamily="Syne, sans-serif" fontWeight="800" fontSize="28" fill="#A78BFA">4+</text>
+      <text x="-10" y="-3" fontFamily="DM Sans, sans-serif" fontSize="12" fill="#B9B3D9">ans</text>
+      <text x="-10" y="13" fontFamily="DM Sans, sans-serif" fontSize="12" fill="#B9B3D9">d'expérience</text>
+    </>
+  );
   return (
-    <div className="apl" role="img" aria-label="Thomas Leloup à Config 2024 devant le logo Figma, posé sur une planète violette à anneau">
+    <div ref={wrapRef} className="apl" role="img" aria-label="Thomas Leloup à Config 2024 devant le logo Figma, posé sur une planète violette à anneau — 4 ans et plus d'expérience">
       <span className="planet-star" style={{ top:"4%", left:"6%" }}>✦</span>
       <span className="planet-star" style={{ top:"16%", right:"3%", animationDelay:"1.2s", fontSize:10 }}>✦</span>
       <span className="planet-star" style={{ bottom:"16%", left:"2%", animationDelay:".6s", fontSize:11 }}>✦</span>
@@ -1662,6 +1740,8 @@ function AboutPlanetScene() {
           <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="url(#aplR)" strokeWidth="26" opacity=".4" filter="url(#aplGlow)"/>
           <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="url(#aplR)" strokeWidth="13" opacity=".85"/>
         </g>
+        {/* badge en orbite — moitié arrière : occulté par la planète */}
+        <g ref={backRef} style={{ display:"none" }}>{badge}</g>
         <circle cx="320" cy="330" r="212" fill="url(#aplP)"/>
         <ellipse cx="238" cy="272" rx="34" ry="30" fill="rgba(10,5,30,.35)"/>
         <ellipse cx="330" cy="356" rx="46" ry="40" fill="rgba(10,5,30,.28)"/>
@@ -1675,6 +1755,8 @@ function AboutPlanetScene() {
           <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="url(#aplR)" strokeWidth="15"/>
           <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2.5"/>
         </g>
+        {/* badge en orbite — moitié avant : passe devant la planète */}
+        <g ref={frontRef} style={{ display:"none" }}>{badge}</g>
       </svg>
       <img className="apl-me" src="/about-figma-me.webp" alt="" loading="lazy" width="710" height="612"/>
     </div>
@@ -1709,6 +1791,8 @@ function BlackHoleTransition() {
         else { s.style.position = "fixed"; s.style.top = "0"; s.style.bottom = "auto"; }
       }
       const t = p < 0.5 ? p * 2 : (1 - p) * 2; // 0 → 1 (englouti) → 0
+      // phase SORTIE : bascule chromatique + hint de scroll (sinon entrée/sortie identiques = confusion)
+      if (s) s.classList.toggle("out", p > 0.52);
       // Trou nativement grand (110vmin) → scale max faible pour garder le conic-gradient net
       const scale = 0.07 + Math.pow(t, 1.5) * 2.75;
       if (holeRef.current) holeRef.current.style.transform = `scale(${scale})`;
@@ -1753,6 +1837,7 @@ function BlackHoleTransition() {
             ))}
           </div>
         </div>
+        <div className="bht-hint">De l'autre côté — continuez l'exploration<i className="bx bx-chevron-down"/></div>
         <div ref={slicesRef} className="bht-slices">
           {["c","p","c","p","p","c","p","c","c","p","c","p"].map((col, i) => (
             <div key={i} className={`bht-slice ${col} s${i + 1}`}/>
@@ -2093,7 +2178,12 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [/* onTrack intentionally omitted — stable callback ref */]);
 
-  if (goAdmin) return <AdminPage onBack={() => setGoAdmin(false)}/>;
+  // le back-office s'ouvre DANS HomePage : on coupe le soleil (sinon il passe sur l'admin)
+  useEffect(() => {
+    document.body.classList.toggle("adm-open", goAdmin);
+    return () => document.body.classList.remove("adm-open");
+  }, [goAdmin]);
+  if (goAdmin) return <Suspense fallback={null}><AdminPage onBack={() => setGoAdmin(false)}/></Suspense>;
 
   const categories = ["Tous", ...new Set(projects.map((p) => p.category))];
   const filtered = projects
@@ -2254,15 +2344,23 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
         <div className="about-grid">
           <div className="about-img-wrap rv">
             <AboutPlanetScene/>
-            <div className="about-badge"><div className="about-badge-n">4+</div><div className="about-badge-t">ans d'expérience</div></div>
           </div>
           <div className="about-txt">
-            <p className="rv">Dès l'âge de 12 ans, la modélisation 3D a été ma première rencontre avec le design. Après un parcours de développeur Full Stack, j'ai choisi de mettre cette double expertise au service du Product Design.</p>
-            <p className="rv">Ce qui me différencie : mon background de développeur Full Stack me permet de concevoir en anticipant les contraintes techniques, sans pour autant coder aujourd'hui. Je parle le même langage que les équipes dev, ce qui fluidifie considérablement les cycles de livraison.</p>
-            <p className="rv">Spécialisé en Design Ops, je structure les processus design pour les rendre scalables, reproductibles et alignés avec les équipes engineering.</p>
-            <div className="about-skills rv">
-              {["Audit UX","Design System","Design Ops","Maquettage","Prototypage","UX Research","UX Writing","Tests utilisateurs","Design thinking","React / HTML","Dev Handoff"].map((s) => (
-                <span className="askill" key={s}>{s}</span>
+            <div className="about-manifesto rv">
+              «&nbsp;Rien n'est laissé au hasard&nbsp;: chaque détail est pensé, chaque usage anticipé — et même l'imprévu est calculé.&nbsp;»
+            </div>
+            <p className="rv">Dès l'âge de 12 ans, la modélisation 3D a été ma première rencontre avec le design. Après un parcours de <span className="hl">développeur Full Stack</span>, j'ai choisi de mettre cette double expertise au service du Product Design.</p>
+            <p className="rv">Je conçois en <span className="hl">anticipant les contraintes techniques</span> et les futurs cas d'usage — je parle le même langage que les équipes dev. Spécialisé en <span className="hl">Design Ops</span>, je structure les process design pour les rendre scalables, reproductibles et alignés avec l'engineering.</p>
+            <div className="about-skill-groups rv">
+              {[
+                ["Recherche", "bx-search", ["Audit UX","UX Research","Tests utilisateurs","Design thinking"]],
+                ["Design", "bxs-palette", ["Design System","Maquettage","Prototypage","UX Writing"]],
+                ["Ops & Dev", "bx-code-alt", ["Design Ops","React / HTML","Dev Handoff"]],
+              ].map(([lab, ic, items]) => (
+                <div className="askill-row" key={lab}>
+                  <span className="askill-lab"><i className={`bx ${ic}`}/>{lab}</span>
+                  <span className="askill-pills">{items.map((s) => <span className="askill" key={s}>{s}</span>)}</span>
+                </div>
               ))}
             </div>
           </div>
@@ -2371,6 +2469,12 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
                       <div className="pcard-cat">{p.category}</div>
                       <div className="pcard-title">{p.title}</div>
                       <div className="pcard-sub">{p.subtitle}</div>
+                      {(p.metrics?.[0] || p.role) && (
+                        <div className="pcard-impact">
+                          {p.metrics?.[0] && <span className="pcard-imp"><i className="bx bx-trending-up"/><b>{p.metrics[0].value}</b>{String(p.metrics[0].label || "").split(/[,—]/)[0].trim()}</span>}
+                          {p.role && <span className="pcard-role">{p.role}</span>}
+                        </div>
+                      )}
                       <div className="pcard-tags">
                         {p.tags.slice(0,4).map((tid) => { const t=getTag(tid); return t?<span className="ptag" key={tid}>{t.name}</span>:null; })}
                       </div>
@@ -2660,6 +2764,15 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
             ))}
           </div>
         </>)}
+      </div>
+      {/* Conversion : le recruteur vient de dérouler tout le process — c'est LE moment */}
+      <div className="pd-cta rv">
+        <div className="pd-cta-t">Ce process vous parle ?</div>
+        <div className="pd-cta-s">Chaque projet suit la même exigence : anticiper les usages, mesurer l'impact, soigner le moindre détail. Parlons de ce que je peux apporter à votre équipe.</div>
+        <div className="pd-cta-btns">
+          <button className="btn-pri btn-rf" onClick={() => { if (onTrack) onTrack("cta_click", { label:"project_contact" }); onBack("contact"); }}>Discutons-en →</button>
+          <a className="btn-sec btn-rf" href={cvUrl ? "/api/cv" : "#"} target="_blank" rel="noopener" onClick={() => { if (onTrack) onTrack("cta_click", { label:"project_cv" }); }}>Mon CV</a>
+        </div>
       </div>
       <div className="pd-nav">
         <div>{prev && <><div className="pd-nav-lbl">← Précédent</div><div className="pd-nav-t" onClick={() => onProject(prev.id)}>{prev.title}</div></>}</div>
