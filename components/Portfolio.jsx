@@ -1566,7 +1566,8 @@ function BlackHoleTransition() {
   const slicesRef = useRef(null);
   useEffect(() => {
     // backdrop-filter animé par frame = très coûteux sur Firefox → lentille désactivée là-bas
-    const noLens = typeof CSS !== "undefined" && CSS.supports("-moz-appearance", "none");
+    // NB : window.CSS obligatoire — la constante locale CSS (feuille de style) masque le global
+    const noLens = typeof window !== "undefined" && !!window.CSS?.supports?.("-moz-appearance", "none");
     let lastLens = "";
     const onScroll = () => {
       const el = wrapRef.current; if (!el) return;
