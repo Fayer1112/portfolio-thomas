@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef, useId } from "react";
-import AdminPage from "./admin/AdminPanel";
+import React, { useState, useEffect, useCallback, useRef, useId, Suspense, lazy } from "react";
+// Lazy : le back-office (~78Ko) ne se charge que quand on ouvre l'admin, pas pour les visiteurs
+const AdminPage = lazy(() => import("./admin/AdminPanel"));
 import { useStorage, fromDbProject, fromDbTestimonial, DEFAULT_TAGS, DEFAULT_PROJECTS, DEFAULT_TESTIMONIALS } from "./admin/shared";
 
 const FONTS = "https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap";
@@ -2941,7 +2942,7 @@ export default function App({ initialData = {}, initialView, initialProjectId })
 
   const curtainClass = `page-curtain${transPhase === "in" ? " cin" : transPhase === "out" ? " cout" : ""}`;
 
-  if (view === "admin") return <><AppStyles/><AdminPage onBack={goHome}/><div className={curtainClass}/></>;
+  if (view === "admin") return <><AppStyles/><Suspense fallback={null}><AdminPage onBack={goHome}/></Suspense><div className={curtainClass}/></>;
   if (view === "404") return <><AppStyles/><NotFoundPage onHome={goHome}/></>;
 
   if (view === "project") {
