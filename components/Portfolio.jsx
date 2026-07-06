@@ -101,6 +101,14 @@ button{cursor:pointer;font-family:var(--fb)}
 .sun-layer{transition:opacity .5s ease}
 body.bht-active .sun-layer{opacity:0}
 @media(max-width:768px){.bht-wrap{height:180vh}}
+/* Firefox (Gecko) : filtres dynamiques beaucoup plus lents que Blink — on allège le tunnel
+   sans toucher au rendu Chrome. @supports -moz-appearance ne matche que Firefox. */
+@supports (-moz-appearance:none){
+  .bht-glitch.on{filter:none}
+  .bht-arch{filter:blur(3px)}
+  .bht-core{box-shadow:0 0 120px 45px rgba(0,0,0,.95)}
+  .bht-slice{mix-blend-mode:normal}
+}
 .page-curtain{position:fixed;inset:0;z-index:9998;pointer-events:none;background:linear-gradient(170deg,#060812 0%,#0c0d1e 45%,#130f35 75%,#1a0847 100%);transform:translateY(105%);will-change:transform}
 .page-curtain.cin{animation:curtainIn .42s cubic-bezier(.77,0,.175,1) forwards}
 .page-curtain.cout{animation:curtainOut .42s cubic-bezier(.77,0,.175,1) forwards}
@@ -961,6 +969,8 @@ function BgCanvas({ variant = "home" }) {
     };
 
     const tick = (ts) => {
+      // tunnel plein écran au-dessus → inutile de peindre les étoiles pendant ce temps
+      if (document.body.classList.contains("bht-active")) { lastTs = ts; raf = requestAnimationFrame(tick); return; }
       const dt = Math.min(ts - lastTs, 50); lastTs = ts; elapsed += dt;
       ctx.clearRect(0, 0, W, H);
 
