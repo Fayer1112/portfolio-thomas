@@ -68,7 +68,7 @@ button{cursor:pointer;font-family:var(--fb)}
 .bht-glitch{position:absolute;inset:0}
 .bht-glitch.on{animation:bhtTwerk .42s steps(2,end) infinite;filter:drop-shadow(3px 0 rgba(5,234,250,.38)) drop-shadow(-3px 0 rgba(255,107,211,.38))}
 .bht-slices{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.bht-slice{position:absolute;left:0;right:0;height:1%;opacity:0;pointer-events:none;mix-blend-mode:screen}
+.bht-slice{position:absolute;top:0;left:0;right:0;height:1%;opacity:0;pointer-events:none;mix-blend-mode:screen;will-change:transform,opacity}
 .bht-slice.c{background:#05EAFA}
 .bht-slice.p{background:#FF6BD3}
 .bht-slices.on .bht-slice{animation-iteration-count:infinite;animation-timing-function:steps(1,end)}
@@ -85,10 +85,11 @@ button{cursor:pointer;font-family:var(--fb)}
 .bht-slices.on .s11{animation-name:bhtSlice2;animation-duration:.7s;animation-delay:.24s;height:.5%}
 .bht-slices.on .s12{animation-name:bhtSlice4;animation-duration:.46s;animation-delay:.15s;height:.8%}
 @keyframes bhtTwerk{0%{transform:translate(0,0) skewX(0)}25%{transform:translate(-.5%,.25%) skewX(.8deg)}50%{transform:translate(.4%,-.2%) skewX(-.7deg)}75%{transform:translate(-.25%,-.3%) skewX(.5deg)}100%{transform:translate(0,0) skewX(0)}}
-@keyframes bhtSlice1{0%{top:18%;opacity:0}12%{opacity:1}30%{top:64%}50%{top:38%;opacity:0}70%{top:74%;opacity:1}100%{top:22%;opacity:0}}
-@keyframes bhtSlice2{0%{top:52%;opacity:1}25%{top:12%;opacity:0}45%{top:80%;opacity:1}75%{top:30%}100%{top:58%;opacity:0}}
-@keyframes bhtSlice3{0%{top:8%;opacity:1}20%{top:44%;opacity:0}40%{top:70%;opacity:1}60%{top:26%;opacity:1}80%{opacity:0}100%{top:86%;opacity:1}}
-@keyframes bhtSlice4{0%{top:34%;opacity:0}15%{top:90%;opacity:1}35%{opacity:0}55%{top:6%;opacity:1}85%{top:48%;opacity:0}100%{top:60%;opacity:1}}
+/* translateY (composité) et non top : top déclenchait ~80 reflows/s pendant le tunnel */
+@keyframes bhtSlice1{0%{transform:translateY(18vh);opacity:0}12%{opacity:1}30%{transform:translateY(64vh)}50%{transform:translateY(38vh);opacity:0}70%{transform:translateY(74vh);opacity:1}100%{transform:translateY(22vh);opacity:0}}
+@keyframes bhtSlice2{0%{transform:translateY(52vh);opacity:1}25%{transform:translateY(12vh);opacity:0}45%{transform:translateY(80vh);opacity:1}75%{transform:translateY(30vh)}100%{transform:translateY(58vh);opacity:0}}
+@keyframes bhtSlice3{0%{transform:translateY(8vh);opacity:1}20%{transform:translateY(44vh);opacity:0}40%{transform:translateY(70vh);opacity:1}60%{transform:translateY(26vh);opacity:1}80%{opacity:0}100%{transform:translateY(86vh);opacity:1}}
+@keyframes bhtSlice4{0%{transform:translateY(34vh);opacity:0}15%{transform:translateY(90vh);opacity:1}35%{opacity:0}55%{transform:translateY(6vh);opacity:1}85%{transform:translateY(48vh);opacity:0}100%{transform:translateY(60vh);opacity:1}}
 .bht-lensring{position:absolute;inset:-14%;border-radius:50%;pointer-events:none;-webkit-mask-image:radial-gradient(circle,transparent 44%,#000 55%,#000 72%,transparent 84%);mask-image:radial-gradient(circle,transparent 44%,#000 55%,#000 72%,transparent 84%)}
 .bht-arch{position:absolute;inset:15%;border-radius:50%;background:radial-gradient(circle,transparent 54%,rgba(196,161,255,.9) 62%,rgba(124,58,237,.55) 69%,transparent 78%);filter:blur(7px);-webkit-mask-image:linear-gradient(180deg,#000 46%,transparent 58%);mask-image:linear-gradient(180deg,#000 46%,transparent 58%)}
 .bht-core{position:absolute;inset:26%;border-radius:50%;background:radial-gradient(circle at 50% 42%,#0A0512 0%,#000 55%);box-shadow:0 0 240px 90px rgba(0,0,0,.95)}
