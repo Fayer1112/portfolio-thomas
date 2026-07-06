@@ -333,20 +333,30 @@ function Dashboard({ token }) {
         </div>
       </>)}
 
-      {/* Avis visiteurs — affiché même sans données analytics */}
-      {fb && fb.total > 0 && (
-        <div style={{ background:"var(--bg3)", border:"1px solid var(--bdr)", borderRadius:12, padding:"18px 20px", marginTop:16 }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
-            <div style={{ fontSize:13, fontWeight:700, fontFamily:"var(--fd)" }}>
-              Avis visiteurs
-              <span style={{ fontSize:11, color:"var(--tx3)", fontWeight:400, marginLeft:8 }}>{fb.total} avis anonymes</span>
-            </div>
+      {/* Avis visiteurs du PORTFOLIO (modale bas de page) — bien distinct des Témoignages
+          (onglet dédié = recommandations de personnes avec qui Thomas a travaillé) */}
+      <div style={{ background:"var(--bg3)", border:"1px solid var(--bdr)", borderRadius:12, padding:"18px 20px", marginTop:16 }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6, flexWrap:"wrap", gap:8 }}>
+          <div style={{ fontSize:13, fontWeight:700, fontFamily:"var(--fd)" }}>
+            <i className="bx bxs-star" style={{ color:"#F5B301", marginRight:6 }}/>Avis visiteurs du portfolio
+            {fb && fb.total > 0 && <span style={{ fontSize:11, color:"var(--tx3)", fontWeight:400, marginLeft:8 }}>{fb.total} avis anonyme{fb.total > 1 ? "s" : ""}</span>}
+          </div>
+          {fb && fb.total > 0 && (
             <div style={{ display:"flex", alignItems:"center", gap:5, fontSize:14, fontWeight:800, color:"#F5B301" }}>
               <i className="bx bxs-star"/>{fb.average}
               <span style={{ color:"var(--tx3)", fontWeight:400, fontSize:11 }}>/ 5</span>
             </div>
+          )}
+        </div>
+        <div style={{ fontSize:10.5, color:"var(--tx3)", marginBottom:12, lineHeight:1.5 }}>
+          Notes laissées via la petite modale en bas du site (anonymes) — rien à voir avec l'onglet Témoignages, qui regroupe les recommandations de tes collègues/clients.
+        </div>
+        {(!fb || fb.total === 0) && (
+          <div style={{ color:"var(--tx3)", fontSize:12, padding:"6px 0" }}>
+            Aucun avis pour l'instant. La modale se présente aux visiteurs arrivés en bas de page après 12 secondes de visite — les notes apparaîtront ici.
           </div>
-          {fb.items.map((it) => (
+        )}
+        {fb && fb.items.map((it) => (
             <div key={it.id} style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 0", borderBottom:"1px solid rgba(255,255,255,.04)" }}>
               <div style={{ display:"flex", gap:1, color:"#F5B301", fontSize:13, flexShrink:0, marginTop:2 }}>
                 {[1,2,3,4,5].map(n => <i key={n} className={`bx ${it.rating >= n ? "bxs-star" : "bx-star"}`} style={it.rating >= n ? undefined : { color:"var(--tx3)" }}/>)}
@@ -357,9 +367,8 @@ function Dashboard({ token }) {
               <span style={{ fontSize:11, color:"var(--tx3)", flexShrink:0 }}>{timeAgo(it.created_at)}</span>
               <button onClick={() => delFb(it.id)} title="Supprimer cet avis" style={{ background:"none", border:"none", color:"var(--tx3)", cursor:"pointer", fontSize:15, padding:2 }}><i className="bx bx-trash"/></button>
             </div>
-          ))}
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   );
 }
@@ -823,7 +832,7 @@ export default function AdminPage({ onBack }) {
         </>)}
 
         {tab==="testimonials" && (<>
-          <div className="ahd"><div><div className="atit">Avis &amp; Témoignages</div><div className="asub">{testimonials.length} témoignage{testimonials.length>1?"s":""} — Le 1er est affiché en vedette</div></div><button className="btn-pri" onClick={()=>setAddTesti(true)}>+ Nouveau témoignage</button></div>
+          <div className="ahd"><div><div className="atit">Témoignages</div><div className="asub">Recommandations de personnes avec qui tu as travaillé ({testimonials.length}) — le 1er est affiché en vedette. Les notes des visiteurs du portfolio sont dans le Dashboard.</div></div><button className="btn-pri" onClick={()=>setAddTesti(true)}>+ Nouveau témoignage</button></div>
           <table className="atbl">
             <thead><tr><th>Auteur</th><th>Entreprise</th><th>Logo</th><th>Extrait</th><th>Ordre</th><th>Actions</th></tr></thead>
             <tbody>{[...testimonials].sort((a,b)=>(a.order||99)-(b.order||99)).map((t) => (

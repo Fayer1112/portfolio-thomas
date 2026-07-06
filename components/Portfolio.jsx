@@ -939,7 +939,17 @@ function BgCanvas({ variant = "home" }) {
     // dpr plafonné : des étoiles de fond n'ont pas besoin du rétina complet (÷2 de pixels sur écran 2x)
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     let stars = [], shootingStars = [];
-    let elapsed = 0, lastTs = 0, nextShootAt = 5000 + Math.random() * 6000;
+    let comet = null, satellite = null, nova = null;
+    let elapsed = 0, lastTs = 0;
+    // événements spatiaux aléatoires : filante isolée, pluie groupée, comète, satellite, supernova
+    let nextShootAt  = 5000  + Math.random() * 6000;
+    let nextShowerAt = 16000 + Math.random() * 26000;
+    let nextCometAt  = 30000 + Math.random() * 45000;
+    let nextSatAt    = 22000 + Math.random() * 34000;
+    let nextNovaAt   = 11000 + Math.random() * 16000;
+    // sensation de navigation : les étoiles dérivent lentement, cap propre à chaque visite
+    const driftAngle = Math.PI * (0.9 + Math.random() * 0.08);
+    const reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     let hueShift = 0; // dérive de teinte au fil du scroll — le fond évolue le long de la page
     let lastHue = -1;
 
@@ -960,15 +970,29 @@ function BgCanvas({ variant = "home" }) {
       canvas.width = W * dpr; canvas.height = H * dpr;
       ctx = canvas.getContext('2d');
       ctx.scale(dpr, dpr);
-      stars = Array.from({length:130}, () => ({
-        x: Math.random() * W, y: Math.random() * H,
-        r: 0.25 + Math.random() * 1.3,
-        phase: Math.random() * Math.PI * 2,
-        speed: 0.3 + Math.random() * 0.9,
-        bright: 0.12 + Math.random() * 0.52,
-        hue: cfg.hueMin + Math.random() * (cfg.hueMax - cfg.hueMin),
-        sat: 15 + Math.random() * 55,
-      }));
+      stars = Array.from({length:130}, () => {
+        const depth = Math.random(); // profondeur : les proches sont plus grosses ET dérivent plus vite (parallaxe)
+        return {
+          x: Math.random() * W, y: Math.random() * H,
+          r: 0.25 + depth * 1.3,
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.3 + Math.random() * 0.9,
+          bright: 0.12 + Math.random() * 0.52,
+          hue: cfg.hueMin + Math.random() * (cfg.hueMax - cfg.hueMin),
+          sat: 15 + Math.random() * 55,
+          drift: 0.0025 + depth * depth * 0.018,
+        };
+      });
+    };
+
+    const spawnShoot = (wait = 0, angle) => {
+      shootingStars.push({
+        sx: Math.random() * W * 0.6, sy: Math.random() * H * 0.3,
+        angle: angle !== undefined ? angle : Math.PI / 4 + (Math.random() - 0.5) * 0.45,
+        progress: 0, wait,
+        dur: 750 + Math.random() * 550,
+        len: 80 + Math.random() * 90,
+      });
     };
 
     const tick = (ts) => {
@@ -977,8 +1001,14 @@ function BgCanvas({ variant = "home" }) {
       const dt = Math.min(ts - lastTs, 50); lastTs = ts; elapsed += dt;
       ctx.clearRect(0, 0, W, H);
 
-      // Twinkling stars
+      // Twinkling stars + dérive de navigation (wrap sur les bords)
+      const ddx = Math.cos(driftAngle) * dt, ddy = Math.sin(driftAngle) * dt;
       for (const s of stars) {
+        if (!reduceMotion) {
+          s.x += ddx * s.drift; s.y += ddy * s.drift;
+          if (s.x < -6) s.x += W + 12; else if (s.x > W + 6) s.x -= W + 12;
+          if (s.y < -6) s.y += H + 12; else if (s.y > H + 6) s.y -= H + 12;
+        }
         const op = s.bright * (0.45 + 0.55 * Math.sin(elapsed * 0.001 * s.speed + s.phase));
         const h = s.hue + hueShift;
         ctx.beginPath();
@@ -993,20 +1023,44 @@ function BgCanvas({ variant = "home" }) {
         }
       }
 
-      // Spawn shooting star
+      // Spawn étoile filante isolée
       if (elapsed > nextShootAt) {
         nextShootAt = elapsed + 5000 + Math.random() * 9000;
-        const angle = Math.PI / 4 + (Math.random() - 0.5) * 0.45;
-        shootingStars.push({
-          sx: Math.random() * W * 0.6, sy: Math.random() * H * 0.3,
-          angle, progress: 0,
-          dur: 750 + Math.random() * 550,
-          len: 80 + Math.random() * 90,
-        });
+        spawnShoot(0);
+      }
+      // PLUIE d'étoiles filantes : salve groupée, cap commun, départs étagés
+      if (!reduceMotion && elapsed > nextShowerAt) {
+        nextShowerAt = elapsed + 28000 + Math.random() * 42000;
+        const n = 9 + Math.floor(Math.random() * 6);
+        const baseAngle = Math.PI / 4 + (Math.random() - 0.5) * 0.3;
+        for (let i = 0; i < n; i++) spawnShoot(i * 240 + Math.random() * 200, baseAngle + (Math.random() - 0.5) * 0.12);
+      }
+      // Comète : rare, lente, longue traîne lavande
+      if (!reduceMotion && !comet && elapsed > nextCometAt) {
+        nextCometAt = elapsed + 55000 + Math.random() * 65000;
+        const fromLeft = Math.random() < 0.5;
+        comet = { sx: fromLeft ? -60 : W + 60, ex: fromLeft ? W + 60 : -60,
+                  sy: H * (0.06 + Math.random() * 0.28), ey: H * (0.3 + Math.random() * 0.42),
+                  bow: 30 + Math.random() * 55, len: 150 + Math.random() * 80,
+                  t: 0, dur: 9000 + Math.random() * 5000 };
+      }
+      // Satellite : petit point lent qui traverse avec un blink
+      if (!reduceMotion && !satellite && elapsed > nextSatAt) {
+        nextSatAt = elapsed + 38000 + Math.random() * 48000;
+        const fromLeft = Math.random() < 0.5;
+        satellite = { sx: fromLeft ? -14 : W + 14, ex: fromLeft ? W + 14 : -14,
+                      sy: H * (0.05 + Math.random() * 0.5), ey: H * (0.05 + Math.random() * 0.5),
+                      t: 0, dur: 13000 + Math.random() * 6000 };
+      }
+      // Supernova : une étoile flashe puis retombe
+      if (!reduceMotion && !nova && elapsed > nextNovaAt && stars.length) {
+        nextNovaAt = elapsed + 15000 + Math.random() * 22000;
+        nova = { star: stars[Math.floor(Math.random() * stars.length)], t: 0 };
       }
 
       // Draw shooting stars
       shootingStars = shootingStars.filter(ss => {
+        if (ss.wait > 0) { ss.wait -= dt; return true; } // départ étagé (pluie)
         ss.progress = Math.min(1, ss.progress + dt / ss.dur);
         const p = ss.progress;
         const op = p < 0.12 ? p / 0.12 : p > 0.72 ? (1 - p) / 0.28 : 1;
@@ -1036,6 +1090,66 @@ function BgCanvas({ variant = "home" }) {
         ctx.restore();
         return p < 1;
       });
+
+      // Comète — trajectoire légèrement incurvée, tête lumineuse + longue traîne
+      if (comet) {
+        comet.t += dt / comet.dur;
+        if (comet.t >= 1) comet = null;
+        else {
+          const p = comet.t;
+          const op = p < 0.08 ? p / 0.08 : p > 0.85 ? (1 - p) / 0.15 : 1;
+          const hx = comet.sx + (comet.ex - comet.sx) * p;
+          const hy = comet.sy + (comet.ey - comet.sy) * p + Math.sin(p * Math.PI) * comet.bow;
+          const ang = Math.atan2(comet.ey - comet.sy, comet.ex - comet.sx);
+          const tx = hx - Math.cos(ang) * comet.len, ty = hy - Math.sin(ang) * comet.len;
+          const g = ctx.createLinearGradient(hx, hy, tx, ty);
+          g.addColorStop(0,   `rgba(255,255,255,${op * .95})`);
+          g.addColorStop(.12, `hsla(258,90%,88%,${op * .7})`);
+          g.addColorStop(.5,  `hsla(258,80%,70%,${op * .22})`);
+          g.addColorStop(1,   "hsla(258,80%,60%,0)");
+          ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(tx, ty);
+          ctx.strokeStyle = g; ctx.lineWidth = 2.6; ctx.lineCap = "round"; ctx.stroke();
+          const hg2 = ctx.createRadialGradient(hx, hy, 0, hx, hy, 9);
+          hg2.addColorStop(0,  `rgba(255,255,255,${op})`);
+          hg2.addColorStop(.4, `hsla(258,95%,85%,${op * .55})`);
+          hg2.addColorStop(1,  "hsla(258,90%,70%,0)");
+          ctx.beginPath(); ctx.arc(hx, hy, 9, 0, Math.PI * 2); ctx.fillStyle = hg2; ctx.fill();
+        }
+      }
+
+      // Satellite — point discret en ligne droite, feu clignotant rouge
+      if (satellite) {
+        satellite.t += dt / satellite.dur;
+        if (satellite.t >= 1) satellite = null;
+        else {
+          const p = satellite.t;
+          const x = satellite.sx + (satellite.ex - satellite.sx) * p;
+          const y = satellite.sy + (satellite.ey - satellite.sy) * p;
+          const op = p < 0.05 ? p / 0.05 : p > 0.95 ? (1 - p) / 0.05 : 1;
+          ctx.beginPath(); ctx.arc(x, y, 1.3, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(235,235,255,${op * .9})`; ctx.fill();
+          const blink = Math.pow(Math.max(0, Math.sin(elapsed * 0.006)), 18);
+          if (blink > 0.02) {
+            ctx.beginPath(); ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255,120,110,${op * blink * .8})`; ctx.fill();
+          }
+        }
+      }
+
+      // Supernova — flash bref d'une étoile existante
+      if (nova) {
+        nova.t += dt / 1400;
+        if (nova.t >= 1) nova = null;
+        else {
+          const s = nova.star, k = Math.sin(nova.t * Math.PI);
+          const rad = s.r * (3 + 13 * k);
+          const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, rad);
+          g.addColorStop(0,   `rgba(255,255,255,${.9 * k})`);
+          g.addColorStop(.35, `hsla(${s.hue + hueShift},85%,80%,${.5 * k})`);
+          g.addColorStop(1,   `hsla(${s.hue + hueShift},80%,65%,0)`);
+          ctx.beginPath(); ctx.arc(s.x, s.y, rad, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
+        }
+      }
 
       raf = requestAnimationFrame(tick);
     };
