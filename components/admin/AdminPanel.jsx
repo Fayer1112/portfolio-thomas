@@ -133,6 +133,18 @@ function Dashboard({ token }) {
       .catch(() => setLoading(false));
   }, [token, period, tick]);
 
+  // Avis visiteurs (modale feedback bas de page) — indépendant de la période
+  const [fb, setFb] = useState(null);
+  useEffect(() => {
+    if (!token) return;
+    fetch("/api/feedback", { headers: { Authorization:`Bearer ${token}` } })
+      .then(r => r.json()).then(setFb).catch(() => {});
+  }, [token, tick]);
+  const delFb = async (id) => {
+    try { await fetch(`/api/feedback?id=${id}`, { method:"DELETE", headers:{ Authorization:`Bearer ${token}` } }); } catch {}
+    setFb(f => f ? { ...f, items: f.items.filter(x => x.id !== id), total: f.total - 1 } : f);
+  };
+
   const periodLabel = PERIOD_CFG[period]?.sub || "";
 
   const totals     = data?.totals || {};
@@ -320,6 +332,34 @@ function Dashboard({ token }) {
           }
         </div>
       </>)}
+
+      {/* Avis visiteurs — affiché même sans données analytics */}
+      {fb && fb.total > 0 && (
+        <div style={{ background:"var(--bg3)", border:"1px solid var(--bdr)", borderRadius:12, padding:"18px 20px", marginTop:16 }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
+            <div style={{ fontSize:13, fontWeight:700, fontFamily:"var(--fd)" }}>
+              Avis visiteurs
+              <span style={{ fontSize:11, color:"var(--tx3)", fontWeight:400, marginLeft:8 }}>{fb.total} avis anonymes</span>
+            </div>
+            <div style={{ display:"flex", alignItems:"center", gap:5, fontSize:14, fontWeight:800, color:"#F5B301" }}>
+              <i className="bx bxs-star"/>{fb.average}
+              <span style={{ color:"var(--tx3)", fontWeight:400, fontSize:11 }}>/ 5</span>
+            </div>
+          </div>
+          {fb.items.map((it) => (
+            <div key={it.id} style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 0", borderBottom:"1px solid rgba(255,255,255,.04)" }}>
+              <div style={{ display:"flex", gap:1, color:"#F5B301", fontSize:13, flexShrink:0, marginTop:2 }}>
+                {[1,2,3,4,5].map(n => <i key={n} className={`bx ${it.rating >= n ? "bxs-star" : "bx-star"}`} style={it.rating >= n ? undefined : { color:"var(--tx3)" }}/>)}
+              </div>
+              <div style={{ flex:1, fontSize:12.5, color: it.message ? "var(--tx2)" : "var(--tx3)", lineHeight:1.55, fontStyle: it.message ? "normal" : "italic" }}>
+                {it.message || "Note sans commentaire"}
+              </div>
+              <span style={{ fontSize:11, color:"var(--tx3)", flexShrink:0 }}>{timeAgo(it.created_at)}</span>
+              <button onClick={() => delFb(it.id)} title="Supprimer cet avis" style={{ background:"none", border:"none", color:"var(--tx3)", cursor:"pointer", fontSize:15, padding:2 }}><i className="bx bx-trash"/></button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -112,7 +112,7 @@ export default async function ProjectRoute({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(creativeWorkJsonLd) }}
         />
       )}
-      <ClientPage initialData={initialData} />
+      <ClientPage initialData={initialData} initialView="project" initialProjectId={id} />
     </>
   );
 }

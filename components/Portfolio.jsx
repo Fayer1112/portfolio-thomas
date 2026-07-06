@@ -131,6 +131,23 @@ body.bht-active .sun-layer{opacity:0}
 .cookie-acc:hover{background:#8B47FF}
 .cookie-dec{background:transparent;color:var(--tx3);border:1px solid var(--bdr);padding:8px 16px;border-radius:7px;font-size:12px;font-weight:600;transition:all .2s}
 .cookie-dec:hover{border-color:var(--bdr2);color:var(--tx2)}
+.fbk{position:fixed;bottom:24px;right:24px;z-index:490;background:var(--bg2);border:1px solid var(--bdr2);border-radius:16px;padding:20px;width:min(calc(100vw - 32px),340px);box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 0 1px rgba(124,58,237,.14);transform:translateY(26px);opacity:0;pointer-events:none;transition:transform .45s var(--ease),opacity .45s var(--ease)}
+.fbk.show{transform:translateY(0);opacity:1;pointer-events:auto}
+.fbk-x{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--tx3);font-size:19px;padding:4px;line-height:1;cursor:pointer;transition:color .2s}
+.fbk-x:hover{color:var(--tx)}
+.fbk-t{font-family:var(--fd);font-size:15.5px;font-weight:700;color:var(--tx);margin-bottom:3px;padding-right:20px}
+.fbk-s{font-size:12px;color:var(--tx2);line-height:1.55;margin-bottom:12px}
+.fbk-stars{display:flex;gap:4px}
+.fbk-star{background:none;border:none;padding:2px;font-size:26px;color:var(--tx3);cursor:pointer;line-height:1;transition:color .15s,transform .15s}
+.fbk-star:hover{transform:scale(1.18)}
+.fbk-star.on{color:#F5B301}
+.fbk-ta{width:100%;margin-top:12px;background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;color:var(--tx);font-size:13px;font-family:inherit;padding:10px 12px;min-height:72px;resize:vertical}
+.fbk-ta:focus{outline:none;border-color:var(--acc)}
+.fbk-send{margin-top:10px;width:100%;background:var(--acc);color:#fff;border:none;padding:10px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.fbk-send:hover{background:#8B47FF}
+.fbk-send:disabled{opacity:.55}
+.fbk-thanks{display:flex;align-items:center;gap:10px;color:var(--tx);font-weight:600;font-size:14px;padding:4px 0}
+@media(max-width:720px){.fbk{right:16px;left:16px;bottom:86px;width:auto}}
 @media(max-width:640px){
   .cookie{flex-direction:column;align-items:stretch;gap:12px;padding:16px 18px;bottom:16px}
   .cookie-btns{justify-content:flex-end}
@@ -1110,6 +1127,81 @@ function LoadingScreen({ onDone, fast }) {
       <div className="loading-bar-wrap">
         <div className="loading-bar"/>
       </div>
+    </div>
+  );
+}
+
+// ── FEEDBACK — petite carte bas de page : note 1-5 + avis facultatif ─────────
+// Non-intrusive : n'apparaît qu'après 12s de visite ET arrivée en bas du site,
+// une seule fois par visiteur (localStorage), sans fond bloquant.
+function FeedbackModal({ active }) {
+  const [show, setShow] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [msg, setMsg] = useState("");
+  const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const armed = useRef(false);
+
+  useEffect(() => {
+    if (!active) return;
+    let seen = null;
+    try { seen = localStorage.getItem("tl_feedback"); } catch {}
+    if (seen) return;
+    const readyAt = Date.now() + 12000;
+    const onScroll = () => {
+      if (armed.current || Date.now() < readyAt) return;
+      const bottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 140;
+      if (bottom) { armed.current = true; setShow(true); }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    const t = setTimeout(onScroll, 12100); // couvre le cas "déjà garé en bas de page"
+    return () => { window.removeEventListener("scroll", onScroll); clearTimeout(t); };
+  }, [active]);
+
+  const close = () => {
+    setShow(false);
+    try { localStorage.setItem("tl_feedback", "closed"); } catch {}
+  };
+  const send = async () => {
+    if (!rating || busy) return;
+    setBusy(true);
+    try {
+      await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rating, message: msg, session_id: getSessionId() }),
+      });
+    } catch {}
+    try { localStorage.setItem("tl_feedback", "sent"); } catch {}
+    setSent(true);
+    setTimeout(() => setShow(false), 2600);
+  };
+
+  return (
+    <div className={`fbk${show ? " show" : ""}`} role="dialog" aria-label="Donner un avis" aria-hidden={!show}>
+      {sent ? (
+        <div className="fbk-thanks"><i className="bx bxs-heart" style={{ color:"#FF6BD3", fontSize:20 }}/>Merci pour votre retour !</div>
+      ) : (
+        <>
+          <button className="fbk-x" onClick={close} aria-label="Fermer"><i className="bx bx-x"/></button>
+          <div className="fbk-t">Un avis sur ce portfolio ?</div>
+          <div className="fbk-s">Anonyme et facultatif — ça m'aide à l'améliorer.</div>
+          <div className="fbk-stars" onMouseLeave={() => setHover(0)}>
+            {[1,2,3,4,5].map(n => (
+              <button key={n} className={`fbk-star${(hover || rating) >= n ? " on" : ""}`} onClick={() => setRating(n)} onMouseEnter={() => setHover(n)} aria-label={`${n} étoile${n>1?"s":""}`}>
+                <i className={`bx ${(hover || rating) >= n ? "bxs-star" : "bx-star"}`}/>
+              </button>
+            ))}
+          </div>
+          {rating > 0 && (
+            <>
+              <textarea className="fbk-ta" placeholder="Un commentaire ? (facultatif)" value={msg} onChange={(e) => setMsg(e.target.value)} maxLength={1200}/>
+              <button className="fbk-send" onClick={send} disabled={busy}>{busy ? "Envoi…" : "Envoyer"}</button>
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 }
@@ -2705,13 +2797,17 @@ function ToolLogo({ name }) {
 }
 
 // ── ROOT ──────────────────────────────────────────────────────────────────────
-export default function App({ initialData = {} }) {
+export default function App({ initialData = {}, initialView, initialProjectId }) {
   // Initialise depuis l'URL courante pour éviter tout flash au mount (composant client-only, window toujours dispo)
+  // initialView/initialProjectId viennent du serveur (route /projets/[id]) :
+  // serveur et client s'accordent dès le premier rendu — pas de mismatch d'hydratation
   const [view, setView] = useState(() => {
+    if (initialView) return initialView;
     if (typeof window !== "undefined" && /^\/projets\/[^/]+$/.test(window.location.pathname)) return "project";
     return "home";
   });
   const [projectId, setProjectId] = useState(() => {
+    if (initialProjectId) return initialProjectId;
     if (typeof window !== "undefined") {
       const m = window.location.pathname.match(/^\/projets\/([^/]+)$/);
       if (m) return m[1];
@@ -2861,6 +2957,7 @@ export default function App({ initialData = {} }) {
         {/* Loader en overlay au-dessus du contenu déjà monté : le hero se peint (LCP)
             et les images/fonts se chargent pendant l'intro au lieu d'attendre sa fin */}
         {loading && <LoadingScreen fast={hasLoadedBefore} onDone={() => { setLoading(false); try { window.storage?.set("tl_loaded_before", "true"); } catch {} }}/>}
+        <FeedbackModal active={!loading && !showCookie}/>
         {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
         <div className={curtainClass}/>
       </>
