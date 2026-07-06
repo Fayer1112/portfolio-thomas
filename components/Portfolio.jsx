@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useId } from "react";
 import AdminPage from "./admin/AdminPanel";
 import { useStorage, fromDbProject, fromDbTestimonial, DEFAULT_TAGS, DEFAULT_PROJECTS, DEFAULT_TESTIMONIALS } from "./admin/shared";
 
@@ -727,17 +727,7 @@ const TOKENS = Object.freeze({
 });
 
 
-// Inject CSS and fonts synchronously at module level (before React renders)
-(function() {
-  try {
-    const _s = document.createElement("style");
-    _s.textContent = CSS;
-    document.head.appendChild(_s);
-    const _l = document.createElement("link");
-    _l.href = FONTS; _l.rel = "stylesheet";
-    document.head.appendChild(_l);
-  } catch(e) {}
-})();
+// CSS + fonts : rendus en SSR via <AppStyles/> (hoistables React 19) — plus d'injection JS.
 
 
 
@@ -918,16 +908,23 @@ function BgCanvas({ variant = "home" }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     let raf, W, H, ctx;
-    const dpr = window.devicePixelRatio || 1;
+    // dpr plafonné : des étoiles de fond n'ont pas besoin du rétina complet (÷2 de pixels sur écran 2x)
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     let stars = [], shootingStars = [];
     let elapsed = 0, lastTs = 0, nextShootAt = 5000 + Math.random() * 6000;
     let hueShift = 0; // dérive de teinte au fil du scroll — le fond évolue le long de la page
+    let lastHue = -1;
 
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const progress = max > 0 ? window.scrollY / max : 0;
       hueShift = progress * cfg.scrollHue;
-      if (svgRef.current) svgRef.current.style.filter = `hue-rotate(${hueShift}deg)`;
+      // hue-rotate quantisé au degré : re-filtrer le SVG plein écran à chaque frame rame (surtout Firefox)
+      const hq = Math.round(hueShift);
+      if (hq !== lastHue && svgRef.current) {
+        lastHue = hq;
+        svgRef.current.style.filter = `hue-rotate(${hq}deg)`;
+      }
     };
 
     const init = () => {
@@ -1085,13 +1082,24 @@ function BgCanvas({ variant = "home" }) {
   );
 }
 
+// ── STYLES GLOBAUX (hoistables React 19 : dédupliqués par href, rendus en SSR) ─
+function AppStyles() {
+  return (
+    <>
+      <link rel="stylesheet" href={FONTS} precedence="default"/>
+      <style href="tl-app-css" precedence="default">{CSS}</style>
+    </>
+  );
+}
+
 // ── LOADING SCREEN ────────────────────────────────────────────────────────────
-function LoadingScreen({ onDone }) {
+function LoadingScreen({ onDone, fast }) {
   const [out, setOut] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => { setOut(true); setTimeout(onDone, 400); }, 2200);
+    // fast = visiteur récurrent : fondu immédiat au lieu de l'intro complète
+    const t = setTimeout(() => { setOut(true); setTimeout(onDone, 400); }, fast ? 0 : 1600);
     return () => clearTimeout(t);
-  }, []);
+  }, [fast]);
   return (
     <div className={`loading${out ? " loading-out" : ""}`} style={{ opacity: out ? 0 : 1, transition: "opacity .4s ease" }}>
       <div className="loading-logo">
@@ -1449,7 +1457,7 @@ function AboutPlanetScene() {
           <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2.5"/>
         </g>
       </svg>
-      <img className="apl-me" src="/about-figma-me.png" alt="" loading="lazy"/>
+      <img className="apl-me" src="/about-figma-me.webp" alt="" loading="lazy" width="710" height="612"/>
     </div>
   );
 }
@@ -1465,6 +1473,9 @@ function BlackHoleTransition() {
   const glitchRef = useRef(null);
   const slicesRef = useRef(null);
   useEffect(() => {
+    // backdrop-filter animé par frame = très coûteux sur Firefox → lentille désactivée là-bas
+    const noLens = typeof CSS !== "undefined" && CSS.supports("-moz-appearance", "none");
+    let lastLens = "";
     const onScroll = () => {
       const el = wrapRef.current; if (!el) return;
       const r = el.getBoundingClientRect();
@@ -1486,10 +1497,15 @@ function BlackHoleTransition() {
       if (glitchRef.current) glitchRef.current.classList.toggle("on", t > 0.41);
       if (slicesRef.current) slicesRef.current.classList.toggle("on", t > 0.41);
       // Distorsion gravitationnelle : la lentille se renforce à mesure qu'on approche du trou
-      if (lensRef.current) {
-        const dist = `blur(${(1 + t * 8).toFixed(1)}px) saturate(${(1 + t * 0.6).toFixed(2)}) contrast(${(1 + t * 0.2).toFixed(2)})`;
-        lensRef.current.style.backdropFilter = dist;
-        lensRef.current.style.webkitBackdropFilter = dist;
+      // (blur quantisé au 1/2 px : on n'écrit le style que s'il change vraiment)
+      if (lensRef.current && !noLens) {
+        const tq = Math.round(t * 16) / 16; // 17 paliers → réécriture du style seulement au changement de palier
+        const dist = `blur(${(1 + tq * 8).toFixed(1)}px) saturate(${(1 + tq * 0.6).toFixed(2)}) contrast(${(1 + tq * 0.2).toFixed(2)})`;
+        if (dist !== lastLens) {
+          lastLens = dist;
+          lensRef.current.style.backdropFilter = dist;
+          lensRef.current.style.webkitBackdropFilter = dist;
+        }
       }
       if (blackRef.current) blackRef.current.style.opacity = Math.min(1, Math.max(0, (t - 0.6) / 0.2));
       document.body.classList.toggle("bht-active", p > 0.03 && p < 0.97);
@@ -1531,7 +1547,8 @@ function BlackHoleTransition() {
 function ProjectCoverSVG({ type = "cabin", featured = false }) {
   const d = COVER_DEFS[type] || COVER_DEFS.cabin;
   const W = 800, H = featured ? 340 : 480;
-  const uid = `cv_${type}_${featured ? "f" : "n"}_${Math.random().toString(36).slice(2,6)}`;
+  // useId : stable entre SSR et hydratation (Math.random() créait un mismatch)
+  const uid = `cv_${type}_${featured ? "f" : "n"}_${useId().replace(/:/g, "")}`;
   const grid = Array.from({ length: 11 }, (_, i) => [
     <line key={`h${i}`} x1="0" y1={H*i/10} x2={W} y2={H*i/10} stroke="white" strokeOpacity=".022" strokeWidth="1"/>,
     <line key={`v${i}`} x1={W*i/10} y1="0" x2={W*i/10} y2={H} stroke="white" strokeOpacity=".022" strokeWidth="1"/>,
@@ -1934,7 +1951,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
             <div className="hero-cstage afu d1">
               <div className="hero-castro" aria-hidden="true">
                 <div style={{ transform:`perspective(900px) translate3d(${px.x*18}px, ${px.y*12}px, 0) rotateY(${-px.x*4}deg) rotateX(${px.y*2.5}deg)`, transition:"transform .18s ease-out" }}>
-                  <img src="/astro-fly.png" alt="" style={{ width:"100%", height:"auto", display:"block" }}/>
+                  <img src="/astro-fly.webp" alt="" fetchPriority="high" width="1280" height="832" style={{ width:"100%", height:"auto", display:"block" }}/>
                 </div>
               </div>
               <h1 className="hero-h1c">
@@ -2044,7 +2061,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
               <div className="seye rv">Double expertise</div>
               <h2 className="stit rv">Design × Engineering</h2>
             </div>
-            <img src="/astro-research.png" alt="" aria-hidden="true" className="rv" style={{ width:180, height:"auto", flexShrink:0, filter:"drop-shadow(0 12px 32px rgba(75,127,250,.2))", animation:"floatY 9s ease-in-out infinite", animationDelay:"1.5s" }}/>
+            <img src="/astro-research.webp" alt="" aria-hidden="true" loading="lazy" width="402" height="572" className="rv" style={{ width:180, height:"auto", flexShrink:0, filter:"drop-shadow(0 12px 32px rgba(75,127,250,.2))", animation:"floatY 9s ease-in-out infinite", animationDelay:"1.5s" }}/>
           </div>
           <p style={{ fontSize:15, color:"var(--tx2)", maxWidth:580, lineHeight:1.8, marginTop:14 }} className="rv">
             Ma trajectoire atypique — développeur Full Stack devenu Product Designer — me donne un avantage concret : je conçois en anticipant les contraintes techniques, ce qui réduit les frictions avec les équipes de développement.
@@ -2101,7 +2118,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
             <div className="seye rv">Portfolio</div>
             <h2 className="stit rv">Projets</h2>
           </div>
-          <img src="/astro-tablet.png" alt="" aria-hidden="true" className="rv" style={{ width:170, height:"auto", opacity:.92, flexShrink:0, marginBottom:-8, filter:"drop-shadow(0 12px 32px rgba(124,58,237,.25))", animation:"floatY 8s ease-in-out infinite" }}/>
+          <img src="/astro-tablet.webp" alt="" aria-hidden="true" loading="lazy" width="377" height="606" className="rv" style={{ width:170, height:"auto", opacity:.92, flexShrink:0, marginBottom:-8, filter:"drop-shadow(0 12px 32px rgba(124,58,237,.25))", animation:"floatY 8s ease-in-out infinite" }}/>
         </div>
         <div className="pf-bar rv">
           {categories.map((c) => <button key={c} className={`pf-btn${filter===c?" on":""}`} onClick={() => { setFilter(c); setTagFilter(null); }}>{c}</button>)}
@@ -2740,11 +2757,8 @@ export default function App({ initialData = {} }) {
   // Show loading only on first ever visit
   const [hasLoadedBefore] = useStorage("tl_loaded_before", false);
 
-  useEffect(() => {
-    const link = document.createElement("link"); link.href = FONTS; link.rel = "stylesheet"; document.head.appendChild(link);
-    const style = document.createElement("style"); style.textContent = CSS; document.head.appendChild(style);
-    return () => { try { document.head.removeChild(link); document.head.removeChild(style); } catch {} };
-  }, []);
+  // CSS + fonts rendus en SSR via les hoistables React 19 (voir <AppStyles/>)
+  // au lieu d'une injection JS post-hydratation qui laissait le HTML nu ~2s.
 
   useEffect(() => {
     // Show cookie banner after loading finishes and only if not yet decided
@@ -2817,27 +2831,18 @@ export default function App({ initialData = {} }) {
     }
   }, [view, scrollTarget]);
 
-  // Show loading screen only on first visit to home (not on project->home transition)
-  if (loading && view === "home") {
-    return (
-      <>
-        <LoadingScreen onDone={() => setLoading(false)}/>
-        {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
-      </>
-    );
-  }
-
   const curtainClass = `page-curtain${transPhase === "in" ? " cin" : transPhase === "out" ? " cout" : ""}`;
 
-  if (view === "admin") return <><AdminPage onBack={goHome}/><div className={curtainClass}/></>;
-  if (view === "404") return <NotFoundPage onHome={goHome}/>;
+  if (view === "admin") return <><AppStyles/><AdminPage onBack={goHome}/><div className={curtainClass}/></>;
+  if (view === "404") return <><AppStyles/><NotFoundPage onHome={goHome}/></>;
 
   if (view === "project") {
     const p = projects.find((x) => x.id === projectId);
-    if (!p) return <NotFoundPage onHome={goHome}/>;
+    if (!p) return <><AppStyles/><NotFoundPage onHome={goHome}/></>;
     return (
       <ErrorBoundary onHome={goHome}>
         <>
+          <AppStyles/>
           <ProjectPage key={projectId} project={p} allProjects={projects} tags={tags} onBack={(target)=>goHome(target||"projets")} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
           <SunSweep/>
           {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
@@ -2850,8 +2855,12 @@ export default function App({ initialData = {} }) {
   return (
     <ErrorBoundary onHome={goHome}>
       <>
+        <AppStyles/>
         <HomePage projects={projects} tags={tags} testimonials={testimonials} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
         <SunSweep/>
+        {/* Loader en overlay au-dessus du contenu déjà monté : le hero se peint (LCP)
+            et les images/fonts se chargent pendant l'intro au lieu d'attendre sa fin */}
+        {loading && <LoadingScreen fast={hasLoadedBefore} onDone={() => { setLoading(false); try { window.storage?.set("tl_loaded_before", "true"); } catch {} }}/>}
         {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
         <div className={curtainClass}/>
       </>

@@ -81,12 +81,19 @@ const personJsonLd = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          rel="stylesheet"
-          href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-          precedence="default"
+          rel="preload"
+          href="/boxicons/fonts/boxicons.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
         />
+      </head>
+      <body>
+        <link rel="stylesheet" href="/boxicons/css/boxicons.min.css" precedence="default" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
