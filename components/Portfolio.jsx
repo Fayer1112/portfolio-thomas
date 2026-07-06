@@ -103,7 +103,7 @@ button{cursor:pointer;font-family:var(--fb)}
 /* SORTIE du tunnel : bascule chromatique violet→cyan + hint de scroll, pour que le
    visiteur comprenne qu'il en sort (l'entrée et la sortie étaient identiques) */
 .bht-hole{transition:filter 1.4s ease}
-.bht-sticky.out .bht-hole{filter:hue-rotate(-105deg) saturate(1.15)}
+.bht-sticky.out .bht-hole{filter:hue-rotate(-78deg) saturate(1.15)}
 .bht-hint{position:absolute;left:50%;bottom:7vh;transform:translateX(-50%);z-index:6;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(5,234,250,.9);text-shadow:0 0 18px rgba(5,234,250,.5);opacity:0;transition:opacity .9s ease .35s;white-space:nowrap;text-align:center;pointer-events:none}
 .bht-sticky.out .bht-hint{opacity:1}
 .bht-hint i{display:block;font-size:18px;margin-top:5px;animation:hintBob 1.6s ease-in-out infinite}
@@ -1678,7 +1678,9 @@ function AboutPlanetScene() {
     const cos13 = Math.cos(-13 * Math.PI / 180), sin13 = Math.sin(-13 * Math.PI / 180);
     // position sur l'ellipse de l'anneau (mêmes paramètres : cx320 cy352 rx304 ry86 rot -13°)
     const place = (th) => {
-      const ex = 304 * Math.cos(th), ey = 86 * Math.sin(th);
+      // rx légèrement réduit vs l'anneau (304) : aux extrêmes gauche/droite le badge
+      // sortait du viewport — il reste ainsi lisible tout en suivant la bande de l'anneau
+      const ex = 252 * Math.cos(th), ey = 86 * Math.sin(th);
       const x = 320 + ex * cos13 - ey * sin13;
       const y = 352 + ex * sin13 + ey * cos13;
       const k = Math.min(1, Math.max(0, (y - 266) / 172)); // 0 = fond, 1 = premier plan
