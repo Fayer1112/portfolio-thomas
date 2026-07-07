@@ -587,6 +587,22 @@ body.adm-open .sun-layer{display:none}
 .pd-img-strip::-webkit-scrollbar{display:none}
 .pd-img-strip-item{flex-shrink:0;width:280px;height:180px;border-radius:10px;object-fit:cover;cursor:zoom-in;border:1px solid var(--bdr);transition:all .22s}
 .pd-img-strip-item:hover{border-color:rgba(124,58,237,.4);box-shadow:0 6px 20px rgba(124,58,237,.15)}
+/* tuile "+N photos" : aperçu de la 6e image sous un voile sombre, ouvre la lightbox */
+.pd-img-more{position:relative;flex-shrink:0;width:280px;height:180px;border-radius:10px;border:1px solid var(--bdr);background-size:cover;background-position:center;cursor:pointer;overflow:hidden;padding:0;transition:all .22s}
+.pd-img-more::before{content:"";position:absolute;inset:0;background:rgba(7,8,15,.82)}
+.pd-img-more span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:9px;font-family:var(--fd);font-weight:800;font-size:17px;color:#EDE8FF;letter-spacing:.4px}
+.pd-img-more span i{font-size:21px;color:#A78BFA}
+.pd-img-more:hover{border-color:rgba(124,58,237,.5);box-shadow:0 6px 20px rgba(124,58,237,.22)}
+/* témoignages contextuels de la page projet */
+.pd-testi{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:8px}
+.pd-testi-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:16px}
+.pd-testi-quote{font-size:13px;color:var(--tx2);line-height:1.75;font-style:italic;flex:1}
+.pd-testi-foot{display:flex;align-items:center;gap:10px}
+.pd-testi-who{flex:1;min-width:0}
+.pd-testi-name{font-size:12.5px;font-weight:700;color:var(--tx)}
+.pd-testi-role{font-size:11px;color:var(--tx3)}
+.pd-testi-logos{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.pd-testi-logos img{height:17px;max-width:76px;object-fit:contain;filter:brightness(0) invert(.6);opacity:.75}
 .pd-pv{display:flex;flex-direction:column;border:1px solid var(--bdr);border-radius:11px;overflow:hidden;margin-top:8px}
 .pd-pv-item{display:flex;gap:14px;align-items:flex-start;padding:16px 20px;border-bottom:1px solid var(--bdr);transition:background .2s}
 .pd-pv-item:last-child{border-bottom:none}
@@ -2519,7 +2535,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
                 </div>
                 <div className="tcard-company">
                   {t.companyLogo
-                    ? <img src={t.companyLogo} className="tcard-co-img" alt={t.company}/>
+                    ? t.companyLogo.split(",").filter(Boolean).map((u, li) => <img key={li} src={u} className="tcard-co-img" alt={t.company}/>)
                     : t.company
                       ? <span className="tcard-co-badge">{t.company}</span>
                       : null
@@ -2611,7 +2627,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
 }
 
 // ── PROJECT DETAIL ────────────────────────────────────────────────────────────
-function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack, cvUrl }) {
+function ProjectPage({ project: p, allProjects, tags, testimonials = [], onBack, onProject, onTrack, cvUrl }) {
   const [scrolled, setScrolled] = useState(false);
   const [pastHero, setPastHero] = useState(false);
   const [navHidden, setNavHidden] = useState(false);
@@ -2640,6 +2656,9 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
   const prev = sorted[idx-1], next = sorted[idx+1];
   const pvIcons = ["✦","◈","⬡","◆","✶","◉","⬟","◇"];
 
+  // Témoignages liés à ce projet (mapping project_ids en base)
+  const projTesti = testimonials.filter((t) => (t.projects || []).includes(p.id));
+
   // Build sections for sub-nav (only those with data)
   const subSections = [
     p.context && { id:"context", label:"Contexte" },
@@ -2650,6 +2669,7 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
     p.images?.length && { id:"gallery", label:"Visuels" },
     p.plusValues?.length && { id:"plusvalues", label:"Plus-values" },
     p.tools?.length && { id:"outils", label:"Outils" },
+    projTesti.length > 0 && { id:"avis", label:"Ils en parlent" },
   ].filter(Boolean);
 
   return (
@@ -2698,14 +2718,20 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
         )}
       </div>
 
-      {/* Images strip — right after cover */}
+      {/* Images strip — right after cover. Au-delà de 5 : tuile "+N photos" → lightbox */}
       {p.images?.length > 0 && (
-        <div style={{ padding:"0 64px", marginBottom:24 }}>
+        <div id="pds-gallery" style={{ padding:"0 64px", marginBottom:24 }}>
           <div className="pd-img-strip">
-            {p.images.map((src, i) => (
+            {p.images.slice(0, 5).map((src, i) => (
               <img key={i} src={src} alt={`${p.title} — ${i+1}`} className="pd-img-strip-item"
                 onClick={()=>setLb({ images:p.images, idx:i })}/>
             ))}
+            {p.images.length > 5 && (
+              <button className="pd-img-more" style={{ backgroundImage:`url(${p.images[5]})` }}
+                onClick={()=>setLb({ images:p.images, idx:5 })} aria-label={`Voir les ${p.images.length - 5} photos restantes`}>
+                <span><i className="bx bx-images"/>+{p.images.length - 5} photos</span>
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -2775,6 +2801,27 @@ function ProjectPage({ project: p, allProjects, tags, onBack, onProject, onTrack
               <div className="pd-tool" key={t}>
                 <ToolLogo name={t}/>
                 <span className="pd-tool-name">{t}</span>
+              </div>
+            ))}
+          </div>
+        </>)}
+        {/* Témoignages des personnes ayant travaillé sur CE projet — social proof contextuelle */}
+        {projTesti.length > 0 && (<>
+          <div id="pds-avis" className="pd-slbl rv">Ils en parlent</div>
+          <div className="pd-testi rv">
+            {projTesti.map((t) => (
+              <div className="pd-testi-card" key={t.id}>
+                <p className="pd-testi-quote">«&nbsp;{t.text.length > 240 ? t.text.slice(0, 240).trim() + "…" : t.text}&nbsp;»</p>
+                <div className="pd-testi-foot">
+                  <div className="tcard-avt">{t.init}</div>
+                  <div className="pd-testi-who">
+                    <div className="pd-testi-name">{t.name}</div>
+                    <div className="pd-testi-role">{t.role}</div>
+                  </div>
+                  <div className="pd-testi-logos">
+                    {(t.companyLogo || "").split(",").filter(Boolean).map((u, li) => <img key={li} src={u} alt={t.company}/>)}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -3195,7 +3242,7 @@ export default function App({ initialData = {}, initialView, initialProjectId })
       <ErrorBoundary onHome={goHome}>
         <>
           <AppStyles/>
-          <ProjectPage key={projectId} project={p} allProjects={projects} tags={tags} onBack={(target)=>goHome(target||"projets")} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
+          <ProjectPage key={projectId} project={p} allProjects={projects} tags={tags} testimonials={testimonials} onBack={(target)=>goHome(target||"projets")} onProject={goProject} onTrack={track} cvUrl={cvUrl}/>
           <SunSweep/>
           {showCookie && <CookieBanner onAccept={() => { setCookieState("accepted"); setShowCookie(false); }} onDecline={() => { setCookieState("declined"); setShowCookie(false); }}/>}
           <div className={curtainClass}/>

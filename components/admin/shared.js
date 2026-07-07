@@ -65,6 +65,8 @@ export const fromDbTestimonial = (t) => ({
   init: t.initials ?? t.init ?? '',
   text: t.content ?? t.text ?? '',
   companyLogo: t.company_logo ?? t.companyLogo ?? '',
+  // témoignage lié à un ou plusieurs projets (affiché dans la page projet concernée)
+  projects: t.project_ids ?? t.projects ?? [],
   order: t.display_order ?? t.order ?? 99,
   rating: t.rating ?? 5,
 });
