@@ -226,8 +226,63 @@ body.tl-countdown .mp{opacity:0;pointer-events:none}
 @keyframes lpFade{0%,100%{opacity:0}20%,80%{opacity:1}}
 @keyframes lpFadeOut{0%{opacity:1}100%{opacity:0}}
 
-/* ── Trou noir : tunnel recalé dans la palette (le rendu est cyan) ──────── */
-.bht-seq canvas{transition:filter var(--dur-4) var(--ease-standard)}
-.bht-sticky.tun .bht-seq canvas{filter:hue-rotate(60deg) saturate(.8)}
-.bht-hint{color:var(--brand-300)!important;text-shadow:0 0 18px rgba(124,58,237,.5)!important}
-@media(max-width:768px){.hero-spec{gap:6px 16px;max-width:320px;margin-left:auto;margin-right:auto}.hero-spec span+span::before{content:none}}
+/* ── Trou noir : approche au scroll, lecture complète déclenchée ───────── */
+.bh{position:relative;height:56vh;margin:-4vh 0;z-index:60;pointer-events:none}
+.bh-stage{--bha:0;--bhp:0;position:absolute;left:0;right:0;top:0;height:100vh;transform:scale(calc(.58 + .42 * var(--bha)));opacity:calc(.1 + .9 * var(--bha));transition:transform var(--dur-3) linear,opacity var(--dur-4) var(--ease-standard)}
+.bh-stage.is-playing{position:fixed;inset:0;height:100vh;transform:none;opacity:1}
+.bh-stage.is-done{opacity:0;transform:none}
+.bh-seq{position:absolute;inset:0;--bhm:calc(14% * max(0, 1 - var(--bhp) * 3.4));-webkit-mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 calc(100% - var(--bhm) * 3),transparent 100%);mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 calc(100% - var(--bhm) * 3),transparent 100%)}
+.bh-stage.is-playing .bh-seq{-webkit-mask-image:none;mask-image:none}
+.bh-seq canvas{position:absolute;inset:0;width:100%;height:100%;display:block;transition:filter var(--dur-4) var(--ease-standard)}
+.bh-stage.tun .bh-seq canvas{filter:hue-rotate(60deg) saturate(.8)}
+/* halo : diffus, vivant — respire et miroite lentement, s'efface quand on plonge */
+.bh-halo{position:absolute;left:50%;top:50%;width:min(120vmin,1400px);aspect-ratio:1;transform:translate(-50%,-50%);opacity:calc(1 - var(--bhp) * 1.8);pointer-events:none}
+.bh-halo span{position:absolute;inset:0;border-radius:50%}
+.bh-halo span:first-child{background:radial-gradient(circle,rgba(124,58,237,.30) 0%,rgba(124,58,237,.16) 26%,rgba(91,43,194,.07) 46%,transparent 66%);filter:blur(30px);animation:bhBreath 7s ease-in-out infinite}
+.bh-halo span:last-child{inset:14%;background:conic-gradient(from 0deg,rgba(196,181,253,.0),rgba(196,181,253,.14),rgba(124,58,237,.0) 30%,rgba(167,139,250,.12) 55%,rgba(124,58,237,0) 75%,rgba(196,181,253,.1),rgba(196,181,253,0));filter:blur(40px);animation:bhSpin 38s linear infinite}
+@keyframes bhBreath{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.08);opacity:1}}
+@keyframes bhSpin{to{transform:rotate(360deg)}}
+body.bht-active .sun-layer{opacity:0}
+@media(max-width:768px){.bh{height:70vh}}
+@media (prefers-reduced-motion: reduce){.bh-stage{transform:none;opacity:1}.bh-halo span{animation:none!important}}
+
+/* ── Soleil (rendu Blender) : lointain, discret, ne passe plus sur le texte ─ */
+.sun-light{display:none}
+.sun-disc{top:-4vh;width:24vmin;height:24vmin;border-radius:0;background:url(/sun.webp) center/contain no-repeat;filter:none;opacity:.62;animation-duration:180s}
+.sun-disc::before,.sun-disc::after{content:none}
+body.tl-countdown .sun-layer{opacity:0}
+@media(max-width:768px){.sun-disc{width:34vmin;height:34vmin;top:-2vh;opacity:.5}}
+
+/* ── Voyage continu : aucune section ne doit trahir sa limite ── */
+.hero-outer::before{background:radial-gradient(ellipse 85% 70% at 72% 48%,rgba(124,58,237,.14) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 12% 88%,rgba(91,33,182,.08) 0%,transparent 60%);-webkit-mask-image:linear-gradient(180deg,#000 55%,transparent 100%);mask-image:linear-gradient(180deg,#000 55%,transparent 100%)}
+#projets::before{inset:-18vh 0;background:radial-gradient(ellipse 75% 60% at 50% 50%,rgba(4,3,10,.6) 0%,rgba(4,3,10,.35) 45%,rgba(4,3,10,0) 100%)}
+.testi-collapsed::after{background:linear-gradient(180deg,transparent,var(--bg) 90%)}
+.about-manifesto::before{background:linear-gradient(180deg,var(--brand-300),var(--brand-600))}
+.foot{border-top:0}
+.foot::before{content:"";position:absolute;left:50%;top:0;width:min(560px,70%);height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,var(--line-2),transparent)}
+
+/* Étapes : l'action vit sous son libellé (proximité), plus dans une colonne lointaine */
+.ms-step,.ms-compact .ms-step{grid-template-columns:28px 1fr;align-items:start}
+.ms-compact .ms-step{grid-template-columns:24px 1fr}
+.ms-dot{margin-top:1px}
+.ms-body .ms-act{align-self:flex-start;margin-top:var(--sp-2)}
+
+/* Contact : fiche éditoriale */
+.csheet{display:flex;flex-direction:column;gap:var(--sp-5)}
+.csheet-avail{display:flex;align-items:center;gap:10px;font:500 var(--fs-1)/1.4 var(--font-mono);letter-spacing:.04em;color:var(--ink-2);margin:0}
+.csheet-dot{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 0 4px rgba(6,214,160,.12);flex-shrink:0}
+.csheet-lead{font-size:var(--fs-3);line-height:1.6;color:var(--ink-2);margin:0;max-width:34ch}
+.csheet-mail{display:flex;align-items:baseline;flex-wrap:wrap;gap:var(--sp-3) var(--sp-4);padding-bottom:var(--sp-5);border-bottom:1px solid var(--line-1)}
+.csheet-mail a{font:700 clamp(20px,2.3vw,28px)/1.2 var(--font-display);color:var(--ink-1);text-decoration:none;background:linear-gradient(var(--brand-400),var(--brand-400)) 0 100%/0 2px no-repeat;transition:background-size var(--dur-3) var(--ease-standard);word-break:break-all}
+.csheet-mail a:hover,.csheet-mail a:focus-visible{background-size:100% 2px}
+.csheet-copy{font:500 var(--fs-1)/1 var(--font-mono);color:var(--brand-300);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line-2)}
+.csheet-copy:hover{color:var(--ink-1);text-decoration-color:var(--brand-400)}
+.csheet-log{margin:0;display:flex;flex-direction:column}
+.csheet-log>div{display:grid;grid-template-columns:96px 1fr;gap:var(--sp-4);padding:var(--sp-3) 0;border-bottom:1px solid var(--line-1)}
+.csheet-log dt{font:500 var(--fs-1)/1.6 var(--font-mono);color:var(--ink-3);letter-spacing:.04em}
+.csheet-log dd{margin:0;font-size:var(--fs-2);color:var(--ink-1)}
+.csheet-log a{color:var(--ink-1);text-decoration:none;border-bottom:1px solid var(--line-2)}
+.csheet-log a:hover{border-color:var(--brand-400);color:var(--brand-200)}
+/* Pendant la lecture, un voile radial efface le contenu derrière l'anneau (pas de texte en transparence) */
+.bh-stage::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(4,3,10,.95) 0%,rgba(4,3,10,.86) 50%,rgba(4,3,10,.55) 100%);opacity:0;transition:opacity var(--dur-3) var(--ease-standard)}
+.bh-stage.is-playing::before{opacity:1}

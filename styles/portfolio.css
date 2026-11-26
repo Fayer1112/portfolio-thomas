@@ -53,25 +53,14 @@ button{cursor:pointer;font-family:var(--fb)}
 @keyframes bhxFall{0%{transform:translate(170px,-50%) rotate(0deg) scale(1);opacity:0}8%{opacity:.95}68%{transform:translate(58px,-50%) rotate(240deg) scale(.55);opacity:.9}100%{transform:translate(6px,-50%) rotate(520deg) scale(.04);opacity:0}}
 @keyframes cstDrift{0%,100%{transform:translate(0,0)}50%{transform:translate(.4px,-.8px)}}
 /* transition trou noir au scroll */
-.bht-wrap{height:230vh;position:relative;z-index:60;pointer-events:none;margin:-40px 0}
-.bht-sticky{position:absolute;top:0;left:0;right:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.bht-hole{position:relative;width:110vmin;aspect-ratio:1;will-change:transform}
 /* Trou noir rendu dans Blender : séquence d'images sur canvas, pilotée par le scroll.
    Bords fondus (--bhtf) tant que le trou est loin, pour que le halo ne dessine pas de rectangle. */
-.bht-sticky{--bhtf:14%}
-.bht-seq{position:absolute;inset:0;width:100%;height:100%;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--bhtf),#000 calc(100% - var(--bhtf)),transparent 100%),linear-gradient(to right,transparent 0,#000 var(--bhtf),#000 calc(100% - var(--bhtf)),transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to bottom,transparent 0,#000 var(--bhtf),#000 calc(100% - var(--bhtf)),transparent 100%),linear-gradient(to right,transparent 0,#000 var(--bhtf),#000 calc(100% - var(--bhtf)),transparent 100%);mask-composite:intersect}
-.bht-seq canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 /* SORTIE du tunnel : bascule chromatique violet→cyan + hint de scroll, pour que le
    visiteur comprenne qu'il en sort (l'entrée et la sortie étaient identiques) */
-.bht-hint{position:absolute;left:50%;bottom:7vh;transform:translateX(-50%);z-index:6;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(5,234,250,.9);text-shadow:0 0 18px rgba(5,234,250,.5);opacity:0;transition:opacity .9s ease .35s;white-space:nowrap;text-align:center;pointer-events:none}
-.bht-sticky.out .bht-hint{opacity:1}
-.bht-hint i{display:block;font-size:18px;margin-top:5px;animation:hintBob 1.6s ease-in-out infinite}
 @keyframes hintBob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-@media(max-width:768px){.bht-hint{font-size:9.5px;letter-spacing:2px}}
 .sun-layer{transition:opacity .5s ease}
 body.bht-active .sun-layer{opacity:0}
 body.adm-open .sun-layer{display:none}
-@media(max-width:768px){.bht-wrap{height:180vh}}
 .page-curtain{position:fixed;inset:0;z-index:9998;pointer-events:none;background:linear-gradient(170deg,#060812 0%,#0c0d1e 45%,#130f35 75%,#1a0847 100%);transform:translateY(105%);will-change:transform}
 .page-curtain.cin{animation:curtainIn .42s cubic-bezier(.77,0,.175,1) forwards}
 .page-curtain.cout{animation:curtainOut .42s cubic-bezier(.77,0,.175,1) forwards}

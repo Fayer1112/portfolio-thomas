@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useId, useImperativeHandle, Suspense, lazy } from "react";
 import PlanetGL from "./space/PlanetGL";
+import BlackHole from "./space/BlackHole";
 import AboutScene from "./space/AboutScene";
 import IgnitionLoader, { markHeroReady } from "./intro/IgnitionLoader";
 import LaunchPad from "./mission/LaunchPad";
@@ -860,131 +861,6 @@ function PlanetCard() {
 }
 
 
-// Séquence d'images rendue dans Blender (public/3d/...), dessinée sur un canvas.
-// Le parent pilote la frame affichée via ref.setProgress(0→1). Chargement progressif :
-// une frame sur 16, puis 8, 4, 2, 1 — on affiche toujours la frame chargée la plus proche,
-// donc le scroll reste fluide même sur une connexion mobile lente.
-const FrameSequence = React.forwardRef(function FrameSequence({ dir, count, className, fit = "cover", lazyMargin = "200% 0px" }, ref) {
-  const canvasRef = useRef(null);
-  const st = useRef(null);
-  if (!st.current) st.current = { imgs: new Array(count), want: 0, drawn: -1, raf: 0 };
-  const src = (i) => `${dir}/f_${String(i + 1).padStart(4, "0")}.webp`;
-  const draw = useCallback(() => {
-    const s = st.current, c = canvasRef.current;
-    if (!c || !c.width) return;
-    const ok = (k) => { const im = s.imgs[k]; return im && im.complete && im.naturalWidth > 0; };
-    let best = -1;
-    for (let d = 0; d < count && best < 0; d++) {
-      if (ok(s.want - d)) best = s.want - d; else if (ok(s.want + d)) best = s.want + d;
-    }
-    if (best < 0 || best === s.drawn) return;
-    s.drawn = best;
-    const img = s.imgs[best], ctx = c.getContext("2d");
-    const W = c.width, H = c.height, iw = img.naturalWidth, ih = img.naturalHeight;
-    const k = fit === "cover" ? Math.max(W / iw, H / ih) : Math.min(W / iw, H / ih);
-    const dw = iw * k, dh = ih * k;
-    ctx.clearRect(0, 0, W, H);
-    ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
-  }, [count, fit]);
-  useImperativeHandle(ref, () => ({
-    setProgress(p) {
-      const s = st.current;
-      const w = Math.round(Math.min(1, Math.max(0, p)) * (count - 1));
-      if (w === s.want && s.drawn === w) return;
-      s.want = w;
-      if (!s.raf) s.raf = requestAnimationFrame(() => { s.raf = 0; draw(); });
-    },
-  }), [count, draw]);
-  useEffect(() => {
-    const c = canvasRef.current; if (!c) return;
-    const s = st.current;
-    let alive = true, started = false;
-    const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      const w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
-      if (w && h && (w !== c.width || h !== c.height)) { c.width = w; c.height = h; s.drawn = -1; draw(); }
-    };
-    const start = () => {
-      if (started) return; started = true;
-      const order = [], seen = new Set();
-      for (const step of [16, 8, 4, 2, 1]) for (let i = 0; i < count; i += step) if (!seen.has(i)) { seen.add(i); order.push(i); }
-      if (!seen.has(count - 1)) order.splice(1, 0, count - 1);
-      let next = 0;
-      const pump = () => {
-        if (!alive || next >= order.length) return;
-        const i = order[next++];
-        const im = new Image();
-        im.decoding = "async";
-        im.onload = im.onerror = () => { if (!alive) return; if (Math.abs(i - s.want) <= Math.abs(s.drawn - s.want) || s.drawn < 0) { s.drawn = -1; draw(); } pump(); };
-        im.src = src(i);
-        s.imgs[i] = im;
-      };
-      for (let k = 0; k < 6; k++) pump(); // 6 téléchargements en parallèle
-    };
-    const ro = new ResizeObserver(resize); ro.observe(c); resize();
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { start(); io.disconnect(); } }, { rootMargin: lazyMargin });
-    io.observe(c);
-    return () => { alive = false; ro.disconnect(); io.disconnect(); cancelAnimationFrame(s.raf); s.raf = 0; };
-  }, [count, dir, draw, lazyMargin]);
-  return <div className={className}><canvas ref={canvasRef}/></div>;
-});
-
-const isMobileViewport = () => typeof window !== "undefined" && !!window.matchMedia?.("(max-width:768px)").matches;
-
-
-// Transition d'aspiration au scroll : le trou noir grossit, avale l'écran (noir total),
-// puis nous recrache sur la section suivante. Pilote aussi le masquage du soleil (body.bht-active).
-function BlackHoleTransition() {
-  const wrapRef = useRef(null);
-  const stickyRef = useRef(null);
-  const seqRef = useRef(null);
-  // Mobile : rendu vertical 540×960, 60 images (≈1,5 Mo) au lieu de 120 en 1280×720
-  const [mobile] = useState(isMobileViewport);
-  useEffect(() => {
-    let lastF = "";
-    const onScroll = () => {
-      const el = wrapRef.current; if (!el) return;
-      const r = el.getBoundingClientRect();
-      const total = r.height - window.innerHeight;
-      const p = Math.min(1, Math.max(0, -r.top / (total || 1)));
-      // position:sticky est cassé par l'overflow-x:hidden global → fixed piloté à la main
-      const s = stickyRef.current;
-      if (s) {
-        if (p <= 0) { s.style.position = "absolute"; s.style.top = "0"; s.style.bottom = "auto"; }
-        else if (p >= 1) { s.style.position = "absolute"; s.style.top = "auto"; s.style.bottom = "0"; }
-        else { s.style.position = "fixed"; s.style.top = "0"; s.style.bottom = "auto"; }
-        // phase SORTIE (tunnel cyan) : hint de scroll
-        s.classList.toggle("out", p > 0.66 && p < 0.97);
-        // tunnel : le rendu Blender est cyan → ramené dans la palette violette (bascule pendant le noir total)
-        s.classList.toggle("tun", p > 0.58);
-        // bords fondus quand le trou est loin, plein cadre quand on plonge
-        const f = `${(14 * Math.max(0, 1 - p / 0.3)).toFixed(1)}%`;
-        if (f !== lastF) { lastF = f; s.style.setProperty("--bhtf", f); }
-      }
-      // séquence Blender : 0 → approche + logos aspirés, ~0.6 → noir total, → tunnel → sortie transparente
-      seqRef.current?.setProgress(p);
-      document.body.classList.toggle("bht-active", p > 0.03 && p < 0.97);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    onScroll();
-    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); document.body.classList.remove("bht-active"); };
-  }, []);
-  return (
-    <div ref={wrapRef} className="bht-wrap" aria-hidden="true">
-      <div ref={stickyRef} className="bht-sticky">
-        <FrameSequence
-          ref={seqRef}
-          className="bht-seq"
-          dir={mobile ? "/3d/black-hole-mobile" : "/3d/black-hole"}
-          count={mobile ? 60 : 120}
-        />
-        <div className="bht-hint">De l'autre côté — continuez l'exploration<i className="bx bx-chevron-down"/></div>
-      </div>
-    </div>
-  );
-}
-
 function ProjectCoverSVG({ type = "cabin", featured = false }) {
   const d = COVER_DEFS[type] || COVER_DEFS.cabin;
   const W = 800, H = featured ? 340 : 480;
@@ -1016,10 +892,38 @@ function ProjectCoverSVG({ type = "cabin", featured = false }) {
 }
 
 // ── COMPETENCE DIAGRAM ───────────────────────────────────────────────────────
+/* Contact : une fiche éditoriale (mail en grand, puis un registre ligne à ligne)
+   au lieu de cartes à pastille d'icône. */
+function ContactSheet({ onTrack }) {
+  const [copied, setCopied] = useState(false);
+  const mail = "leloupthomas.pro@gmail.com";
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(mail); setCopied(true); setTimeout(() => setCopied(false), 2200); } catch {}
+    if (onTrack) onTrack("contact_click", { label:"email_copy" });
+  };
+  return (
+    <div className="csheet">
+      <p className="csheet-avail"><span className="csheet-dot" aria-hidden="true"/>Disponible · CDI, freelance ou mission</p>
+      <p className="csheet-lead">Un mail suffit. Je réponds sous 24 h, en général le jour même.</p>
+      <div className="csheet-mail">
+        <a href={"mailto:"+mail} onClick={()=>{ if(onTrack) onTrack("contact_click",{label:"email"}); }}>{mail}</a>
+        <button type="button" className="csheet-copy" onClick={copy}>{copied ? "Copié" : "Copier"}</button>
+        <span className="sr-only" aria-live="polite">{copied ? "Adresse copiée" : ""}</span>
+      </div>
+      <dl className="csheet-log">
+        <div><dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/thomas--leloup/" target="_blank" rel="noopener"
+          onClick={()=>{ if(onTrack) onTrack("contact_click",{label:"linkedin"}); }}>thomas--leloup<span aria-hidden="true"> ↗</span><span className="sr-only"> (nouvel onglet)</span></a></dd></div>
+        <div><dt>Base</dt><dd>Paris · remote possible</dd></div>
+        <div><dt>Fuseau</dt><dd>UTC+1, Europe</dd></div>
+      </dl>
+    </div>
+  );
+}
+
 function DoubleHatTree({ visible }) {
   const skills = [
     // txt = variante claire pour le % (la couleur de barre passait sous les 4.5:1 AA)
-    { label:"UX Research",   pct:92, color:TOKENS.blue+"CC", txt:"#8FB0FF" },
+    { label:"UX Research",   pct:92, color:TOKENS.blue, txt:"#8FB0FF" },
     { label:"UI / Figma",    pct:95, color:TOKENS.acc, txt:"var(--brand-400)" },
     { label:"Design System", pct:88, color:"var(--success)" },
     { label:"Design Ops",    pct:80, color:"var(--brand-400)" },
@@ -1037,15 +941,15 @@ function DoubleHatTree({ visible }) {
   ];
 
   const lines = [
-    { x1:66, y1:126, x2:148, y2:162, color:TOKENS.blue+"CC", delay:0.05, len:89.6 },
-    { x1:170, y1:126, x2:170, y2:162, color:TOKENS.blue+"CC", delay:0.1, len:36.0 },
+    { x1:66, y1:126, x2:148, y2:162, color:TOKENS.blue, delay:0.05, len:89.6 },
+    { x1:170, y1:126, x2:170, y2:162, color:TOKENS.blue, delay:0.1, len:36.0 },
     { x1:274, y1:126, x2:192, y2:162, color:"var(--success)", delay:0.15, len:89.6 },
     { x1:466, y1:126, x2:548, y2:162, color:"var(--energy-500)", delay:0.05, len:89.6 },
     { x1:570, y1:126, x2:570, y2:162, color:"var(--brand-300)", delay:0.1, len:36.0 },
     { x1:674, y1:126, x2:592, y2:162, color:"var(--brand-300)", delay:0.15, len:89.6 },
-    { x1:244, y1:258, x2:294, y2:418, color:TOKENS.blue+"CC", delay:0.3, len:167.6 },
+    { x1:244, y1:258, x2:294, y2:418, color:TOKENS.blue, delay:0.3, len:167.6 },
     { x1:496, y1:258, x2:446, y2:418, color:"var(--brand-400)", delay:0.3, len:167.6 },
-    { x1:370, y1:530, x2:370, y2:562, color:TOKENS.blue+"CC", delay:0.46, len:32.0 },
+    { x1:370, y1:530, x2:370, y2:562, color:TOKENS.blue, delay:0.46, len:32.0 },
   ];
 
   const ns = (delay) => ({
@@ -1086,7 +990,7 @@ function DoubleHatTree({ visible }) {
           {leaves.map((n, i) => (
             <g key={i} style={ns(0.12 + i * 0.07)}>
               <circle cx={n.x} cy={n.y} r={n.r}
-                fill={n.color+"1A"} stroke={n.color} strokeWidth="2"/>
+                fill={n.color} fillOpacity=".1" stroke={n.color} strokeWidth="2"/>
               {n.t2 ? (
                 <>
                   <text x={n.x} y={n.y - 8} textAnchor="middle"
@@ -1523,7 +1427,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
       </section>
 
       {/* ── TRANSITION TROU NOIR — aspiration au scroll, ouvre le chapitre Projets ── */}
-      <BlackHoleTransition/>
+      <BlackHole/>
 
       {/* ── PROJETS ── */}
       <section className="sec" id="projets" style={{ paddingTop:0 }}>
@@ -1626,39 +1530,8 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
         <div className="seye rv">Contact</div>
         <h2 className="stit rv">Travaillons ensemble.</h2>
         <div className="contact-layout rv">
-          {/* Left — info */}
-          <div className="contact-info">
-            <div className="contact-avail">
-              <div className="contact-avail-dot"/>
-              Disponible — CDI · Freelance · Mission
-            </div>
-            <p className="contact-info-desc">
-              Basé à Paris, ouvert au remote.<br/>Je réponds sous 24h.
-            </p>
-            <a className="contact-card" href="mailto:leloupthomas.pro@gmail.com"
-              onClick={()=>{ if(onTrack) onTrack("contact_click",{label:"email"}); }}>
-              <div className="contact-card-icon" style={{ background:"rgba(124,58,237,.12)" }}><i className="bx bx-envelope" style={{ color:"var(--brand-400)" }}/></div>
-              <div>
-                <div className="contact-card-label">Email</div>
-                <div className="contact-card-val">leloupthomas.pro@gmail.com</div>
-              </div>
-            </a>
-            <a className="contact-card" href="https://www.linkedin.com/in/thomas--leloup/" target="_blank" rel="noopener"
-              onClick={()=>{ if(onTrack) onTrack("contact_click",{label:"linkedin"}); }}>
-              <div className="contact-card-icon" style={{ background:"rgba(75,127,250,.12)" }}><i className="bx bxl-linkedin" style={{ color:"var(--brand-400)" }}/></div>
-              <div>
-                <div className="contact-card-label">LinkedIn</div>
-                <div className="contact-card-val">linkedin.com/in/thomas--leloup</div>
-              </div>
-            </a>
-            <div className="contact-card" style={{ cursor:"default", pointerEvents:"none" }}>
-              <div className="contact-card-icon" style={{ background:"rgba(6,214,160,.1)" }}><i className="bx bx-map" style={{ color:"var(--success)" }}/></div>
-              <div>
-                <div className="contact-card-label">Localisation</div>
-                <div className="contact-card-val">Paris, France · Remote OK</div>
-              </div>
-            </div>
-          </div>
+          {/* Left — info : une fiche, pas des cartes */}
+          <ContactSheet onTrack={onTrack}/>
           {/* Right — form */}
           <ContactForm onTrack={onTrack}/>
         </div>

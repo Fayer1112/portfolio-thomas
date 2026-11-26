@@ -39,8 +39,8 @@ export default function MissionSteps({ m, cvHref = "/api/cv", compact = false, o
               </span>
               {!compact && <span className="ms-hint">{done ? (boost ? "Poussée maximale activée" : "Validée") : meta.hint}{pct ? ` · ${pct} %` : ""}</span>}
               {pct !== null && <span className="ms-bar" aria-hidden="true"><span style={{ transform: `scaleX(${m.explorePct || 0})` }}/></span>}
+              {!done && action[k]}
             </span>
-            {!done && action[k]}
           </li>
         );
       })}
