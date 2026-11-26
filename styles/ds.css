@@ -227,12 +227,12 @@ body.tl-countdown .mp{opacity:0;pointer-events:none}
 @keyframes lpFadeOut{0%{opacity:1}100%{opacity:0}}
 
 /* ── Trou noir : approche au scroll, lecture complète déclenchée ───────── */
-.bh{position:relative;height:56vh;margin:-4vh 0;z-index:60;pointer-events:none}
-.bh-stage{--bha:0;--bhp:0;position:absolute;left:0;right:0;top:0;height:100vh;transform:scale(calc(.58 + .42 * var(--bha)));opacity:calc(.1 + .9 * var(--bha));transition:transform var(--dur-3) linear,opacity var(--dur-4) var(--ease-standard)}
-.bh-stage.is-playing{position:fixed;inset:0;height:100vh;transform:none;opacity:1}
-.bh-stage.is-done{opacity:0;transform:none}
-.bh-seq{position:absolute;inset:0;--bhm:calc(14% * max(0, 1 - var(--bhp) * 3.4));-webkit-mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 calc(100% - var(--bhm) * 3),transparent 100%);mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 calc(100% - var(--bhm) * 3),transparent 100%)}
-.bh-stage.is-playing .bh-seq{-webkit-mask-image:none;mask-image:none}
+.bh{position:relative;height:100vh;height:100svh;overflow:hidden;overflow:clip;z-index:1;pointer-events:none}
+.bh-stage{--bha:0;--bhp:0;position:absolute;left:0;right:0;top:0;bottom:0;transform:scale(calc(.58 + .42 * var(--bha)));opacity:calc(.1 + .9 * var(--bha));transition:transform var(--dur-3) linear,opacity var(--dur-4) var(--ease-standard)}
+.bh-stage.is-playing,.bh-stage.is-done{transform:none;opacity:1}
+/* fondu haut et bas : la section se fond dans le ciel, sans bord visible */
+.bh{-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 16%,#000 84%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 16%,#000 84%,transparent 100%)}
+.bh-seq{position:absolute;inset:0}
 .bh-seq canvas{position:absolute;inset:0;width:100%;height:100%;display:block;transition:filter var(--dur-4) var(--ease-standard)}
 .bh-stage.tun .bh-seq canvas{filter:hue-rotate(60deg) saturate(.8)}
 /* halo : diffus, vivant — respire et miroite lentement, s'efface quand on plonge */
@@ -242,16 +242,15 @@ body.tl-countdown .mp{opacity:0;pointer-events:none}
 .bh-halo span:last-child{inset:14%;background:conic-gradient(from 0deg,rgba(196,181,253,.0),rgba(196,181,253,.14),rgba(124,58,237,.0) 30%,rgba(167,139,250,.12) 55%,rgba(124,58,237,0) 75%,rgba(196,181,253,.1),rgba(196,181,253,0));filter:blur(40px);animation:bhSpin 38s linear infinite}
 @keyframes bhBreath{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.08);opacity:1}}
 @keyframes bhSpin{to{transform:rotate(360deg)}}
-body.bht-active .sun-layer{opacity:0}
-@media(max-width:768px){.bh{height:70vh}}
 @media (prefers-reduced-motion: reduce){.bh-stage{transform:none;opacity:1}.bh-halo span{animation:none!important}}
 
 /* ── Soleil (rendu Blender) : lointain, discret, ne passe plus sur le texte ─ */
 .sun-light{display:none}
-.sun-disc{top:-4vh;width:24vmin;height:24vmin;border-radius:0;background:url(/sun.webp) center/contain no-repeat;filter:none;opacity:.62;animation-duration:180s}
+.sun-disc{top:-4vh;width:24vmin;height:24vmin;border-radius:0;background:none;filter:none;opacity:.8;animation-duration:180s}
 .sun-disc::before,.sun-disc::after{content:none}
 body.tl-countdown .sun-layer{opacity:0}
-@media(max-width:768px){.sun-disc{width:34vmin;height:34vmin;top:-2vh;opacity:.5}}
+@media(max-width:768px){.sun-disc{width:34vmin;height:34vmin;top:-2vh;opacity:.65}}
+.sun-seq{position:absolute;inset:0}.sun-seq canvas{width:100%;height:100%;display:block;mix-blend-mode:screen}
 
 /* ── Voyage continu : aucune section ne doit trahir sa limite ── */
 .hero-outer::before{background:radial-gradient(ellipse 85% 70% at 72% 48%,rgba(124,58,237,.14) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 12% 88%,rgba(91,33,182,.08) 0%,transparent 60%);-webkit-mask-image:linear-gradient(180deg,#000 55%,transparent 100%);mask-image:linear-gradient(180deg,#000 55%,transparent 100%)}
@@ -283,6 +282,5 @@ body.tl-countdown .sun-layer{opacity:0}
 .csheet-log dd{margin:0;font-size:var(--fs-2);color:var(--ink-1)}
 .csheet-log a{color:var(--ink-1);text-decoration:none;border-bottom:1px solid var(--line-2)}
 .csheet-log a:hover{border-color:var(--brand-400);color:var(--brand-200)}
-/* Pendant la lecture, un voile radial efface le contenu derrière l'anneau (pas de texte en transparence) */
-.bh-stage::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(4,3,10,.95) 0%,rgba(4,3,10,.86) 50%,rgba(4,3,10,.55) 100%);opacity:0;transition:opacity var(--dur-3) var(--ease-standard)}
-.bh-stage.is-playing::before{opacity:1}
+/* le soleil s'efface sous la barre de navigation : les liens restent lisibles quand il passe derrière */
+.sun-behind{-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.25) 0,rgba(0,0,0,.25) 56px,#000 120px);mask-image:linear-gradient(180deg,rgba(0,0,0,.25) 0,rgba(0,0,0,.25) 56px,#000 120px)}

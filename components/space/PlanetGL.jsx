@@ -17,6 +17,9 @@ import React, { useEffect, useRef } from "react";
 const VERT = `attribute vec2 p;varying vec2 v;void main(){v=p;gl_Position=vec4(p,0.,1.);}`;
 
 const FRAG = `
+#ifdef GL_OES_standard_derivatives
+#extension GL_OES_standard_derivatives : enable
+#endif
 precision highp float;
 varying vec2 v;
 uniform vec2 uRes;
@@ -64,20 +67,25 @@ void main(){
   vec3 L=normalize(uLight);
 
   vec4 col=vec4(0.);
-  // ── sphère
+  // taille d'un pixel en unités planète : sert à lisser tous les bords (anti-crénelage analytique)
+  float px=2./(uRes.y*uScale);
+  // ── sphère : couverture du pixel selon la distance au limbe, pas un test tout-ou-rien
   float b=dot(ro,rd), c=dot(ro,ro)-1., d=b*b-c;
-  float tS=d>0.?-b-sqrt(d):1e9;
+  float D=sqrt(max(dot(ro,ro)-b*b,0.));
+  float cov=clamp((1.-D)/px+.5,0.,1.);
+  float tS=cov>0.?-b-sqrt(max(d,0.)):1e9;
   // ── anneau
   float tR=1e9; vec3 pR;
   if(uRing>.5){
     float dn=dot(rd,nrm);
     if(abs(dn)>1e-4){ float t=-dot(ro,nrm)/dn; vec3 p=ro+rd*t; float r=length(p);
-      if(t>0. && r>1.35 && r<2.35){ tR=t; pR=p; } }
+      if(t>0. && r>1.3 && r<2.4){ tR=t; pR=p; } }
   }
   // planète
   vec4 planet=vec4(0.);
   if(tS<1e8){
     vec3 p=ro+rd*tS, N=normalize(p);
+    if(d<=0.) N=normalize(ro+rd*(-b));
     vec3 q=transpose3(tilt)*N;
     vec3 base=surface(q);
     float diff=max(dot(N,L),0.);
@@ -85,28 +93,36 @@ void main(){
     // ombre de l'anneau sur la planète
     float sh=1.;
     if(uRing>.5){ float dn=dot(L,nrm); if(abs(dn)>1e-4){ float t=-dot(p,nrm)/dn; vec3 s=p+L*t; float r=length(s);
-      if(t>0. && r>1.35 && r<2.35) sh=.45; } }
+      if(t>0.) sh=1.-.55*smoothstep(1.35-.02,1.35+.02,r)*(1.-smoothstep(2.35-.02,2.35+.02,r)); } }
     vec3 lit=base*(.06+1.15*diff*sh)*mix(vec3(1.),cSun,.35*term);
     float fres=pow(1.-max(dot(N,-rd),0.),3.);
     lit+=cRim*fres*(.35+.65*smoothstep(-.4,.4,dot(N,-L)*.5+.5))*.9;   // atmosphère, contre-jour violet
     lit+=cSun*fres*term*.25;
-    planet=vec4(lit,1.);
+    planet=vec4(lit,1.)*cov;
   }
   vec4 ring=vec4(0.);
   if(tR<1e8){
     float r=length(pR);
     float k=(r-1.35)/1.;
-    float bands=.55+.45*sin(k*48.+n(vec2(k*22.,0.))*5.);
-    float a=smoothstep(0.,.06,k)*smoothstep(1.,.86,k)*(.35+.5*bands);
-    a*= (k>.42&&k<.47)?.15:1.;                         // division de Cassini
+    // fines bandes atténuées quand elles deviennent plus fines qu'un pixel (anneau vu par la tranche)
+    float fw=px*3.;
+    #ifdef GL_OES_standard_derivatives
+    fw=fwidth(k);
+    #endif
+    float amp=clamp(1.-fw*48./3.1415926,0.,1.);
+    float bands=.55+.45*amp*sin(k*48.+n(vec2(k*22.,0.))*5.);
+    float e=max(fw,.004);
+    float a=smoothstep(0.,max(.06,e*1.5),k)*smoothstep(1.,min(.86,1.-e*1.5),k)*(.35+.5*bands);
+    a*=1.-.85*smoothstep(.42-e,.42+e,k)*(1.-smoothstep(.47-e,.47+e,k));   // division de Cassini
     vec3 rc=mix(cMid,cHi,bands);
     // ombre de la planète sur l'anneau
-    float bb=dot(pR,L), cc=dot(pR,pR)-1.; float sh=(bb*bb-cc>0. && -bb>0.)?.25:1.;
+    float bb=dot(pR,L); float Ds=sqrt(max(dot(pR,pR)-bb*bb,0.));
+    float sh=(-bb>0.)?mix(.25,1.,smoothstep(1.-.025,1.+.025,Ds)):1.;
     rc*= (.3+.9*sh)*mix(vec3(1.),cSun,.25);
     ring=vec4(rc*a,a);
   }
   // composition dans l'ordre de profondeur (prémultiplié)
-  if(tR<tS){ col=ring+planet*(1.-ring.a); } else { col=planet.a>0.?planet:ring; }
+  if(tR<tS){ col=ring+planet*(1.-ring.a); } else { col=planet+ring*(1.-planet.a); }
   gl_FragColor=col;
 }`.replace("transpose3(tilt)", "mat3(tilt[0][0],tilt[1][0],tilt[2][0],tilt[0][1],tilt[1][1],tilt[2][1],tilt[0][2],tilt[1][2],tilt[2][2])");
 
@@ -136,6 +152,7 @@ export default function PlanetGL({
     const still = reducedMotion();
     let gl = null;
     try { gl = cv.getContext("webgl", { premultipliedAlpha: true, alpha: true, antialias: true }); } catch { gl = null; }
+    gl?.getExtension("OES_standard_derivatives");
     if (!gl) { cv.style.display = "none"; if (fbRef.current) fbRef.current.style.display = "block"; onReady?.(); return; }
 
     const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
@@ -193,7 +210,7 @@ export default function PlanetGL({
     }
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const w = Math.round(cv.clientWidth * dpr), hh = Math.round(cv.clientHeight * dpr);
       if (w && hh && (w !== cv.width || hh !== cv.height)) { cv.width = w; cv.height = hh; if (still || !visible) draw(0.9); }
     };

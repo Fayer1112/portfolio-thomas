@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useId, useImperativeHandle, Suspense, lazy } from "react";
 import PlanetGL from "./space/PlanetGL";
+import SunActive from "./space/SunActive";
 import BlackHole from "./space/BlackHole";
 import AboutScene from "./space/AboutScene";
 import IgnitionLoader, { markHeroReady } from "./intro/IgnitionLoader";
@@ -843,7 +844,7 @@ function AstronautSVG({ size = 520, style = {} }) {
 function SunSweep() {
   return (
     <>
-      <div className="sun-layer sun-behind" aria-hidden="true"><div className="sun-disc"/></div>
+      <div className="sun-layer sun-behind" aria-hidden="true"><div className="sun-disc"><SunActive/></div></div>
       <div className="sun-layer sun-light" aria-hidden="true"><div className="sun-wash"/></div>
     </>
   );
