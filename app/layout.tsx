@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import "../styles/tokens.css";
+import "../styles/portfolio.css";
+import "../styles/ds.css";
 
 const BASE = "https://www.thomas-leloup.fr";
 const DESCRIPTION =

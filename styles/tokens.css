@@ -1,0 +1,98 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — Thomas Leloup
+   Une seule source de vérité. Aucun composant ne doit contenir de valeur en dur
+   (couleur, taille, rayon, durée) : il référence un token ci-dessous.
+   Principe DA : un seul ciel, une seule lumière (le soleil, en haut à droite).
+   - brand  = la marque (violet)            → identité, liens, focus
+   - energy = l'énergie (chaud, le soleil)  → progression, allumage, décollage UNIQUEMENT
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Espace (fonds, du plus profond au plus proche) ── */
+  --space-0: #07080F;
+  --space-1: #0C0D18;
+  --space-2: #111220;
+  --space-3: #171826;
+  --line-1: #1C1D2E;           /* séparateurs discrets */
+  --line-2: #282940;           /* bordures de surface */
+
+  /* ── Encre (texte) — contrastes mesurés sur --space-3 ── */
+  --ink-1: #F0EDFF;            /* titres, texte fort      ~15:1 */
+  --ink-2: #B9B3D9;            /* texte courant           ~8.8:1 */
+  --ink-3: #8F8DB8;            /* texte secondaire, méta  ~5.6:1 */
+
+  /* ── Marque ── */
+  --brand-200: #DDD6FE;
+  --brand-300: #C4B5FD;        /* texte accent sur fond sombre (AA) */
+  --brand-400: #A78BFA;
+  --brand-500: #7C3AED;        /* couleur de marque */
+  --brand-600: #6025C0;
+  --brand-900: #26135A;
+  --brand-a12: rgba(124,58,237,.12);
+  --brand-a05: rgba(124,58,237,.05);
+
+  /* ── Énergie (soleil · progression · décollage) ── */
+  --energy-300: #FFD29A;
+  --energy-500: #F59E0B;
+  --energy-600: #F97316;
+  --energy-800: #C45C00;
+  --energy-a20: rgba(245,158,11,.2);
+
+  /* ── États (formulaires uniquement) ── */
+  --success: #34D399;
+  --danger: #F87171;
+
+  /* ── Typographie ── */
+  --font-display: 'Syne', sans-serif;
+  --font-text: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, monospace;
+  --fs-1: 12px;
+  --fs-2: 14px;
+  --fs-3: 16px;
+  --fs-4: 20px;
+  --fs-5: clamp(22px, 2.2vw + 10px, 28px);
+  --fs-6: clamp(28px, 3.4vw + 12px, 40px);
+  --fs-7: clamp(40px, 6vw + 12px, 64px);
+  --lh-tight: 1.05;
+  --lh-text: 1.65;
+  --tracking-caps: .14em;
+
+  /* ── Espacements (base 4) ── */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px; --sp-5: 24px;
+  --sp-6: 32px; --sp-7: 48px; --sp-8: 64px; --sp-9: 96px; --sp-10: 128px;
+
+  /* ── Rayons ── */
+  --radius-s: 4px;
+  --radius-m: 8px;
+  --radius-l: 16px;
+  --radius-full: 999px;
+
+  /* ── Lumière (remplace les ombres : dans l'espace, on éclaire) ── */
+  --rim: inset 0 1px 0 rgba(255,255,255,.06);
+  --glow-brand: 0 0 24px rgba(124,58,237,.35);
+  --glow-energy: 0 0 32px rgba(245,158,11,.45);
+  --scrim: radial-gradient(ellipse at center, rgba(7,8,15,.82) 0%, rgba(7,8,15,.55) 55%, rgba(7,8,15,0) 80%);
+  --focus-ring: 0 0 0 2px var(--space-0), 0 0 0 4px var(--brand-300);
+
+  /* ── Surfaces ── */
+  --surface-1: rgba(17,18,32,.8);
+  --surface-2: rgba(23,24,38,.92);
+  --surface-blur: blur(12px);
+
+  /* ── Mouvement ── */
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --dur-4: 600ms;
+  --dur-5: 1200ms;
+  --ease-standard: cubic-bezier(.2,0,0,1);
+  --ease-out: cubic-bezier(.16,1,.3,1);
+  --ease-launch: cubic-bezier(.7,0,.84,0);
+
+  /* ── Profondeur ── */
+  --z-bg: 0;
+  --z-content: 1;
+  --z-nav: 100;
+  --z-overlay: 500;
+  --z-launch: 900;
+  --z-loader: 1000;
+}
