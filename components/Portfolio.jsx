@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, useId, Suspense, lazy } from "react";
+import React, { useState, useEffect, useCallback, useRef, useId, useImperativeHandle, Suspense, lazy } from "react";
 // Lazy : le back-office (~78Ko) ne se charge que quand on ouvre l'admin, pas pour les visiteurs
 const AdminPage = lazy(() => import("./admin/AdminPanel"));
 import { useStorage, fromDbProject, fromDbTestimonial, DEFAULT_TAGS, DEFAULT_PROJECTS, DEFAULT_TESTIMONIALS } from "./admin/shared";
@@ -66,44 +66,13 @@ button{cursor:pointer;font-family:var(--fb)}
 .bht-wrap{height:230vh;position:relative;z-index:60;pointer-events:none;margin:-40px 0}
 .bht-sticky{position:absolute;top:0;left:0;right:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .bht-hole{position:relative;width:110vmin;aspect-ratio:1;will-change:transform}
-.bht-glitch{position:absolute;inset:0}
-.bht-glitch.on{animation:bhtTwerk .42s steps(2,end) infinite;filter:drop-shadow(3px 0 rgba(5,234,250,.38)) drop-shadow(-3px 0 rgba(255,107,211,.38))}
-.bht-slices{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.bht-slice{position:absolute;top:0;left:0;right:0;height:1%;opacity:0;pointer-events:none;mix-blend-mode:screen;will-change:transform,opacity}
-.bht-slice.c{background:#05EAFA}
-.bht-slice.p{background:#FF6BD3}
-.bht-slices.on .bht-slice{animation-iteration-count:infinite;animation-timing-function:steps(1,end)}
-.bht-slices.on .s1{animation-name:bhtSlice1;animation-duration:.5s}
-.bht-slices.on .s2{animation-name:bhtSlice2;animation-duration:.64s;height:.6%}
-.bht-slices.on .s3{animation-name:bhtSlice3;animation-duration:.44s;left:14%;right:-2%}
-.bht-slices.on .s4{animation-name:bhtSlice4;animation-duration:.72s;height:1.3%}
-.bht-slices.on .s5{animation-name:bhtSlice1;animation-duration:.58s;animation-delay:.12s;left:-2%;right:30%}
-.bht-slices.on .s6{animation-name:bhtSlice3;animation-duration:.52s;animation-delay:.2s;height:.5%}
-.bht-slices.on .s7{animation-name:bhtSlice2;animation-duration:.48s;animation-delay:.06s;height:.7%}
-.bht-slices.on .s8{animation-name:bhtSlice4;animation-duration:.6s;animation-delay:.18s;height:.9%;left:22%;right:-2%}
-.bht-slices.on .s9{animation-name:bhtSlice1;animation-duration:.68s;animation-delay:.3s;height:.6%}
-.bht-slices.on .s10{animation-name:bhtSlice3;animation-duration:.56s;animation-delay:.09s;height:1.1%;left:-2%;right:40%}
-.bht-slices.on .s11{animation-name:bhtSlice2;animation-duration:.7s;animation-delay:.24s;height:.5%}
-.bht-slices.on .s12{animation-name:bhtSlice4;animation-duration:.46s;animation-delay:.15s;height:.8%}
-@keyframes bhtTwerk{0%{transform:translate(0,0) skewX(0)}25%{transform:translate(-.5%,.25%) skewX(.8deg)}50%{transform:translate(.4%,-.2%) skewX(-.7deg)}75%{transform:translate(-.25%,-.3%) skewX(.5deg)}100%{transform:translate(0,0) skewX(0)}}
-/* translateY (composité) et non top : top déclenchait ~80 reflows/s pendant le tunnel */
-@keyframes bhtSlice1{0%{transform:translateY(18vh);opacity:0}12%{opacity:1}30%{transform:translateY(64vh)}50%{transform:translateY(38vh);opacity:0}70%{transform:translateY(74vh);opacity:1}100%{transform:translateY(22vh);opacity:0}}
-@keyframes bhtSlice2{0%{transform:translateY(52vh);opacity:1}25%{transform:translateY(12vh);opacity:0}45%{transform:translateY(80vh);opacity:1}75%{transform:translateY(30vh)}100%{transform:translateY(58vh);opacity:0}}
-@keyframes bhtSlice3{0%{transform:translateY(8vh);opacity:1}20%{transform:translateY(44vh);opacity:0}40%{transform:translateY(70vh);opacity:1}60%{transform:translateY(26vh);opacity:1}80%{opacity:0}100%{transform:translateY(86vh);opacity:1}}
-@keyframes bhtSlice4{0%{transform:translateY(34vh);opacity:0}15%{transform:translateY(90vh);opacity:1}35%{opacity:0}55%{transform:translateY(6vh);opacity:1}85%{transform:translateY(48vh);opacity:0}100%{transform:translateY(60vh);opacity:1}}
-.bht-lensring{position:absolute;inset:-14%;border-radius:50%;pointer-events:none;-webkit-mask-image:radial-gradient(circle,transparent 44%,#000 55%,#000 72%,transparent 84%);mask-image:radial-gradient(circle,transparent 44%,#000 55%,#000 72%,transparent 84%)}
-.bht-arch{position:absolute;inset:15%;border-radius:50%;background:radial-gradient(circle,transparent 54%,rgba(196,161,255,.9) 62%,rgba(124,58,237,.55) 69%,transparent 78%);filter:blur(7px);-webkit-mask-image:linear-gradient(180deg,#000 46%,transparent 58%);mask-image:linear-gradient(180deg,#000 46%,transparent 58%)}
-.bht-core{position:absolute;inset:26%;border-radius:50%;background:radial-gradient(circle at 50% 42%,#0A0512 0%,#000 55%);box-shadow:0 0 240px 90px rgba(0,0,0,.95)}
-.bht-ring{position:absolute;inset:24.5%;border-radius:50%;border:3px solid rgba(224,206,255,.8);box-shadow:0 0 34px rgba(167,139,250,.75),inset 0 0 22px rgba(167,139,250,.5)}
-.bht-diskflat{position:absolute;inset:-52%;transform:rotateX(80deg);pointer-events:none}
-.bht-diskflat-spin{position:absolute;inset:0;border-radius:50%;animation:spinSlow 7s linear infinite;filter:blur(5px);background:conic-gradient(from 10deg,rgba(124,58,237,.78) 0deg,rgba(203,172,255,.95) 75deg,rgba(91,33,182,.6) 150deg,rgba(170,128,255,.9) 230deg,rgba(110,48,220,.7) 305deg,rgba(124,58,237,.78) 360deg);-webkit-mask-image:radial-gradient(circle closest-side,transparent 21%,#000 25%,#000 38%,rgba(0,0,0,.22) 41%,rgba(0,0,0,.22) 45%,#000 48%,#000 58%,transparent 66%);mask-image:radial-gradient(circle closest-side,transparent 21%,#000 25%,#000 38%,rgba(0,0,0,.22) 41%,rgba(0,0,0,.22) 45%,#000 48%,#000 58%,transparent 66%)}
-.bht-orbit{position:absolute;top:50%;left:50%;width:0;height:0;animation:spinSlow 9s linear infinite}
-@keyframes bhtFall{0%{transform:translate(50vmin,-50%) rotate(0deg) scale(1);opacity:0}8%{opacity:.95}68%{transform:translate(17vmin,-50%) rotate(240deg) scale(.55);opacity:.9}100%{transform:translate(2vmin,-50%) rotate(520deg) scale(.04);opacity:0}}
-.bht-black{position:absolute;inset:0;background:#050308;opacity:0}
+/* Trou noir rendu dans Blender : séquence d'images sur canvas, pilotée par le scroll.
+   Bords fondus (--bhtf) tant que le trou est loin, pour que le halo ne dessine pas de rectangle. */
+.bht-sticky{--bhtf:14%}
+.bht-seq{position:absolute;inset:0;width:100%;height:100%;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--bhtf),#000 calc(100% - var(--bhtf)),transparent 100%),linear-gradient(to right,transparent 0,#000 var(--bhtf),#000 calc(100% - var(--bhtf)),transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to bottom,transparent 0,#000 var(--bhtf),#000 calc(100% - var(--bhtf)),transparent 100%),linear-gradient(to right,transparent 0,#000 var(--bhtf),#000 calc(100% - var(--bhtf)),transparent 100%);mask-composite:intersect}
+.bht-seq canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 /* SORTIE du tunnel : bascule chromatique violet→cyan + hint de scroll, pour que le
    visiteur comprenne qu'il en sort (l'entrée et la sortie étaient identiques) */
-.bht-hole{transition:filter 1.4s ease}
-.bht-sticky.out .bht-hole{filter:hue-rotate(-78deg) saturate(1.15)}
 .bht-hint{position:absolute;left:50%;bottom:7vh;transform:translateX(-50%);z-index:6;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(5,234,250,.9);text-shadow:0 0 18px rgba(5,234,250,.5);opacity:0;transition:opacity .9s ease .35s;white-space:nowrap;text-align:center;pointer-events:none}
 .bht-sticky.out .bht-hint{opacity:1}
 .bht-hint i{display:block;font-size:18px;margin-top:5px;animation:hintBob 1.6s ease-in-out infinite}
@@ -113,14 +82,6 @@ button{cursor:pointer;font-family:var(--fb)}
 body.bht-active .sun-layer{opacity:0}
 body.adm-open .sun-layer{display:none}
 @media(max-width:768px){.bht-wrap{height:180vh}}
-/* Firefox (Gecko) : filtres dynamiques beaucoup plus lents que Blink — on allège le tunnel
-   sans toucher au rendu Chrome. @supports -moz-appearance ne matche que Firefox. */
-@supports (-moz-appearance:none){
-  .bht-glitch.on{filter:none}
-  .bht-arch{filter:blur(3px)}
-  .bht-core{box-shadow:0 0 120px 45px rgba(0,0,0,.95)}
-  .bht-slice{mix-blend-mode:normal}
-}
 .page-curtain{position:fixed;inset:0;z-index:9998;pointer-events:none;background:linear-gradient(170deg,#060812 0%,#0c0d1e 45%,#130f35 75%,#1a0847 100%);transform:translateY(105%);will-change:transform}
 .page-curtain.cin{animation:curtainIn .42s cubic-bezier(.77,0,.175,1) forwards}
 .page-curtain.cout{animation:curtainOut .42s cubic-bezier(.77,0,.175,1) forwards}
@@ -227,6 +188,8 @@ body.adm-open .sun-layer{display:none}
 .hero-planet2-tex{position:absolute;inset:-16%;border-radius:50%;filter:blur(1.2px);animation:spinSlow 110s linear infinite;background:radial-gradient(ellipse 24% 13% at 28% 32%,rgba(155,116,255,.36) 0 55%,transparent 64%),radial-gradient(ellipse 13% 8% at 39% 24%,rgba(155,116,255,.3) 0 52%,transparent 63%),radial-gradient(ellipse 9% 14% at 23% 41%,rgba(139,92,246,.3) 0 50%,transparent 62%),radial-gradient(ellipse 21% 10% at 67% 38%,rgba(167,139,250,.3) 0 52%,transparent 62%),radial-gradient(ellipse 11% 15% at 74% 49%,rgba(129,90,240,.34) 0 52%,transparent 63%),radial-gradient(ellipse 15% 7% at 60% 30%,rgba(196,181,253,.2) 0 48%,transparent 60%),radial-gradient(ellipse 26% 12% at 48% 68%,rgba(104,66,214,.42) 0 55%,transparent 65%),radial-gradient(ellipse 10% 6% at 18% 60%,rgba(196,181,253,.22) 0 45%,transparent 58%),radial-gradient(ellipse 17% 9% at 58% 15%,rgba(88,50,190,.42) 0 50%,transparent 61%),radial-gradient(ellipse 12% 7% at 83% 27%,rgba(139,92,246,.26) 0 48%,transparent 60%),radial-gradient(ellipse 30% 17% at 44% 47%,rgba(52,27,116,.5) 0 60%,transparent 71%),radial-gradient(ellipse 14% 8% at 33% 78%,rgba(139,92,246,.28) 0 50%,transparent 62%),radial-gradient(ellipse 7% 4% at 52% 36%,rgba(196,181,253,.26) 0 50%,transparent 60%),radial-gradient(ellipse 6% 9% at 70% 61%,rgba(150,111,255,.3) 0 48%,transparent 59%),radial-gradient(ellipse 5% 3% at 45% 22%,rgba(196,181,253,.22) 0 46%,transparent 58%)}
 .hero-planet2::before{content:"";position:absolute;inset:0;border-radius:50%;z-index:1;background:radial-gradient(ellipse 70% 22% at 50% 4%,rgba(216,203,255,.42) 0%,rgba(139,92,246,.14) 45%,transparent 75%)}
 .hero-planet2::after{content:"";position:absolute;inset:0;border-radius:50%;z-index:1;background:radial-gradient(circle at 50% 130%,rgba(0,0,0,.95) 45%,rgba(0,0,0,.35) 68%,transparent 82%)}
+.hero-planet3{position:absolute;left:50%;bottom:0;width:min(78vw,1500px);aspect-ratio:16/9;z-index:0;pointer-events:none;-webkit-mask-image:linear-gradient(180deg,#000 40%,rgba(0,0,0,.6) 56%,transparent 74%);mask-image:linear-gradient(180deg,#000 40%,rgba(0,0,0,.6) 56%,transparent 74%)}
+.hero-planet3 canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hero-c .hero-spec{justify-content:center;position:relative;z-index:4}
 .hero-c .hero-desc{margin-left:auto;margin-right:auto}
 .hero-c .hero-acts{justify-content:center}
@@ -735,7 +698,7 @@ body.adm-open .sun-layer{display:none}
   .hero-c{text-align:center;padding-left:28px;padding-right:28px}
   .hero-c .hero-float-card{display:none!important}
   .hero-castro{width:52vw}
-  .hero-planet2{width:150vw;opacity:.85}
+  .hero-planet2{width:150vw;opacity:.85}.hero-planet3{width:165vw}
   .about-grid{grid-template-columns:1fr}
   .dh-wrap{grid-template-columns:1fr}
   .dh-tree-wrap{display:none}
@@ -1703,15 +1666,13 @@ function AboutPlanetScene() {
     const back = backRef.current, front = frontRef.current, wrap = wrapRef.current;
     if (!back || !front || !wrap) return;
     const cos13 = Math.cos(-13 * Math.PI / 180), sin13 = Math.sin(-13 * Math.PI / 180);
-    // position sur l'ellipse de l'anneau (mêmes paramètres : cx320 cy352 rx304 ry86 rot -13°)
+    // orbite calée sur l'anneau rendu dans Blender (centre planète 320,330 ; caméra à 16,4° → ry/rx = 0,283)
     const place = (th) => {
-      // rx légèrement réduit vs l'anneau (304) : aux extrêmes gauche/droite le badge
-      // sortait du viewport — il reste ainsi lisible tout en suivant la bande de l'anneau
-      const ex = 252 * Math.cos(th), ey = 86 * Math.sin(th);
+      const ex = 280 * Math.cos(th), ey = 79 * Math.sin(th);
       const x = 320 + ex * cos13 - ey * sin13;
-      const y = 352 + ex * sin13 + ey * cos13;
-      const k = Math.min(1, Math.max(0, (y - 266) / 172)); // 0 = fond, 1 = premier plan
-      const behind = Math.sin(th) < 0; // même frontière que le clip back/front de l'anneau (repère incliné)
+      const y = 330 + ex * sin13 + ey * cos13;
+      const k = (Math.sin(th) + 1) / 2; // 0 = fond, 1 = premier plan
+      const behind = Math.sin(th) < 0; // moitié arrière de l'anneau = derrière la planète
       const g = behind ? back : front, other = behind ? front : back;
       g.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${(0.84 + k * 0.26).toFixed(3)})`);
       g.setAttribute("opacity", (0.45 + k * 0.55).toFixed(2));
@@ -1751,43 +1712,107 @@ function AboutPlanetScene() {
       <span className="planet-star" style={{ bottom:"16%", left:"2%", animationDelay:".6s", fontSize:11 }}>✦</span>
       <span className="planet-star" style={{ bottom:"6%", right:"9%", animationDelay:"1.8s" }}>✦</span>
       <svg className="apl-svg" viewBox="0 0 640 620" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs>
-          <radialGradient id="aplP" cx="50%" cy="26%" r="80%">
-            <stop offset="0%" stopColor="#5A35AC"/><stop offset="42%" stopColor="#3A2178"/><stop offset="78%" stopColor="#1E1048"/><stop offset="100%" stopColor="#140A34"/>
-          </radialGradient>
-          <radialGradient id="aplShade" cx="50%" cy="130%" r="90%">
-            <stop offset="0%" stopColor="rgba(4,2,14,.9)"/><stop offset="55%" stopColor="rgba(4,2,14,.42)"/><stop offset="100%" stopColor="rgba(4,2,14,0)"/>
-          </radialGradient>
-          <linearGradient id="aplR" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#C4B5FD"/><stop offset="50%" stopColor="#8B5CF6"/><stop offset="100%" stopColor="#6025C0"/>
-          </linearGradient>
-          <filter id="aplGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7"/></filter>
-          <clipPath id="aplBack"><rect x="-80" y="-60" width="800" height="412"/></clipPath>
-          <clipPath id="aplFront"><rect x="-80" y="352" width="800" height="330"/></clipPath>
-        </defs>
-        <g transform="rotate(-13 320 352)" clipPath="url(#aplBack)">
-          <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="url(#aplR)" strokeWidth="26" opacity=".4" filter="url(#aplGlow)"/>
-          <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="url(#aplR)" strokeWidth="13" opacity=".85"/>
-        </g>
+        {/* Planète + anneau rendus dans Blender, en 3 calques pour que le badge passe derrière/devant */}
+        <image href="/3d/ring-planet/ring-back.webp" x="-40" y="0" width="720" height="620"/>
         {/* badge en orbite — moitié arrière : occulté par la planète */}
         <g ref={backRef} style={{ display:"none" }}>{badge}</g>
-        <circle cx="320" cy="330" r="212" fill="url(#aplP)"/>
-        <ellipse cx="238" cy="272" rx="34" ry="30" fill="rgba(10,5,30,.35)"/>
-        <ellipse cx="330" cy="356" rx="46" ry="40" fill="rgba(10,5,30,.28)"/>
-        <ellipse cx="428" cy="252" rx="18" ry="15" fill="rgba(10,5,30,.4)"/>
-        <ellipse cx="212" cy="392" rx="22" ry="18" fill="rgba(10,5,30,.3)"/>
-        <path d="M428 372 q64 -30 102 8 q12 46 -24 82 q-62 12 -98 -24 q-8 -42 20 -66Z" fill="rgba(75,127,250,.32)"/>
-        <circle cx="320" cy="330" r="212" fill="url(#aplShade)"/>
-        <circle cx="320" cy="330" r="212" fill="none" stroke="rgba(196,181,253,.32)" strokeWidth="2" filter="url(#aplGlow)"/>
-        <g transform="rotate(-13 320 352)" clipPath="url(#aplFront)">
-          <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="url(#aplR)" strokeWidth="30" opacity=".45" filter="url(#aplGlow)"/>
-          <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="url(#aplR)" strokeWidth="15"/>
-          <ellipse cx="320" cy="352" rx="304" ry="86" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2.5"/>
-        </g>
+        <image href="/3d/ring-planet/planet.webp" x="-40" y="0" width="720" height="620"/>
+        <image href="/3d/ring-planet/ring-front.webp" x="-40" y="0" width="720" height="620"/>
         {/* badge en orbite — moitié avant : passe devant la planète */}
         <g ref={frontRef} style={{ display:"none" }}>{badge}</g>
       </svg>
       <img className="apl-me" src="/about-figma-me.webp" alt="" loading="lazy" width="710" height="612"/>
+    </div>
+  );
+}
+
+// Séquence d'images rendue dans Blender (public/3d/...), dessinée sur un canvas.
+// Le parent pilote la frame affichée via ref.setProgress(0→1). Chargement progressif :
+// une frame sur 16, puis 8, 4, 2, 1 — on affiche toujours la frame chargée la plus proche,
+// donc le scroll reste fluide même sur une connexion mobile lente.
+const FrameSequence = React.forwardRef(function FrameSequence({ dir, count, className, fit = "cover", lazyMargin = "200% 0px" }, ref) {
+  const canvasRef = useRef(null);
+  const st = useRef(null);
+  if (!st.current) st.current = { imgs: new Array(count), want: 0, drawn: -1, raf: 0 };
+  const src = (i) => `${dir}/f_${String(i + 1).padStart(4, "0")}.webp`;
+  const draw = useCallback(() => {
+    const s = st.current, c = canvasRef.current;
+    if (!c || !c.width) return;
+    const ok = (k) => { const im = s.imgs[k]; return im && im.complete && im.naturalWidth > 0; };
+    let best = -1;
+    for (let d = 0; d < count && best < 0; d++) {
+      if (ok(s.want - d)) best = s.want - d; else if (ok(s.want + d)) best = s.want + d;
+    }
+    if (best < 0 || best === s.drawn) return;
+    s.drawn = best;
+    const img = s.imgs[best], ctx = c.getContext("2d");
+    const W = c.width, H = c.height, iw = img.naturalWidth, ih = img.naturalHeight;
+    const k = fit === "cover" ? Math.max(W / iw, H / ih) : Math.min(W / iw, H / ih);
+    const dw = iw * k, dh = ih * k;
+    ctx.clearRect(0, 0, W, H);
+    ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  }, [count, fit]);
+  useImperativeHandle(ref, () => ({
+    setProgress(p) {
+      const s = st.current;
+      const w = Math.round(Math.min(1, Math.max(0, p)) * (count - 1));
+      if (w === s.want && s.drawn === w) return;
+      s.want = w;
+      if (!s.raf) s.raf = requestAnimationFrame(() => { s.raf = 0; draw(); });
+    },
+  }), [count, draw]);
+  useEffect(() => {
+    const c = canvasRef.current; if (!c) return;
+    const s = st.current;
+    let alive = true, started = false;
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
+      if (w && h && (w !== c.width || h !== c.height)) { c.width = w; c.height = h; s.drawn = -1; draw(); }
+    };
+    const start = () => {
+      if (started) return; started = true;
+      const order = [], seen = new Set();
+      for (const step of [16, 8, 4, 2, 1]) for (let i = 0; i < count; i += step) if (!seen.has(i)) { seen.add(i); order.push(i); }
+      if (!seen.has(count - 1)) order.splice(1, 0, count - 1);
+      let next = 0;
+      const pump = () => {
+        if (!alive || next >= order.length) return;
+        const i = order[next++];
+        const im = new Image();
+        im.decoding = "async";
+        im.onload = im.onerror = () => { if (!alive) return; if (Math.abs(i - s.want) <= Math.abs(s.drawn - s.want) || s.drawn < 0) { s.drawn = -1; draw(); } pump(); };
+        im.src = src(i);
+        s.imgs[i] = im;
+      };
+      for (let k = 0; k < 6; k++) pump(); // 6 téléchargements en parallèle
+    };
+    const ro = new ResizeObserver(resize); ro.observe(c); resize();
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { start(); io.disconnect(); } }, { rootMargin: lazyMargin });
+    io.observe(c);
+    return () => { alive = false; ro.disconnect(); io.disconnect(); cancelAnimationFrame(s.raf); s.raf = 0; };
+  }, [count, dir, draw, lazyMargin]);
+  return <div className={className}><canvas ref={canvasRef}/></div>;
+});
+
+const isMobileViewport = () => typeof window !== "undefined" && !!window.matchMedia?.("(max-width:768px)").matches;
+const prefersReducedMotion = () => typeof window !== "undefined" && !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+// Planète géante du hero (rendu Blender) : tourne doucement quand on scrolle le hero.
+// Mobile / mouvement réduit : une seule image fixe, rien d'autre à télécharger.
+function HeroPlanet3D({ px }) {
+  const seqRef = useRef(null);
+  const [still] = useState(() => isMobileViewport() || prefersReducedMotion());
+  useEffect(() => {
+    if (still) { seqRef.current?.setProgress(0); return; }
+    const onScroll = () => seqRef.current?.setProgress(window.scrollY / (window.innerHeight * 0.9));
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [still]);
+  return (
+    <div className="hero-planet3" aria-hidden="true" style={{ transform:`translate(calc(-50% + ${px.x*7}px), calc(24% + ${px.y*5}px))` }}>
+      <FrameSequence ref={seqRef} dir="/3d/hero-planet" count={still ? 1 : 40} fit="contain" lazyMargin="0px"/>
     </div>
   );
 }
@@ -1797,16 +1822,11 @@ function AboutPlanetScene() {
 function BlackHoleTransition() {
   const wrapRef = useRef(null);
   const stickyRef = useRef(null);
-  const holeRef = useRef(null);
-  const blackRef = useRef(null);
-  const lensRef = useRef(null);
-  const glitchRef = useRef(null);
-  const slicesRef = useRef(null);
+  const seqRef = useRef(null);
+  // Mobile : rendu vertical 540×960, 60 images (≈1,5 Mo) au lieu de 120 en 1280×720
+  const [mobile] = useState(isMobileViewport);
   useEffect(() => {
-    // backdrop-filter animé par frame = très coûteux sur Firefox → lentille désactivée là-bas
-    // NB : window.CSS obligatoire — la constante locale CSS (feuille de style) masque le global
-    const noLens = typeof window !== "undefined" && !!window.CSS?.supports?.("-moz-appearance", "none");
-    let lastLens = "";
+    let lastF = "";
     const onScroll = () => {
       const el = wrapRef.current; if (!el) return;
       const r = el.getBoundingClientRect();
@@ -1818,61 +1838,31 @@ function BlackHoleTransition() {
         if (p <= 0) { s.style.position = "absolute"; s.style.top = "0"; s.style.bottom = "auto"; }
         else if (p >= 1) { s.style.position = "absolute"; s.style.top = "auto"; s.style.bottom = "0"; }
         else { s.style.position = "fixed"; s.style.top = "0"; s.style.bottom = "auto"; }
+        // phase SORTIE (tunnel cyan) : hint de scroll
+        s.classList.toggle("out", p > 0.66 && p < 0.97);
+        // bords fondus quand le trou est loin, plein cadre quand on plonge
+        const f = `${(14 * Math.max(0, 1 - p / 0.3)).toFixed(1)}%`;
+        if (f !== lastF) { lastF = f; s.style.setProperty("--bhtf", f); }
       }
-      const t = p < 0.5 ? p * 2 : (1 - p) * 2; // 0 → 1 (englouti) → 0
-      // phase SORTIE : bascule chromatique + hint de scroll (sinon entrée/sortie identiques = confusion)
-      if (s) s.classList.toggle("out", p > 0.52);
-      // Trou nativement grand (110vmin) → scale max faible pour garder le conic-gradient net
-      const scale = 0.07 + Math.pow(t, 1.5) * 2.75;
-      if (holeRef.current) holeRef.current.style.transform = `scale(${scale})`;
-      // Glitch : jitter léger + split chromatique + barres cyan/roses, actif près du trou,
-      // se coupe en s'éloignant (et avant le voile noir opaque)
-      if (glitchRef.current) glitchRef.current.classList.toggle("on", t > 0.41);
-      if (slicesRef.current) slicesRef.current.classList.toggle("on", t > 0.41);
-      // Distorsion gravitationnelle : la lentille se renforce à mesure qu'on approche du trou
-      // (blur quantisé au 1/2 px : on n'écrit le style que s'il change vraiment)
-      if (lensRef.current && !noLens) {
-        const tq = Math.round(t * 16) / 16; // 17 paliers → réécriture du style seulement au changement de palier
-        const dist = `blur(${(1 + tq * 8).toFixed(1)}px) saturate(${(1 + tq * 0.6).toFixed(2)}) contrast(${(1 + tq * 0.2).toFixed(2)})`;
-        if (dist !== lastLens) {
-          lastLens = dist;
-          lensRef.current.style.backdropFilter = dist;
-          lensRef.current.style.webkitBackdropFilter = dist;
-        }
-      }
-      if (blackRef.current) blackRef.current.style.opacity = Math.min(1, Math.max(0, (t - 0.6) / 0.2));
+      // séquence Blender : 0 → approche + logos aspirés, ~0.6 → noir total, → tunnel → sortie transparente
+      seqRef.current?.setProgress(p);
       document.body.classList.toggle("bht-active", p > 0.03 && p < 0.97);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     onScroll();
-    return () => { window.removeEventListener("scroll", onScroll); document.body.classList.remove("bht-active"); };
+    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); document.body.classList.remove("bht-active"); };
   }, []);
   return (
     <div ref={wrapRef} className="bht-wrap" aria-hidden="true">
       <div ref={stickyRef} className="bht-sticky">
-        <div ref={holeRef} className="bht-hole">
-          <div ref={lensRef} className="bht-lensring"/>
-          <div ref={glitchRef} className="bht-glitch">
-            <div className="bht-arch"/>
-            <div className="bht-core"/>
-            <div className="bht-ring"/>
-            <div className="bht-diskflat"><div className="bht-diskflat-spin"/></div>
-            {[0, 1, 2].map(i => (
-              <div key={i} className="bht-orbit" style={{ animationDelay:`${i*3}s` }}>
-                <div style={{ animation:`bhtFall 9s ease-in ${i*3}s infinite`, position:"absolute", width:"6.5vmin" }}>
-                  <FigmaMark/>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <FrameSequence
+          ref={seqRef}
+          className="bht-seq"
+          dir={mobile ? "/3d/black-hole-mobile" : "/3d/black-hole"}
+          count={mobile ? 60 : 120}
+        />
         <div className="bht-hint">De l'autre côté — continuez l'exploration<i className="bx bx-chevron-down"/></div>
-        <div ref={slicesRef} className="bht-slices">
-          {["c","p","c","p","p","c","p","c","c","p","c","p"].map((col, i) => (
-            <div key={i} className={`bht-slice ${col} s${i + 1}`}/>
-          ))}
-        </div>
-        <div ref={blackRef} className="bht-black"/>
       </div>
     </div>
   );
@@ -2281,9 +2271,7 @@ function HomePage({ projects, tags, testimonials, onProject, onTrack, cvUrl }) {
 
         <section className="hero hero-c" id="hero">
           {/* Planète géante qui se fond dans le noir — arrière-plan du hero */}
-          <div className="hero-planet2" aria-hidden="true" style={{ transform:`translate(calc(-50% + ${px.x*7}px), calc(72% + ${px.y*5}px))` }}>
-            <div className="hero-planet2-tex"/>
-          </div>
+          <HeroPlanet3D px={px}/>
           <div className="hero-cwrap">
             {/* Sandwich 3D : « Thomas » derrière l'astronaute, « Leloup » devant.
                 L'animation d'entrée est portée par cstage (pas le h1) pour ne pas
