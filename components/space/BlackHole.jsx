@@ -8,10 +8,12 @@ import FrameSequence from "./FrameSequence";
      halo violet diffus qui respire. Rien n'est piloté image par image par le scroll.
   2. Déclenché : quand sa section est bien à l'écran, la séquence COMPLÈTE se joue seule (2,6 s),
      dans sa propre section (jamais par-dessus les autres). Le scroll n'est jamais bloqué.
-  3. Retour : si on remonte, sens inverse allégé (1,1 s, une image sur deux), puis l'approche reprend.
+  3. Retour : si on remonte, sens inverse plus court (1,1 s), puis l'approche reprend.
+  4. Fin de lecture : glissement doux vers la section suivante (aller) ou précédente (retour).
+  120 images + fondu entre images voisines : mouvement continu, sans saccade.
   Mouvement réduit : image fixe, pas de lecture automatique.
 */
-const COUNT = 60;
+const COUNT = 120;
 const FWD_MS = 2600, REV_MS = 1100;
 // Courbe douce (sinusoïdale) : départ et arrivée en douceur, sans à-coup au milieu
 const easeInOut = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
@@ -36,16 +38,29 @@ export default function BlackHole() {
       stage.classList.toggle("tun", v > 0.58);
       stage.style.setProperty("--bhp", v.toFixed(3));
     };
-    const finish = () => {
+    // Fin de lecture : on glisse en douceur vers la section suivante (aller) ou précédente (retour).
+    // Pas de glissement si la section a déjà quitté l'écran (l'utilisateur est parti ailleurs).
+    const glide = (down) => {
+      const r = wrap.getBoundingClientRect(), vh = window.innerHeight;
+      if (r.bottom < vh * 0.15 || r.top > vh * 0.85) return;
+      if (down) {
+        const next = wrap.nextElementSibling;
+        const nav = document.querySelector(".nav")?.offsetHeight || 0;
+        if (next) window.scrollTo({ top: window.scrollY + next.getBoundingClientRect().top - nav, behavior: "smooth" });
+      } else {
+        // retour : on remonte jusqu'à ce que la section précédente remplisse l'écran
+        window.scrollTo({ top: Math.max(0, window.scrollY + r.top - vh), behavior: "smooth" });
+      }
+    };
+    const finish = (skipGlide) => {
       raf = 0;
-      if (phase === "fwd") { phase = "done"; stage.classList.remove("is-playing"); stage.classList.add("is-done"); }
-      else { phase = "approach"; stage.classList.remove("is-playing", "is-rev", "is-done"); setP(0); onScroll(); }
+      if (phase === "fwd") { phase = "done"; stage.classList.remove("is-playing"); stage.classList.add("is-done"); if (!skipGlide) glide(true); }
+      else { phase = "approach"; stage.classList.remove("is-playing", "is-rev", "is-done"); setP(0); if (!skipGlide) glide(false); onScroll(); }
     };
     const step = (now) => {
       const t = Math.min(1, (now - t0) / dur);
       const e = easeInOut(t);
       let v = from + (to - from) * e;
-      if (phase === "rev") v = Math.round(v * (COUNT / 2)) / (COUNT / 2); // une image sur deux
       setP(v);
       if (t < 1) raf = requestAnimationFrame(step); else finish();
     };
@@ -60,8 +75,10 @@ export default function BlackHole() {
       raf = requestAnimationFrame(step);
     };
 
+    let lastY = window.scrollY;
     function onScroll() {
       const r = wrap.getBoundingClientRect(), vh = window.innerHeight;
+      const goingUp = window.scrollY < lastY, goingDown = window.scrollY > lastY; lastY = window.scrollY;
       // approche : 0 quand le haut de la section touche le bas de l'écran, 1 quand il touche le haut
       const a = Math.min(1, Math.max(0, 1 - r.top / vh));
       stage.style.setProperty("--bha", a.toFixed(3));
@@ -71,13 +88,14 @@ export default function BlackHole() {
       if (away && (phase === "fwd" || phase === "rev")) {
         cancelAnimationFrame(raf);
         const past = r.bottom < 0;
-        phase = past ? "fwd" : "rev"; setP(past ? 1 : 0); finish();
+        phase = past ? "fwd" : "rev"; setP(past ? 1 : 0); finish(true);
         return;
       }
       if (away) return;
       // section bien cadrée → lecture complète ; on remonte au-dessus → retour allégé
-      if ((phase === "approach" || phase === "rev") && r.top < vh * 0.2 && r.bottom > vh * 0.6) play("fwd");
-      else if ((phase === "done" || phase === "fwd") && r.top > vh * 0.45) play("rev");
+      // depuis le retour, on ne relance l'aller que si l'on redescend vraiment
+      if ((phase === "approach" || (phase === "rev" && goingDown)) && r.top < vh * 0.2 && r.bottom > vh * 0.6) play("fwd");
+      else if ((phase === "done" || phase === "fwd") && (r.top > vh * 0.45 || (goingUp && r.top < 0 && r.bottom > vh * 0.5))) play("rev");
     }
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
@@ -92,7 +110,7 @@ export default function BlackHole() {
     <div ref={wrapRef} className="bh" aria-hidden="true">
       <div ref={stageRef} className="bh-stage">
         <div className="bh-halo"><span/><span/></div>
-        <FrameSequence key={mobile ? "m" : "d"} ref={seqRef} className="bh-seq" dir={mobile ? "/3d/black-hole-mobile" : "/3d/black-hole"} count={COUNT}/>
+        <FrameSequence key={mobile ? "m" : "d"} ref={seqRef} blend className="bh-seq" dir={mobile ? "/3d/black-hole-mobile" : "/3d/black-hole"} count={COUNT}/>
       </div>
     </div>
   );
