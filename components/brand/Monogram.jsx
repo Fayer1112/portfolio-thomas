@@ -1,0 +1,18 @@
+import React from "react";
+
+// Monogramme « <9 » en vectoriel. `trace` : les tracés se dessinent puis se remplissent
+// (utilisé par le loader). Couleurs = logo officiel, ne pas re-teinter.
+const P1 = "M10.2424 62.3826L54.8959 107.036L44.6981 117.234L0.0446684 72.5803L10.2424 62.3826Z";
+const P2 = "M0.00135188 72.6236L72.6251 0.000149158L82.7914 10.1664L10.1676 82.7899L0.00135188 72.6236Z";
+const P3 = "M75.525 87.0488C62.8414 74.3653 62.8575 53.7851 75.5609 41.0816C88.2643 28.3782 108.845 28.3621 121.528 41.0457C130.303 49.8206 132.999 62.375 129.622 73.4859C128.402 79.2203 122.983 86.7874 119.893 89.5015L68.416 140.979L58.2293 130.792L92.9425 96.0792C86.5618 94.9822 80.4485 91.9723 75.525 87.0488ZM84.721 77.8528C92.3337 85.4655 104.686 85.4558 112.311 77.8312C119.935 70.2067 119.945 57.8544 112.332 50.2417C104.719 42.6291 92.3672 42.6387 84.7426 50.2633C77.118 57.8879 77.1083 70.2401 84.721 77.8528Z";
+
+export default function Monogram({ size = 32, trace = false, className, title }) {
+  return (
+    <svg className={`mono-gram${trace ? " is-trace" : ""}${className ? " " + className : ""}`} width={size} height={size * 141 / 145}
+      viewBox="0 0 145 141" fill="none" xmlns="http://www.w3.org/2000/svg" role={title ? "img" : undefined} aria-label={title} aria-hidden={title ? undefined : true}>
+      <path pathLength="1" d={P1} fill="#FCFCFC" stroke="#FCFCFC"/>
+      <path pathLength="1" d={P2} fill="#FCFCFC" stroke="#FCFCFC"/>
+      <path pathLength="1" d={P3} fill="#750CFF" stroke="#9B5CFF" fillRule="evenodd" clipRule="evenodd"/>
+    </svg>
+  );
+}
